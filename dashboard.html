@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIDE KOREA — SNS 광고 성과 대시보드</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0d1117;
+  --bg2: #161b22;
+  --bg3: #1c2333;
+  --bg4: #21262d;
+  --border: #30363d;
+  --border2: #21262d;
+  --text: #e6edf3;
+  --text2: #8b949e;
+  --text3: #6e7681;
+  --accent: #58a6ff;
+  --accent2: #1f6feb;
+  --green: #3fb950;
+  --orange: #f0883e;
+  --red: #f85149;
+  --purple: #bc8cff;
+  --teal: #39d353;
+  --ig: #e1306c;
+  --tt: #010101;
+  --tt2: #69c9d0;
+  --r: 8px;
+  --r2: 12px;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Pretendard', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* ─── 헤더 ─────────────────────────────────── */
+.header {
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  padding: 0 32px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(8px);
+}
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: -0.3px;
+}
+.header-brand .dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+}
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.data-source-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 6px 12px;
+  font-size: 12px;
+}
+.data-source-box input {
+  background: transparent;
+  border: none;
+  color: var(--text2);
+  font-size: 11px;
+  font-family: 'DM Mono', monospace;
+  width: 280px;
+  outline: none;
+}
+.data-source-box input::placeholder { color: var(--text3); }
+.btn {
+  padding: 6px 14px;
+  border-radius: var(--r);
+  border: 1px solid var(--border);
+  background: var(--bg3);
+  color: var(--text);
+  font-size: 12px;
+  font-family: 'Pretendard', sans-serif;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn:hover { background: var(--bg4); border-color: var(--accent); color: var(--accent); }
+.btn-primary {
+  background: var(--accent2);
+  border-color: var(--accent);
+  color: #fff;
+}
+.btn-primary:hover { background: var(--accent); color: #fff; }
+#status-badge {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 11px; color: var(--text3);
+  font-family: 'DM Mono', monospace;
+}
+.status-dot { width:6px; height:6px; border-radius:50%; background:var(--text3); }
+.status-dot.ok { background: var(--green); box-shadow: 0 0 6px var(--green); }
+.status-dot.loading { background: var(--orange); animation: pulse 1s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+/* ─── 레이아웃 ─────────────────────────────── */
+.main { padding: 28px 32px; max-width: 1600px; margin: 0 auto; }
+
+/* ─── 필터 바 ──────────────────────────────── */
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+  padding: 14px 18px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--r2);
+}
+.filter-label { font-size: 11px; color: var(--text3); font-weight: 600; text-transform: uppercase; letter-spacing: .8px; margin-right: 4px; }
+.filter-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.chip {
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--bg3);
+  color: var(--text2);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+}
+.chip:hover { border-color: var(--accent); color: var(--accent); }
+.chip.active { background: var(--accent2); border-color: var(--accent); color: #fff; }
+.chip.ig.active { background: #c13584; border-color: var(--ig); }
+.chip.tt.active { background: #2b2b2b; border-color: var(--tt2); color: var(--tt2); }
+.filter-divider { width: 1px; height: 20px; background: var(--border); margin: 0 4px; }
+
+/* ─── KPI 카드 ─────────────────────────────── */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.kpi-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--r2);
+  padding: 18px 20px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.15s;
+}
+.kpi-card:hover { border-color: var(--accent); }
+.kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+}
+.kpi-card.spend::before { background: linear-gradient(90deg, #58a6ff, #1f6feb); }
+.kpi-card.imp::before   { background: linear-gradient(90deg, #bc8cff, #8250df); }
+.kpi-card.click::before { background: linear-gradient(90deg, #3fb950, #238636); }
+.kpi-card.land::before  { background: linear-gradient(90deg, #39d353, #196127); }
+.kpi-card.cpm::before   { background: linear-gradient(90deg, #f0883e, #bd561d); }
+.kpi-card.cpc::before   { background: linear-gradient(90deg, #f85149, #b91c1c); }
+.kpi-label { font-size: 11px; color: var(--text3); font-weight: 500; text-transform: uppercase; letter-spacing: .6px; margin-bottom: 8px; }
+.kpi-value { font-size: 26px; font-weight: 700; letter-spacing: -1px; line-height: 1; font-family: 'DM Mono', monospace; }
+.kpi-sub { font-size: 11px; color: var(--text3); margin-top: 6px; font-family: 'DM Mono', monospace; }
+.kpi-delta { display: inline-flex; align-items: center; gap: 3px; font-size: 11px; margin-top: 6px; padding: 2px 6px; border-radius: 4px; font-family: 'DM Mono', monospace; }
+.kpi-delta.up   { background: rgba(63,185,80,.15); color: var(--green); }
+.kpi-delta.down { background: rgba(248,81,73,.15);  color: var(--red); }
+
+/* ─── 섹션 레이아웃 ─────────────────────────── */
+.section-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-title::before {
+  content: '';
+  width: 3px; height: 14px;
+  background: var(--accent);
+  border-radius: 2px;
+}
+.panel {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--r2);
+  padding: 20px;
+}
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.grid-13 { display: grid; grid-template-columns: 1fr 2fr; gap: 16px; margin-bottom: 16px; }
+.grid-31 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px; }
+
+/* ─── 차트 캔버스 ───────────────────────────── */
+.chart-wrap { position: relative; }
+.chart-wrap canvas { max-height: 260px; }
+.chart-wrap-tall canvas { max-height: 320px; }
+
+/* ─── 테이블 ────────────────────────────────── */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 12px; }
+thead th {
+  text-align: right;
+  padding: 8px 12px;
+  color: var(--text3);
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+thead th:first-child { text-align: left; }
+tbody tr { border-bottom: 1px solid var(--border2); transition: background 0.1s; }
+tbody tr:hover { background: var(--bg3); }
+tbody tr:last-child { border-bottom: none; }
+tbody td {
+  padding: 9px 12px;
+  text-align: right;
+  font-family: 'DM Mono', monospace;
+  color: var(--text2);
+  white-space: nowrap;
+}
+tbody td:first-child { text-align: left; font-family: 'Pretendard', sans-serif; color: var(--text); font-weight: 500; max-width: 280px; overflow: hidden; text-overflow: ellipsis; }
+.rank-num { color: var(--text3); font-size: 11px; margin-right: 8px; }
+.pf-badge {
+  display: inline-block;
+  padding: 1px 7px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  font-family: 'DM Mono', monospace;
+}
+.pf-ig { background: rgba(225,48,108,.15); color: var(--ig); border: 1px solid rgba(225,48,108,.3); }
+.pf-tt { background: rgba(105,201,208,.1); color: var(--tt2); border: 1px solid rgba(105,201,208,.3); }
+.bar-cell { display: flex; align-items: center; gap: 8px; }
+.bar-cell .bar { height: 4px; border-radius: 2px; background: var(--accent2); min-width: 4px; transition: width .3s; }
+.bar-cell span { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text2); min-width: 70px; text-align: right; }
+
+/* ─── 비교표 ────────────────────────────────── */
+.compare-hdr {
+  display: grid;
+  grid-template-columns: 140px repeat(4, 1fr) repeat(2, 1fr);
+  gap: 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.compare-row {
+  display: grid;
+  grid-template-columns: 140px repeat(4, 1fr) repeat(2, 1fr);
+  gap: 0;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border2);
+  transition: background .1s;
+  font-size: 12px;
+}
+.compare-row:hover { background: var(--bg3); }
+.compare-row:last-child { border-bottom: none; }
+.compare-row > *, .compare-hdr > * { padding: 0 6px; }
+.compare-row > *:not(:first-child) { text-align: right; font-family: 'DM Mono', monospace; color: var(--text2); }
+.delta-pos { color: var(--green); }
+.delta-neg { color: var(--red); }
+.delta-zero { color: var(--text3); }
+.month-col-prev { color: #79b8ff; }
+.month-col-cur  { color: var(--text); font-weight: 600; }
+.month-col-delta { color: var(--green); }
+.compare-month-header {
+  display: grid;
+  grid-template-columns: 140px repeat(2, 1fr) repeat(2, 1fr) repeat(2, 1fr);
+  padding: 6px 14px 0;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .8px;
+}
+
+/* ─── 스피너 ────────────────────────────────── */
+.loading-overlay {
+  position: fixed; inset: 0;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  gap: 16px;
+}
+.spinner {
+  width: 40px; height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { color: var(--text2); font-size: 13px; font-family: 'DM Mono', monospace; }
+
+/* ─── 탭 ────────────────────────────────────── */
+.tabs { display: flex; gap: 2px; margin-bottom: 0; border-bottom: 1px solid var(--border); }
+.tab {
+  padding: 10px 18px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text3);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all .15s;
+  margin-bottom: -1px;
+}
+.tab:hover { color: var(--text); }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+.tab-content { display: none; padding-top: 16px; }
+.tab-content.active { display: block; }
+
+/* ─── 빈 상태 ───────────────────────────────── */
+.empty-state {
+  text-align: center;
+  padding: 48px;
+  color: var(--text3);
+}
+.empty-state .icon { font-size: 32px; margin-bottom: 12px; }
+.empty-state p { font-size: 13px; line-height: 1.8; }
+.empty-state code {
+  background: var(--bg3);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-family: 'DM Mono', monospace;
+  color: var(--accent);
+}
+
+/* ─── 국가 파이 범례 ─────────────────────────── */
+.legend-list { display: flex; flex-direction: column; gap: 6px; overflow-y: auto; max-height: 260px; }
+.legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+.legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.legend-name { flex: 1; color: var(--text2); }
+.legend-val { font-family: 'DM Mono', monospace; color: var(--text3); font-size: 11px; }
+.legend-pct { font-family: 'DM Mono', monospace; color: var(--text); font-size: 11px; min-width: 36px; text-align: right; }
+
+@media (max-width: 1200px) {
+  .kpi-grid { grid-template-columns: repeat(3, 1fr); }
+  .grid-2, .grid-3, .grid-13, .grid-31 { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loading">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loading-text">데이터 로딩 중...</div>
+</div>
+
+<!-- 헤더 -->
+<div class="header">
+  <div class="header-brand">
+    <div class="dot"></div>
+    AIDKOREA <span style="color:var(--text3);font-weight:300;letter-spacing:.5px;">COMPANY</span>
+  </div>
+  <div class="header-right">
+    <div id="status-badge">
+      <div class="status-dot" id="status-dot"></div>
+      <span id="status-text">대기 중</span>
+    </div>
+    <div class="data-source-box">
+      <span style="color:var(--text3);font-size:11px;white-space:nowrap;">Google Sheets CSV</span>
+      <input type="text" id="sheets-url" placeholder="https://docs.google.com/spreadsheets/d/.../export?format=csv&gid=0" />
+    </div>
+    <button class="btn btn-primary" onclick="loadFromSheets()">🔄 불러오기</button>
+    <button class="btn" onclick="loadSampleData()">📊 샘플 데이터</button>
+  </div>
+</div>
+
+<!-- 메인 -->
+<div class="main">
+
+  <!-- 필터 바 -->
+  <div class="filter-bar">
+    <span class="filter-label">기간</span>
+    <div class="filter-chips" id="chips-period"></div>
+    <div class="filter-divider"></div>
+    <span class="filter-label">플랫폼</span>
+    <div class="filter-chips" id="chips-platform">
+      <div class="chip ig active" data-pf="IG" onclick="togglePF(this)">Instagram</div>
+      <div class="chip tt active" data-pf="TT" onclick="togglePF(this)">TikTok</div>
+    </div>
+    <div class="filter-divider"></div>
+    <span class="filter-label">국가</span>
+    <div class="filter-chips" id="chips-country"></div>
+    <div style="margin-left:auto;display:flex;gap:8px;">
+      <button class="btn" onclick="resetFilters()" style="font-size:11px;">필터 초기화</button>
+      <span id="filter-count" style="font-size:11px;color:var(--text3);display:flex;align-items:center;"></span>
+    </div>
+  </div>
+
+  <!-- KPI 카드 -->
+  <div class="kpi-grid">
+    <div class="kpi-card spend">
+      <div class="kpi-label">💰 총 지출</div>
+      <div class="kpi-value" id="kpi-spend">—</div>
+      <div class="kpi-sub" id="kpi-spend-sub"></div>
+    </div>
+    <div class="kpi-card imp">
+      <div class="kpi-label">👁 노출</div>
+      <div class="kpi-value" id="kpi-imp">—</div>
+      <div class="kpi-sub" id="kpi-imp-sub"></div>
+    </div>
+    <div class="kpi-card click">
+      <div class="kpi-label">🖱 링크 클릭</div>
+      <div class="kpi-value" id="kpi-click">—</div>
+      <div class="kpi-sub" id="kpi-click-sub"></div>
+    </div>
+    <div class="kpi-card land">
+      <div class="kpi-label">🏠 랜딩 조회</div>
+      <div class="kpi-value" id="kpi-land">—</div>
+      <div class="kpi-sub" id="kpi-land-sub"></div>
+    </div>
+    <div class="kpi-card cpm">
+      <div class="kpi-label">📡 CPM</div>
+      <div class="kpi-value" id="kpi-cpm">—</div>
+      <div class="kpi-sub">원 / 1,000 노출</div>
+    </div>
+    <div class="kpi-card cpc">
+      <div class="kpi-label">💡 CPC</div>
+      <div class="kpi-value" id="kpi-cpc">—</div>
+      <div class="kpi-sub">원 / 클릭</div>
+    </div>
+  </div>
+
+  <!-- 차트 섹션 1: 기간·플랫폼 -->
+  <div class="grid-2">
+    <div class="panel">
+      <div class="section-title">월별 · 주차별 지출 추이</div>
+      <div class="chart-wrap"><canvas id="chart-period"></canvas></div>
+    </div>
+    <div class="panel">
+      <div class="section-title">IG vs TT 성과 비교</div>
+      <div class="tabs" id="pf-tabs">
+        <div class="tab active" onclick="switchPFTab(this,'spend')">지출</div>
+        <div class="tab" onclick="switchPFTab(this,'imp')">노출</div>
+        <div class="tab" onclick="switchPFTab(this,'click')">클릭</div>
+        <div class="tab" onclick="switchPFTab(this,'cpm')">CPM</div>
+      </div>
+      <div style="padding-top:16px;" class="chart-wrap"><canvas id="chart-platform"></canvas></div>
+    </div>
+  </div>
+
+  <!-- 차트 섹션 2: 국가별 -->
+  <div class="grid-13" style="margin-bottom:16px;">
+    <div class="panel">
+      <div class="section-title">국가별 지출 분포</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:center;">
+        <div class="chart-wrap" style="max-width:220px;margin:0 auto;">
+          <canvas id="chart-country-pie"></canvas>
+        </div>
+        <div class="legend-list" id="country-legend"></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="section-title">국가별 성과 상세</div>
+      <div class="tabs">
+        <div class="tab active" onclick="switchCountryTab(this,'spend')">지출</div>
+        <div class="tab" onclick="switchCountryTab(this,'cpm')">CPM</div>
+        <div class="tab" onclick="switchCountryTab(this,'ctr')">CTR</div>
+      </div>
+      <div class="chart-wrap-tall" style="padding-top:12px;"><canvas id="chart-country-bar"></canvas></div>
+    </div>
+  </div>
+
+  <!-- 전월/현월 비교 -->
+  <div class="panel" style="margin-bottom:16px;">
+    <div class="section-title">월별 주차 성과 비교</div>
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap;">
+      <span style="font-size:12px;color:var(--text3);">전월:</span>
+      <select id="sel-prev" onchange="renderCompare()" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:5px 10px;border-radius:6px;font-size:12px;outline:none;cursor:pointer;"></select>
+      <span style="font-size:12px;color:var(--text3);">현월:</span>
+      <select id="sel-cur" onchange="renderCompare()" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:5px 10px;border-radius:6px;font-size:12px;outline:none;cursor:pointer;"></select>
+      <span style="font-size:11px;color:var(--text3);margin-left:8px;">▲/▼ = 현월 – 전월</span>
+    </div>
+    <div id="compare-table"></div>
+  </div>
+
+  <!-- 소재별 성과 -->
+  <div class="panel" style="margin-bottom:16px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+      <div class="section-title" style="margin-bottom:0;">소재별 성과</div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <span style="font-size:11px;color:var(--text3);">정렬:</span>
+        <select id="creative-sort" onchange="renderCreatives()" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:5px 10px;border-radius:6px;font-size:12px;outline:none;cursor:pointer;">
+          <option value="spend">지출 순</option>
+          <option value="imp">노출 순</option>
+          <option value="click">링크 클릭 순</option>
+          <option value="cpm">CPM 순</option>
+          <option value="ctr">CTR 순</option>
+        </select>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="text-align:left;">소재명</th>
+            <th>PF</th>
+            <th>지출 금액</th>
+            <th>노출</th>
+            <th>링크 클릭</th>
+            <th>랜딩 조회</th>
+            <th>CPM</th>
+            <th>CPC</th>
+            <th>CTR</th>
+          </tr>
+        </thead>
+        <tbody id="creative-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 국가×플랫폼 상세 -->
+  <div class="panel" style="margin-bottom:16px;">
+    <div class="section-title">국가 × 플랫폼 상세</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="text-align:left;">국가</th>
+            <th>플랫폼</th>
+            <th>지출 금액</th>
+            <th>지출 비중</th>
+            <th>노출</th>
+            <th>링크 클릭</th>
+            <th>랜딩 조회</th>
+            <th>CPM</th>
+            <th>CPC</th>
+            <th>CTR</th>
+          </tr>
+        </thead>
+        <tbody id="detail-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<script>
+// ══════════════════════════════════════════════════════════════
+// 데이터 & 상태
+// ══════════════════════════════════════════════════════════════
+let RAW = [];
+let FILTERED = [];
+let activePeriods = new Set();
+let activePFs = new Set(['IG','TT']);
+let activeCountries = new Set();
+let pfTabMetric = 'spend';
+let countryTabMetric = 'spend';
+let charts = {};
+
+const COL_MAP = {
+  '광고 이름': '광고 이름', '일': '일', '월주차': '월주차',
+  '국가': '국가', '권역': '권역', '플랫폼': '플랫폼',
+  '도달': '도달', '노출': '노출',
+  '지출 금액 (KRW)': '지출 금액 (KRW)',
+  '링크 클릭': '링크 클릭',
+  '랜딩 페이지 조회': '랜딩 페이지 조회',
+  '동영상 25% 재생': '동영상 25% 재생',
+  '동영상 75% 재생': '동영상 75% 재생'
+};
+
+// ── 숫자 포맷 ─────────────────────────────────
+const fmt = (n, d=0) => n==null||isNaN(n) ? '-' : n.toLocaleString('ko-KR', {minimumFractionDigits:d, maximumFractionDigits:d});
+const fmtK = n => n >= 1e8 ? (n/1e8).toFixed(1)+'억' : n >= 1e4 ? (n/1e4).toFixed(1)+'만' : fmt(n);
+const pct = n => n==null||isNaN(n) ? '-' : (n*100).toFixed(2)+'%';
+
+// ══════════════════════════════════════════════════════════════
+// 데이터 로드
+// ══════════════════════════════════════════════════════════════
+function setStatus(state, text) {
+  const dot = document.getElementById('status-dot');
+  dot.className = 'status-dot ' + (state==='ok'?'ok':state==='loading'?'loading':'');
+  document.getElementById('status-text').textContent = text;
+}
+
+async function loadFromSheets() {
+  const url = document.getElementById('sheets-url').value.trim();
+  if (!url) { alert('Apps Script URL을 입력해주세요.'); return; }
+  loadViaJSONP(url);
+}
+function loadSampleData() {
+  showLoading('샘플 데이터 로딩 중...');
+  const sampleUrl = 'dashboard_data.json';
+  fetch(sampleUrl)
+    .then(r => r.json())
+    .then(data => {
+      RAW = data.map(normalizeRow);
+      initDashboard();
+      hideLoading();
+      setStatus('ok', `${RAW.length.toLocaleString()}행 로드됨`);
+    })
+    .catch(() => {
+      // JSON 없으면 인라인 샘플
+      hideLoading();
+      alert('dashboard_data.json 파일이 같은 폴더에 있어야 합니다.\n\nHTML 파일과 dashboard_data.json을 같은 폴더에 놓고 다시 시도해주세요.');
+    });
+}
+
+function parseCSV(text) {
+  Papa.parse(text, {
+    header: true,
+    skipEmptyLines: true,
+    complete: result => {
+      RAW = result.data.map(normalizeRow).filter(r => r['노출'] > 0 || r['지출 금액 (KRW)'] > 0);
+      initDashboard();
+      hideLoading();
+      setStatus('ok', `${RAW.length.toLocaleString()}행 로드됨`);
+    },
+    error: e => {
+      hideLoading();
+      setStatus('','파싱 오류');
+      alert('CSV 파싱 오류: ' + e.message);
+    }
+  });
+}
+
+function normalizeRow(r) {
+  // 컬럼명 표준화 (Google Sheets → 로컬 컬럼명 매핑)
+  const o = {};
+  // 직접 복사
+  for (const k of Object.keys(r)) o[k] = r[k];
+
+  // 숫자 변환
+  for (const c of ['도달','노출','지출 금액 (KRW)','링크 클릭','랜딩 페이지 조회','동영상 25% 재생','동영상 75% 재생']) {
+    o[c] = parseFloat(String(o[c]||'').replace(/,/g,'')) || 0;
+  }
+  // 날짜
+  if (o['일']) {
+    const d = new Date(o['일']);
+    o['_month'] = d.getMonth() + 1;
+    o['_day'] = d.getDate();
+    o['_week'] = o['_day'] <= 14 ? '1-2주차' : '3-4주차';
+    const mn = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()];
+    o['월주차'] = o['월주차'] || (mn + ' ' + o['_week']);
+    o['_monthNum'] = o['_month'];
+    o['_monthName'] = mn;
+  }
+  // 공백 제거
+  o['광고 이름'] = String(o['광고 이름']||'').trim();
+  o['_url'] = String(o['광고URL']||o['URL']||'').trim();
+  o['국가'] = String(o['국가']||'').trim();
+  o['플랫폼'] = String(o['플랫폼']||'').trim();
+  o['권역'] = String(o['권역']||'').replace(/\n/g,' ').trim();
+  return o;
+}
+
+function showLoading(text) {
+  document.getElementById('loading').style.display = 'flex';
+  document.getElementById('loading-text').textContent = text || '로딩 중...';
+}
+function hideLoading() {
+  document.getElementById('loading').style.display = 'none';
+}
+
+// ══════════════════════════════════════════════════════════════
+// 초기화
+// ══════════════════════════════════════════════════════════════
+function initDashboard() {
+  // 기간 목록
+  const periods = [...new Set(RAW.map(r=>r['월주차']))].sort((a,b)=>{
+    const mo = s => s.includes('May')?5:s.includes('Jun')?6:s.includes('Jul')?7:s.includes('Apr')?4:s.includes('Mar')?3:s.includes('Feb')?2:s.includes('Jan')?1:parseInt(s);
+    const wk = s => s.includes('1-2')?1:2;
+    return mo(a)!==mo(b) ? mo(a)-mo(b) : wk(a)-wk(b);
+  });
+  activePeriods = new Set(periods);
+
+  // 국가 목록
+  const countries = [...new Set(RAW.map(r=>r['국가']))].sort();
+  activeCountries = new Set(countries);
+
+  // 필터 칩 생성
+  buildPeriodChips(periods);
+  buildCountryChips(countries);
+
+  // 월 선택기
+  const months = [...new Set(RAW.map(r=>r['_monthName']))];
+  const selPrev = document.getElementById('sel-prev');
+  const selCur = document.getElementById('sel-cur');
+  selPrev.innerHTML = ''; selCur.innerHTML = '';
+  months.forEach(m => {
+    selPrev.innerHTML += `<option value="${m}">${m}</option>`;
+    selCur.innerHTML += `<option value="${m}">${m}</option>`;
+  });
+  if (months.length >= 2) { selPrev.value = months[0]; selCur.value = months[months.length-1]; }
+  else if (months.length === 1) { selPrev.value = months[0]; selCur.value = months[0]; }
+
+  applyFilters();
+}
+
+// ── 필터 칩 빌드 ──────────────────────────────
+function buildPeriodChips(periods) {
+  const wrap = document.getElementById('chips-period');
+  wrap.innerHTML = '';
+  periods.forEach(p => {
+    const el = document.createElement('div');
+    el.className = 'chip active';
+    el.textContent = p;
+    el.dataset.period = p;
+    el.onclick = () => togglePeriod(el);
+    wrap.appendChild(el);
+  });
+}
+
+function buildCountryChips(countries) {
+  const wrap = document.getElementById('chips-country');
+  wrap.innerHTML = countries.length > 8
+    ? `<div class="chip active" id="chip-all-country" onclick="toggleAllCountries(this)">전체 (${countries.length})</div>`
+    : '';
+  if (countries.length <= 8) {
+    countries.forEach(c => {
+      const el = document.createElement('div');
+      el.className = 'chip active';
+      el.textContent = c;
+      el.dataset.country = c;
+      el.onclick = () => toggleCountry(el);
+      wrap.appendChild(el);
+    });
+  }
+}
+
+// ── 필터 토글 ─────────────────────────────────
+function togglePeriod(el) {
+  const p = el.dataset.period;
+  if (activePeriods.has(p)) { activePeriods.delete(p); el.classList.remove('active'); }
+  else { activePeriods.add(p); el.classList.add('active'); }
+  applyFilters();
+}
+function togglePF(el) {
+  const pf = el.dataset.pf;
+  if (activePFs.has(pf)) { if(activePFs.size===1) return; activePFs.delete(pf); el.classList.remove('active'); }
+  else { activePFs.add(pf); el.classList.add('active'); }
+  applyFilters();
+}
+function toggleCountry(el) {
+  const c = el.dataset.country;
+  if (activeCountries.has(c)) { activeCountries.delete(c); el.classList.remove('active'); }
+  else { activeCountries.add(c); el.classList.add('active'); }
+  applyFilters();
+}
+function toggleAllCountries(el) {
+  const allC = [...new Set(RAW.map(r=>r['국가']))];
+  if (activeCountries.size === allC.length) {
+    activeCountries = new Set([allC[0]]);
+    el.classList.remove('active');
+  } else {
+    activeCountries = new Set(allC);
+    el.classList.add('active');
+  }
+  applyFilters();
+}
+function resetFilters() {
+  const periods = [...new Set(RAW.map(r=>r['월주차']))];
+  activePeriods = new Set(periods);
+  activePFs = new Set(['IG','TT']);
+  activeCountries = new Set([...new Set(RAW.map(r=>r['국가']))]);
+  document.querySelectorAll('.chip').forEach(c=>c.classList.add('active'));
+  applyFilters();
+}
+
+// ── 필터 적용 ─────────────────────────────────
+function applyFilters() {
+  FILTERED = RAW.filter(r =>
+    activePeriods.has(r['월주차']) &&
+    activePFs.has(r['플랫폼']) &&
+    activeCountries.has(r['국가'])
+  );
+  const cnt = document.getElementById('filter-count');
+  cnt.textContent = `${FILTERED.length.toLocaleString()} / ${RAW.length.toLocaleString()}행`;
+
+  renderKPI();
+  renderPeriodChart();
+  renderPlatformChart();
+  renderCountryCharts();
+  renderCompare();
+  renderCreatives();
+  renderDetailTable();
+}
+
+// ══════════════════════════════════════════════════════════════
+// KPI
+// ══════════════════════════════════════════════════════════════
+function agg(rows) {
+  const spend = rows.reduce((s,r)=>s+r['지출 금액 (KRW)'],0);
+  const imp   = rows.reduce((s,r)=>s+r['노출'],0);
+  const click = rows.reduce((s,r)=>s+r['링크 클릭'],0);
+  const land  = rows.reduce((s,r)=>s+r['랜딩 페이지 조회'],0);
+  const reach = rows.reduce((s,r)=>s+r['도달'],0);
+  return { spend, imp, click, land, reach,
+    cpm: imp>0 ? spend/imp*1000 : 0,
+    cpc: click>0 ? spend/click : 0,
+    ctr: imp>0 ? click/imp : 0,
+    ltr: imp>0 ? land/imp : 0 };
+}
+
+function renderKPI() {
+  const a = agg(FILTERED);
+  document.getElementById('kpi-spend').textContent = fmtK(a.spend) + '원';
+  document.getElementById('kpi-spend-sub').textContent = fmt(a.spend) + ' KRW';
+  document.getElementById('kpi-imp').textContent = fmtK(a.imp);
+  document.getElementById('kpi-imp-sub').textContent = '도달 ' + fmtK(a.reach);
+  document.getElementById('kpi-click').textContent = fmtK(a.click);
+  document.getElementById('kpi-click-sub').textContent = 'CTR ' + pct(a.ctr);
+  document.getElementById('kpi-land').textContent = fmtK(a.land);
+  document.getElementById('kpi-land-sub').textContent = '랜딩율 ' + pct(a.ltr);
+  document.getElementById('kpi-cpm').textContent = fmt(a.cpm,0);
+  document.getElementById('kpi-cpc').textContent = fmt(a.cpc,0);
+}
+
+// ══════════════════════════════════════════════════════════════
+// 차트 공통
+// ══════════════════════════════════════════════════════════════
+const CHART_DEFAULTS = {
+  plugins: {
+    legend: { display: false },
+    tooltip: {
+      backgroundColor: '#161b22',
+      borderColor: '#30363d',
+      borderWidth: 1,
+      titleColor: '#e6edf3',
+      bodyColor: '#8b949e',
+      padding: 10,
+      callbacks: {}
+    }
+  },
+  scales: {
+    x: { grid: { color: '#21262d' }, ticks: { color: '#6e7681', font: { size: 11 } } },
+    y: { grid: { color: '#21262d' }, ticks: { color: '#6e7681', font: { size: 11 } } }
+  }
+};
+
+function destroyChart(id) { if(charts[id]) { charts[id].destroy(); delete charts[id]; } }
+
+// ── 기간별 차트 ───────────────────────────────
+function renderPeriodChart() {
+  const periodOrder = [...activePeriods].sort((a,b) => {
+    const mo = s => ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].indexOf(s.split(' ')[0]);
+    const wk = s => s.includes('1-2')?0:1;
+    return mo(a)!==mo(b) ? mo(a)-mo(b) : wk(a)-wk(b);
+  });
+  const byPeriod = {};
+  periodOrder.forEach(p => byPeriod[p] = {ig:0, tt:0});
+  FILTERED.forEach(r => {
+    if(byPeriod[r['월주차']]) {
+      if(r['플랫폼']==='IG') byPeriod[r['월주차']].ig += r['지출 금액 (KRW)'];
+      else byPeriod[r['월주차']].tt += r['지출 금액 (KRW)'];
+    }
+  });
+
+  destroyChart('period');
+  const ctx = document.getElementById('chart-period').getContext('2d');
+  charts['period'] = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: periodOrder,
+      datasets: [
+        { label:'Instagram', data: periodOrder.map(p=>byPeriod[p].ig), backgroundColor:'rgba(225,48,108,.7)', borderRadius:4, borderSkipped:false },
+        { label:'TikTok',    data: periodOrder.map(p=>byPeriod[p].tt), backgroundColor:'rgba(105,201,208,.7)', borderRadius:4, borderSkipped:false }
+      ]
+    },
+    options: {
+      ...JSON.parse(JSON.stringify(CHART_DEFAULTS)),
+      responsive:true, maintainAspectRatio:true,
+      plugins: { ...JSON.parse(JSON.stringify(CHART_DEFAULTS.plugins)),
+        legend: { display:true, position:'bottom', labels:{ color:'#8b949e', font:{size:11}, boxWidth:10, padding:12 } },
+        tooltip: { ...JSON.parse(JSON.stringify(CHART_DEFAULTS.plugins.tooltip)),
+          callbacks: { label: ctx => ' ' + ctx.dataset.label + ': ' + fmt(ctx.raw) + '원' }
+        }
+      },
+      scales: { x:{...CHART_DEFAULTS.scales.x, stacked:false}, y:{...CHART_DEFAULTS.scales.y, stacked:false, ticks:{...CHART_DEFAULTS.scales.y.ticks, callback:v=>fmtK(v)+'원'}} }
+    }
+  });
+}
+
+// ── 플랫폼 차트 ───────────────────────────────
+function switchPFTab(el, metric) {
+  pfTabMetric = metric;
+  document.querySelectorAll('#pf-tabs .tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderPlatformChart();
+}
+
+function renderPlatformChart() {
+  const pfs = ['IG','TT'];
+  const labels = [...activePeriods].sort((a,b)=>{
+    const mo = s=>['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].indexOf(s.split(' ')[0]);
+    const wk = s=>s.includes('1-2')?0:1;
+    return mo(a)!==mo(b)?mo(a)-mo(b):wk(a)-wk(b);
+  });
+
+  const metricKey = pfTabMetric==='spend'?'지출 금액 (KRW)':pfTabMetric==='imp'?'노출':pfTabMetric==='click'?'링크 클릭':null;
+  const datasets = pfs.map((pf,i) => {
+    const color = pf==='IG' ? 'rgba(225,48,108,.8)' : 'rgba(105,201,208,.8)';
+    const data = labels.map(lbl => {
+      const rows = FILTERED.filter(r=>r['플랫폼']===pf && r['월주차']===lbl);
+      if (pfTabMetric==='cpm') {
+        const sp=rows.reduce((s,r)=>s+r['지출 금액 (KRW)'],0);
+        const im=rows.reduce((s,r)=>s+r['노출'],0);
+        return im>0 ? sp/im*1000 : 0;
+      }
+      return rows.reduce((s,r)=>s+r[metricKey],0);
+    });
+    return { label:pf==='IG'?'Instagram':'TikTok', data, backgroundColor:color, borderRadius:4, borderSkipped:false };
+  });
+
+  destroyChart('platform');
+  const ctx = document.getElementById('chart-platform').getContext('2d');
+  charts['platform'] = new Chart(ctx, {
+    type:'bar', data:{labels, datasets},
+    options:{
+      responsive:true, maintainAspectRatio:true,
+      plugins:{
+        legend:{display:true,position:'bottom',labels:{color:'#8b949e',font:{size:11},boxWidth:10,padding:12}},
+        tooltip:{backgroundColor:'#161b22',borderColor:'#30363d',borderWidth:1,titleColor:'#e6edf3',bodyColor:'#8b949e',padding:10,
+          callbacks:{label:ctx=>' '+ctx.dataset.label+': '+(pfTabMetric==='cpm'?fmt(ctx.raw,0)+'원':pfTabMetric==='spend'?fmt(ctx.raw)+'원':fmtK(ctx.raw))}}
+      },
+      scales:{
+        x:{grid:{color:'#21262d'},ticks:{color:'#6e7681',font:{size:11}}},
+        y:{grid:{color:'#21262d'},ticks:{color:'#6e7681',font:{size:11},callback:v=>pfTabMetric==='cpm'?fmt(v,0)+'원':pfTabMetric==='spend'?fmtK(v)+'원':fmtK(v)}}
+      }
+    }
+  });
+}
+
+// ── 국가 차트 ─────────────────────────────────
+const PIE_COLORS = ['#58a6ff','#bc8cff','#3fb950','#f0883e','#f85149','#39d353','#79c0ff','#d2a8ff','#56d364','#ffa657','#ff7b72','#20d5c4','#e8b04b','#a371f7','#7ee787','#ffb86c','#ff5555','#8be9fd','#50fa7b','#ffb86c','#bd93f9','#ff79c6','#6272a4','#f1fa8c'];
+
+function switchCountryTab(el, metric) {
+  countryTabMetric = metric;
+  document.querySelectorAll('.panel .tabs .tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderCountryCharts();
+}
+
+function renderCountryCharts() {
+  // 국가별 집계
+  const byCountry = {};
+  FILTERED.forEach(r => {
+    const c = r['국가'];
+    if(!byCountry[c]) byCountry[c] = {spend:0,imp:0,click:0,land:0};
+    byCountry[c].spend += r['지출 금액 (KRW)'];
+    byCountry[c].imp   += r['노출'];
+    byCountry[c].click += r['링크 클릭'];
+    byCountry[c].land  += r['랜딩 페이지 조회'];
+  });
+  const sorted = Object.entries(byCountry).sort((a,b)=>b[1].spend-a[1].spend);
+  const totalSpend = sorted.reduce((s,[,v])=>s+v.spend,0);
+
+  // 파이차트
+  destroyChart('country-pie');
+  const ctx1 = document.getElementById('chart-country-pie').getContext('2d');
+  charts['country-pie'] = new Chart(ctx1, {
+    type:'doughnut',
+    data:{
+      labels: sorted.map(([k])=>k),
+      datasets:[{data:sorted.map(([,v])=>v.spend), backgroundColor:PIE_COLORS.slice(0,sorted.length), borderColor:'#0d1117', borderWidth:2, hoverBorderColor:'#58a6ff'}]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:true, cutout:'65%',
+      plugins:{
+        legend:{display:false},
+        tooltip:{backgroundColor:'#161b22',borderColor:'#30363d',borderWidth:1,titleColor:'#e6edf3',bodyColor:'#8b949e',padding:10,
+          callbacks:{label:ctx=>` ${fmt(ctx.raw)}원 (${(ctx.raw/totalSpend*100).toFixed(1)}%)`}}
+      }
+    }
+  });
+
+  // 범례
+  const legend = document.getElementById('country-legend');
+  legend.innerHTML = sorted.slice(0,15).map(([name,v],i)=>`
+    <div class="legend-item">
+      <div class="legend-dot" style="background:${PIE_COLORS[i]}"></div>
+      <span class="legend-name">${name}</span>
+      <span class="legend-val">${fmtK(v.spend)}원</span>
+      <span class="legend-pct">${(v.spend/totalSpend*100).toFixed(1)}%</span>
+    </div>`).join('');
+
+  // 바차트
+  const top12 = sorted.slice(0,12);
+  destroyChart('country-bar');
+  const ctx2 = document.getElementById('chart-country-bar').getContext('2d');
+  const metricFn = countryTabMetric==='spend' ? v=>v.spend
+    : countryTabMetric==='cpm' ? v=>v.imp>0?v.spend/v.imp*1000:0
+    : v=>v.imp>0?v.click/v.imp:0;
+  const fmtFn = countryTabMetric==='ctr' ? v=>pct(v) : v=>fmt(v,0);
+  charts['country-bar'] = new Chart(ctx2, {
+    type:'bar',
+    data:{
+      labels:top12.map(([k])=>k),
+      datasets:[{data:top12.map(([,v])=>metricFn(v)), backgroundColor:PIE_COLORS.slice(0,top12.length), borderRadius:4, borderSkipped:false}]
+    },
+    options:{
+      indexAxis:'y', responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{backgroundColor:'#161b22',borderColor:'#30363d',borderWidth:1,titleColor:'#e6edf3',bodyColor:'#8b949e',padding:10,callbacks:{label:ctx=>` ${countryTabMetric==='ctr'?pct(ctx.raw):fmt(ctx.raw,0)+(countryTabMetric==='spend'?'원':'')}`}}},
+      scales:{x:{grid:{color:'#21262d'},ticks:{color:'#6e7681',font:{size:10},callback:v=>countryTabMetric==='ctr'?pct(v):fmtK(v)}},y:{grid:{display:false},ticks:{color:'#e6edf3',font:{size:11}}}}
+    }
+  });
+}
+
+// ══════════════════════════════════════════════════════════════
+// 전월/현월 비교표
+// ══════════════════════════════════════════════════════════════
+function renderCompare() {
+  const prevMo = document.getElementById('sel-prev').value;
+  const curMo  = document.getElementById('sel-cur').value;
+  const weeks = ['1-2주차','3-4주차'];
+  const metrics = [
+    {label:'지출 금액', key:'spend', fmt:v=>fmt(v)+'원'},
+    {label:'노출',      key:'imp',   fmt:v=>fmtK(v)},
+    {label:'링크 클릭', key:'click', fmt:v=>fmtK(v)},
+    {label:'랜딩 조회', key:'land',  fmt:v=>fmtK(v)},
+    {label:'CPM',       key:'cpm',   fmt:v=>fmt(v,0)+'원'},
+    {label:'CPC',       key:'cpc',   fmt:v=>fmt(v,0)+'원'},
+    {label:'CTR',       key:'ctr',   fmt:v=>pct(v)},
+  ];
+
+  const getAgg = (mo, wk) => {
+    const rows = RAW.filter(r=>r['_monthName']===mo && r['_week']===wk);
+    return agg(rows);
+  };
+
+  const p12=getAgg(prevMo,'1-2주차'), p34=getAgg(prevMo,'3-4주차');
+  const c12=getAgg(curMo,'1-2주차'),  c34=getAgg(curMo,'3-4주차');
+
+  const fmtDelta = (cur, prev, metric) => {
+    if(prev===0 && cur===0) return '<span class="delta-zero">—</span>';
+    const diff = cur - prev;
+    const isRate = metric==='ctr';
+    const str = isRate ? pct(diff) : (diff>=0?'+':'')+fmt(diff,0);
+    return `<span class="${diff>0?'delta-pos':diff<0?'delta-neg':'delta-zero'}">${diff>0?'▲':diff<0?'▼':''}${str}</span>`;
+  };
+
+  let html = `
+    <div class="compare-month-header" style="display:grid;grid-template-columns:140px 1fr 1fr 1fr 1fr 1fr 1fr;">
+      <div></div>
+      <div style="color:#79b8ff;font-weight:700;text-align:right;padding:0 6px;">${prevMo} 1-2주차</div>
+      <div style="color:#79b8ff;font-weight:700;text-align:right;padding:0 6px;">${prevMo} 3-4주차</div>
+      <div style="color:#e6edf3;font-weight:700;text-align:right;padding:0 6px;">${curMo} 1-2주차</div>
+      <div style="color:#e6edf3;font-weight:700;text-align:right;padding:0 6px;">${curMo} 3-4주차</div>
+      <div style="color:#3fb950;font-weight:700;text-align:right;padding:0 6px;">△ 1-2주차</div>
+      <div style="color:#3fb950;font-weight:700;text-align:right;padding:0 6px;">△ 3-4주차</div>
+    </div>
+    <div style="border-top:1px solid var(--border);margin-top:6px;">`;
+
+  metrics.forEach((m,i) => {
+    const bg = i%2===0 ? '' : 'background:rgba(30,40,55,.4);';
+    html += `<div class="compare-row" style="${bg}grid-template-columns:140px 1fr 1fr 1fr 1fr 1fr 1fr;">
+      <div style="font-weight:600;color:var(--text);font-size:12px;text-align:left;padding:0 6px;">${m.label}</div>
+      <div style="text-align:right;padding:0 6px;color:#79b8ff;">${m.fmt(p12[m.key])}</div>
+      <div style="text-align:right;padding:0 6px;color:#79b8ff;">${m.fmt(p34[m.key])}</div>
+      <div style="text-align:right;padding:0 6px;color:var(--text);font-weight:600;">${m.fmt(c12[m.key])}</div>
+      <div style="text-align:right;padding:0 6px;color:var(--text);font-weight:600;">${m.fmt(c34[m.key])}</div>
+      <div style="text-align:right;padding:0 6px;">${fmtDelta(c12[m.key],p12[m.key],m.key)}</div>
+      <div style="text-align:right;padding:0 6px;">${fmtDelta(c34[m.key],p34[m.key],m.key)}</div>
+    </div>`;
+  });
+  html += '</div>';
+  document.getElementById('compare-table').innerHTML = html;
+}
+
+// ══════════════════════════════════════════════════════════════
+// 소재별 성과
+// ══════════════════════════════════════════════════════════════
+function renderCreatives() {
+  const sortKey = document.getElementById('creative-sort').value;
+  const byCreative = {};
+  FILTERED.forEach(r => {
+    const key = r['광고 이름'] + '|||' + r['플랫폼'];
+    if(!byCreative[key]) byCreative[key] = {name:r['광고 이름'], pf:r['플랫폼'], url:r['_url']||'', spend:0, imp:0, click:0, land:0};
+    byCreative[key].spend += r['지출 금액 (KRW)'];
+    byCreative[key].imp   += r['노출'];
+    byCreative[key].click += r['링크 클릭'];
+    byCreative[key].land  += r['랜딩 페이지 조회'];
+  });
+  let rows = Object.values(byCreative).map(r => ({
+    ...r,
+    cpm: r.imp>0 ? r.spend/r.imp*1000 : 0,
+    cpc: r.click>0 ? r.spend/r.click : 0,
+    ctr: r.imp>0 ? r.click/r.imp : 0,
+  }));
+  rows.sort((a,b) => sortKey==='cpm'?a.cpm-b.cpm : sortKey==='ctr'?b.ctr-a.ctr : b[sortKey]-a[sortKey]);
+  const maxSpend = Math.max(...rows.map(r=>r.spend), 1);
+
+  const tbody = document.getElementById('creative-tbody');
+  tbody.innerHTML = rows.map((r,i) => `
+    <tr>
+      <td>
+        <span class="rank-num">${i+1}</span>
+        ${r.url
+          ? `<a href="${r.url}" target="_blank" rel="noopener"
+               style="color:var(--text);text-decoration:none;border-bottom:1px dashed var(--border);
+                      transition:color .15s;cursor:pointer;"
+               onmouseover="this.style.color='var(--accent)';this.style.borderBottomColor='var(--accent)'"
+               onmouseout="this.style.color='var(--text)';this.style.borderBottomColor='var(--border)'"
+               title="광고 링크 열기: ${r.url}">${r.name} <span style="font-size:10px;opacity:.5;">↗</span></a>`
+          : r.name}
+      </td>
+      <td><span class="pf-badge pf-${r.pf.toLowerCase()}">${r.pf}</span></td>
+      <td>
+        <div class="bar-cell">
+          <div class="bar" style="width:${r.spend/maxSpend*80}px;background:${r.pf==='IG'?'rgba(225,48,108,.6)':'rgba(105,201,208,.6)'}"></div>
+          <span>${fmt(r.spend)}원</span>
+        </div>
+      </td>
+      <td>${fmtK(r.imp)}</td>
+      <td>${fmtK(r.click)}</td>
+      <td>${fmtK(r.land)}</td>
+      <td>${fmt(r.cpm,0)}</td>
+      <td>${fmt(r.cpc,0)}</td>
+      <td>${pct(r.ctr)}</td>
+    </tr>`).join('');
+}
+
+// ══════════════════════════════════════════════════════════════
+// 국가×플랫폼 상세
+// ══════════════════════════════════════════════════════════════
+function renderDetailTable() {
+  const byCP = {};
+  FILTERED.forEach(r => {
+    const key = r['국가']+'|||'+r['플랫폼'];
+    if(!byCP[key]) byCP[key] = {country:r['국가'], pf:r['플랫폼'], spend:0, imp:0, click:0, land:0};
+    byCP[key].spend += r['지출 금액 (KRW)'];
+    byCP[key].imp   += r['노출'];
+    byCP[key].click += r['링크 클릭'];
+    byCP[key].land  += r['랜딩 페이지 조회'];
+  });
+  const rows = Object.values(byCP);
+  rows.sort((a,b)=>b.spend-a.spend);
+  const totalSpend = rows.reduce((s,r)=>s+r.spend,0);
+
+  const tbody = document.getElementById('detail-tbody');
+  tbody.innerHTML = rows.map(r => `
+    <tr>
+      <td>${r.country}</td>
+      <td><span class="pf-badge pf-${r.pf.toLowerCase()}">${r.pf}</span></td>
+      <td>${fmt(r.spend)}원</td>
+      <td>
+        <div class="bar-cell">
+          <div class="bar" style="width:${r.spend/totalSpend*80}px"></div>
+          <span>${(r.spend/totalSpend*100).toFixed(1)}%</span>
+        </div>
+      </td>
+      <td>${fmtK(r.imp)}</td>
+      <td>${fmtK(r.click)}</td>
+      <td>${fmtK(r.land)}</td>
+      <td>${r.imp>0?fmt(r.spend/r.imp*1000,0):'-'}</td>
+      <td>${r.click>0?fmt(r.spend/r.click,0):'-'}</td>
+      <td>${r.imp>0?pct(r.click/r.imp):'-'}</td>
+    </tr>`).join('');
+}
+
+// ══════════════════════════════════════════════════════════════
+// 초기 실행
+// ══════════════════════════════════════════════════════════════
+window.onload = () => {
+  const APPS_URL = 'https://script.google.com/macros/s/AKfycbzQn-tRH0Jg6csQOEj3V6s0YL1nh8uNlEYUxixA6J69a_VWJ8LGECyHhYK0CWVM_V8h/exec';
+  document.getElementById('sheets-url').value = APPS_URL;
+  loadViaJSONP(APPS_URL);
+};
+
+function loadViaJSONP(baseUrl) {
+  setStatus('loading', '불러오는 중...');
+  showLoading('Google Sheets에서 데이터 불러오는 중...');
+  const old = document.getElementById('jsonp-script');
+  if (old) old.remove();
+  window.__jsonpCallback = function(data) {
+    try {
+      RAW = data.map(normalizeRow).filter(function(r) {
+        return r['국가'] && r['국가'] !== '' && r['국가'] !== '국가';
+      });
+      if (RAW.length === 0) { hideLoading(); setStatus('', '데이터 없음'); return; }
+      initDashboard();
+      hideLoading();
+      setStatus('ok', RAW.length.toLocaleString() + '행 로드됨');
+    } catch(e) { hideLoading(); setStatus('', '오류: ' + e.message); }
+    const s = document.getElementById('jsonp-script');
+    if (s) s.remove();
+  };
+  const script = document.createElement('script');
+  script.id = 'jsonp-script';
+  script.src = baseUrl + '?callback=__jsonpCallback';
+  script.onerror = function() { hideLoading(); setStatus('', '로드 실패'); };
+  document.head.appendChild(script);
+}
+</script>
+</body>
+</html>
