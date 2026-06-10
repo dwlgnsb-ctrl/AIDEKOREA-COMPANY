@@ -261,8 +261,8 @@ canvas{max-height:240px}
         <div class="kpi-card c2"><div class="kpi-label">👁 노출</div><div class="kpi-val" id="k-imp">—</div><div class="kpi-meta"><span class="kpi-sub" id="k-imp-sub"></span><span class="delta" id="k-imp-d"></span></div></div>
         <div class="kpi-card c3"><div class="kpi-label">🖱 링크 클릭</div><div class="kpi-val" id="k-click">—</div><div class="kpi-meta"><span class="kpi-sub" id="k-click-sub"></span><span class="delta" id="k-click-d"></span></div></div>
         <div class="kpi-card c4"><div class="kpi-label">🏠 랜딩 조회</div><div class="kpi-val" id="k-land">—</div><div class="kpi-meta"><span class="kpi-sub" id="k-land-sub"></span><span class="delta" id="k-land-d"></span></div></div>
-        <div class="kpi-card c5"><div class="kpi-label">📡 CPM</div><div class="kpi-val" id="k-cpm">—</div><div class="kpi-meta"><span class="kpi-sub">원/1,000노출</span><span class="delta" id="k-cpm-d"></span></div></div>
-        <div class="kpi-card c6"><div class="kpi-label">💡 CPC</div><div class="kpi-val" id="k-cpc">—</div><div class="kpi-meta"><span class="kpi-sub">원/클릭</span><span class="delta" id="k-cpc-d"></span></div></div>
+        <div class="kpi-card c5"><div class="kpi-label">📡 CPM</div><div class="kpi-val" id="k-cpm">—</div><div class="kpi-meta"><span class="kpi-sub" id="k-cpm-sub">원/1,000노출</span><span class="delta" id="k-cpm-d"></span></div></div>
+        <div class="kpi-card c6"><div class="kpi-label">💡 CPC</div><div class="kpi-val" id="k-cpc">—</div><div class="kpi-meta"><span class="kpi-sub" id="k-cpc-sub">원/클릭</span><span class="delta" id="k-cpc-d"></span></div></div>
       </div>
       <div class="insight-grid" id="insight-cards"></div>
       <div class="grid2">
@@ -503,7 +503,11 @@ function normalizeRow(r){
   }
   if(o['일']){
     const d=new Date(o['일']);
-    o._month=d.getMonth()+1;o._day=d.getDate();o._date=o['일'];
+    const yr=d.getFullYear();
+    const mo=String(d.getMonth()+1).padStart(2,'0');
+    const dy=String(d.getDate()).padStart(2,'0');
+    o._date=yr+'-'+mo+'-'+dy;
+    o._month=d.getMonth()+1;o._day=d.getDate();
     o._wk=o._day<=14?'1-2주차':'3-4주차';
     o._period=(mo_name[o._month]||'?')+' '+o._wk;
   }
@@ -665,9 +669,9 @@ function renderSummary(){
   const dFn=(c,p)=>p?((c-p)/Math.abs(p)*100):null;
 
   const setK=(vid,sid,did,val,sub,d)=>{
-    document.getElementById(vid).textContent=val;
-    document.getElementById(sid).textContent=sub;
-    if(did){const el=document.getElementById(did);if(d!==null&&!isNaN(d)){el.textContent=(d>=0?'▲':'▼')+Math.abs(d).toFixed(1)+'%';el.className='delta '+(d>=0?'up':'down');}else el.textContent='';}
+    const ve=document.getElementById(vid);if(ve)ve.textContent=val;
+    const se=document.getElementById(sid);if(se)se.textContent=sub;
+    if(did){const el=document.getElementById(did);if(el){if(d!==null&&!isNaN(d)){el.textContent=(d>=0?'▲':'▼')+Math.abs(d).toFixed(1)+'%';el.className='delta '+(d>=0?'up':'down');}else el.textContent='';}}
   };
   setK('k-spend','k-spend-sub','k-spend-d',fmtK(a.spend)+'원',fmt(a.spend)+' KRW',dFn(cur.spend,prev.spend));
   setK('k-imp','k-imp-sub','k-imp-d',fmtK(a.imp),'도달 '+fmtK(a.reach),dFn(cur.imp,prev.imp));
