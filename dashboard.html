@@ -226,14 +226,9 @@ canvas{max-height:240px}
       <span class="date-badge" id="date-range">—</span>
     </div>
     <div class="topbar-right">
-
-      <span style="font-size:10px;color:var(--text3)">전월</span>
-      <select id="filter-prev-month" class="filter-select" onchange="applyFilters()" style="max-width:90px">
-        <option value="">선택</option>
-      </select>
-      <span style="font-size:10px;color:var(--text3)">→ 현월</span>
-      <select id="filter-cur-month" class="filter-select" onchange="applyFilters()" style="max-width:90px">
-        <option value="">선택</option>
+      <select id="filter-period" class="filter-select" onchange="applyFilters()" style="max-width:100px">
+        <option value="">전체 월</option>
+        <option value="__none__">— 없음 —</option>
       </select>
       <div class="fdiv"></div>
       <select id="filter-region" class="filter-select" onchange="applyFilters()" style="max-width:110px">
@@ -571,13 +566,11 @@ function initDashboard(){
   const periods=[...new Set(RAW.map(r=>r._period))].filter(Boolean).sort((a,b)=>{
     return Object.values(mo_name).indexOf(a)-Object.values(mo_name).indexOf(b);
   });
-  ['filter-prev-month','filter-cur-month'].forEach((id,idx)=>{
-    const sel=document.getElementById(id);if(!sel)return;
-    sel.innerHTML='<option value="">선택</option>';
-    periods.forEach(p=>{const o=document.createElement('option');o.value=p;o.textContent=p;sel.appendChild(o);});
-    // 기본값: 전월=첫번째, 현월=마지막
-    if(periods.length>0) sel.value=idx===0?periods[0]:periods[periods.length-1];
-  });
+  const pSel=document.getElementById('filter-period');
+  if(pSel){
+    pSel.innerHTML='<option value="">전체 월</option><option value="__none__">— 없음 —</option>';
+    periods.forEach(p=>{const o=document.createElement('option');o.value=p;o.textContent=p;pSel.appendChild(o);});
+  }
 
   const regions=[...new Set(RAW.map(r=>r.region))].filter(Boolean).sort();
   ['filter-region','trend-region','pf-trend-region'].forEach(id=>{
@@ -608,8 +601,8 @@ function initDashboard(){
 
 function applyFilters(){
   const dateFrom='', dateTo='';
-  const prevMonth=document.getElementById('filter-prev-month').value;
-  const curMonth=document.getElementById('filter-cur-month').value;
+  
+  
   const filterRegion=document.getElementById('filter-region').value;
   const filterCountry=document.getElementById('filter-country').value;
 
@@ -627,9 +620,9 @@ function applyFilters(){
   // 현월 데이터 (메인)
   FILTERED=RAW.filter(r=>baseFilter(r)&&(!curMonth||r._period===curMonth));
   // 전월 데이터 (비교용)
-  window.PREV_FILTERED=RAW.filter(r=>baseFilter(r)&&(!prevMonth||r._period===prevMonth));
+  
 
-  const allRows=[...FILTERED,...(window.PREV_FILTERED||[])];
+  const allRows=[...FILTERED,...(
   const fdates=allRows.map(r=>r._date).filter(Boolean).sort();
   if(fdates.length)document.getElementById('date-range').textContent=fdates[0]+' ~ '+fdates[fdates.length-1];
 
@@ -754,11 +747,11 @@ function renderInsights(){
 }
 
 function renderPeriodChart(){
-  const prevMonth=document.getElementById('filter-prev-month').value;
-  const curMonth=document.getElementById('filter-cur-month').value;
+  
+  
   const prevLabel=prevMonth||'전월';
   const curLabel=curMonth||'현월';
-  const prevRows=window.PREV_FILTERED||[];
+  const prevRows=
   const curRows=FILTERED;
   // 레이블: [전월 IG, 전월 TT, 현월 IG, 현월 TT] → 그룹 비교
   const labels=[prevLabel+' IG', prevLabel+' TT', curLabel+' IG', curLabel+' TT'];
