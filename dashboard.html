@@ -56,8 +56,7 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg);colo
 /* ── 필터 ── */
 .filter-select{background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:4px 8px;border-radius:6px;font-size:11px;font-family:'Pretendard',sans-serif;outline:none;cursor:pointer;transition:border-color .15s}
 .filter-select:hover,.filter-select:focus{border-color:var(--accent)}
-.filter-date{background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:4px 8px;border-radius:6px;font-size:11px;font-family:'DM Mono',monospace;outline:none;cursor:pointer;width:108px}
-.filter-date:focus{border-color:var(--accent)}
+
 .fdiv{width:1px;height:14px;background:var(--border);margin:0 2px;flex-shrink:0}
 .chip{padding:3px 10px;border-radius:14px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-size:11px;cursor:pointer;transition:all .15s;user-select:none}
 .chip:hover{border-color:var(--accent);color:var(--accent2)}
@@ -227,10 +226,7 @@ canvas{max-height:240px}
       <span class="date-badge" id="date-range">—</span>
     </div>
     <div class="topbar-right">
-      <input type="date" id="filter-date-from" class="filter-date" onchange="applyFilters()">
-      <span style="font-size:10px;color:var(--text3)">~</span>
-      <input type="date" id="filter-date-to" class="filter-date" onchange="applyFilters()">
-      <div class="fdiv"></div>
+
       <span style="font-size:10px;color:var(--text3)">전월</span>
       <select id="filter-prev-month" class="filter-select" onchange="applyFilters()" style="max-width:90px">
         <option value="">선택</option>
@@ -571,8 +567,6 @@ function initDashboard(){
   const dates=RAW.map(r=>r._date).filter(Boolean).sort();
   if(dates.length){
     document.getElementById('date-range').textContent=dates[0]+' ~ '+dates[dates.length-1];
-    document.getElementById('filter-date-from').value=dates[0];
-    document.getElementById('filter-date-to').value=dates[dates.length-1];
   }
   const periods=[...new Set(RAW.map(r=>r._period))].filter(Boolean).sort((a,b)=>{
     return Object.values(mo_name).indexOf(a)-Object.values(mo_name).indexOf(b);
@@ -613,8 +607,7 @@ function initDashboard(){
 }
 
 function applyFilters(){
-  const dateFrom=document.getElementById('filter-date-from').value;
-  const dateTo=document.getElementById('filter-date-to').value;
+  const dateFrom='', dateTo='';
   const prevMonth=document.getElementById('filter-prev-month').value;
   const curMonth=document.getElementById('filter-cur-month').value;
   const filterRegion=document.getElementById('filter-region').value;
@@ -656,8 +649,7 @@ function togglePF(el){
 function resetFilters(){
   activePFs=new Set(['IG','TT']);
   document.querySelectorAll('.chip[data-pf]').forEach(c=>c.classList.add('active'));
-  const dates=RAW.map(r=>r._date).filter(Boolean).sort();
-  if(dates.length){document.getElementById('filter-date-from').value=dates[0];document.getElementById('filter-date-to').value=dates[dates.length-1];}
+
   ['filter-period','filter-region','filter-country'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   applyFilters();
 }
@@ -687,56 +679,78 @@ function mkSummary(items){
 }
 
 function renderSummary(){
-  // filter-period 선택값 기준으로 현월/전월 결정
   const periodEl=document.getElementById('filter-period');
   if(!periodEl) return;
   const selPeriod=periodEl.value;
+
+  // 전체 월 목록
   const allPeriods=[...new Set(RAW.map(r=>r._period))].filter(Boolean).sort((a,b)=>
     Object.values(mo_name).indexOf(a)-Object.values(mo_name).indexOf(b));
 
-  let curPeriod, prevPeriod;
+  // 현월·전월 결정
+  let curPeriod=null, prevPeriod=null;
   if(selPeriod && selPeriod!=='__none__'){
     curPeriod=selPeriod;
     const idx=allPeriods.indexOf(selPeriod);
     prevPeriod=idx>0?allPeriods[idx-1]:null;
   } else {
-    curPeriod=allPeriods[allPeriods.length-1]||'';
-    prevPeriod=allPeriods.length>1?allPeriods[allPeriods.length-2]:null;
+    // 전체 선택 시 FILTERED에서 가장 최근 월
+    const filteredPeriods=[...new Set(FILTERED.map(r=>r._period))].filter(Boolean).sort((a,b)=>
+      Object.values(mo_name).indexOf(a)-Object.values(mo_name).indexOf(b));
+    curPeriod=filteredPeriods[filteredPeriods.length-1]||null;
+    prevPeriod=filteredPeriods.length>1?filteredPeriods[filteredPeriods.length-2]:null;
+    if(!curPeriod){
+      // 월 구분 없이 전체 집계
+      const a=agg(FILTERED);
+      setKPICards(a,null,null,'전체');
+      renderInsights();renderPeriodChart();renderHeatmap();renderNatTop5();renderPieChart();
+      return;
+    }
   }
 
-  // 현월: FILTERED 중 현월만, 전월: RAW에서 같은 플랫폼 조건
+  // 현월 데이터
   const curRows=FILTERED.filter(r=>r._period===curPeriod);
-  const prevRows=prevPeriod?RAW.filter(r=>r._period===prevPeriod&&activePFs.has(r.pf)&&
-    (!(document.getElementById('filter-region')&&document.getElementById('filter-region').value)||r.region===document.getElementById('filter-region').value)&&
-    (!(document.getElementById('filter-country')&&document.getElementById('filter-country').value)||r.country===document.getElementById('filter-country').value)):[];
+  // 전월 데이터: RAW에서 같은 필터 조건 적용
+  const regionVal=(document.getElementById('filter-region')||{}).value||'';
+  const countryVal=(document.getElementById('filter-country')||{}).value||'';
+  const prevRows=prevPeriod?RAW.filter(r=>{
+    if(r._period!==prevPeriod) return false;
+    if(!activePFs.has(r.pf)) return false;
+    if(regionVal&&regionVal!=='__none__'&&r.region!==regionVal) return false;
+    if(countryVal&&countryVal!=='__none__'&&r.country!==countryVal) return false;
+    return true;
+  }):[];
 
-  const a=agg(curRows.length?curRows:FILTERED);
+  const a=agg(curRows);
   const prev=agg(prevRows);
+  setKPICards(a,prev,prevPeriod,curPeriod);
+  renderInsights();renderPeriodChart();renderHeatmap();renderNatTop5();renderPieChart();
+}
+
+function setKPICards(a, prev, prevPeriod, curPeriod){
   const dFn=(c,p)=>p&&p!==0?((c-p)/Math.abs(p)*100):null;
-  const prevLabel=prevPeriod||'전월';
+  const prevLabel=prevPeriod||'';
 
   const setKPI=(valId,deltaId,prevId,curVal,prevVal,fmtFn)=>{
-    const ve=document.getElementById(valId);if(ve)ve.textContent=fmtFn(curVal);
-    const d=dFn(curVal,prevVal);
+    const ve=document.getElementById(valId); if(ve) ve.textContent=fmtFn(curVal);
     const de=document.getElementById(deltaId);
     if(de){
+      const d=dFn(curVal,prevVal);
       if(d!==null&&!isNaN(d)&&prevPeriod){
         de.textContent=(d>=0?'▲':'▼')+Math.abs(d).toFixed(1)+'% vs '+prevLabel;
         de.className='delta '+(d>=0?'up':'down');
-      } else de.textContent='';
+      } else { de.textContent=''; de.className='delta'; }
     }
     const pe=document.getElementById(prevId);
-    if(pe) pe.textContent=prevPeriod?prevLabel+': '+fmtFn(prevVal):'';
+    if(pe) pe.textContent=prev&&prevPeriod?prevLabel+': '+fmtFn(prevVal):'';
   };
 
-  setKPI('k-spend','k-spend-d','k-spend-prev',a.spend,prev.spend,v=>fmtK(v)+'원');
-  setKPI('k-imp','k-imp-d','k-imp-prev',a.imp,prev.imp,v=>fmtK(v));
-  setKPI('k-click','k-click-d','k-click-prev',a.click,prev.click,v=>fmtK(v));
-  setKPI('k-land','k-land-d','k-land-prev',a.land,prev.land,v=>fmtK(v));
-  setKPI('k-cpm','k-cpm-d','k-cpm-prev',a.cpm,prev.cpm,v=>fmt(v,0)+'원');
-  setKPI('k-cpc','k-cpc-d','k-cpc-prev',a.cpc,prev.cpc,v=>fmt(v,0)+'원');
-
-  renderInsights();renderPeriodChart();renderHeatmap();renderNatTop5();renderPieChart();
+  setKPI('k-spend','k-spend-d','k-spend-prev',a.spend,prev?prev.spend:0,v=>fmtK(v)+'원');
+  setKPI('k-imp','k-imp-d','k-imp-prev',a.imp,prev?prev.imp:0,v=>fmtK(v));
+  setKPI('k-click','k-click-d','k-click-prev',a.click,prev?prev.click:0,v=>fmtK(v));
+  setKPI('k-land','k-land-d','k-land-prev',a.land,prev?prev.land:0,v=>fmtK(v));
+  setKPI('k-cpm','k-cpm-d','k-cpm-prev',a.cpm,prev?prev.cpm:0,v=>fmt(v,0)+'원');
+  setKPI('k-cpc','k-cpc-d','k-cpc-prev',a.cpc,prev?prev.cpc:0,v=>fmt(v,0)+'원');
 }
 
 
