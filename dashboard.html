@@ -658,7 +658,7 @@ function resetFilters(){
   document.querySelectorAll('.chip[data-pf]').forEach(c=>c.classList.add('active'));
   const dates=RAW.map(r=>r._date).filter(Boolean).sort();
   if(dates.length){document.getElementById('filter-date-from').value=dates[0];document.getElementById('filter-date-to').value=dates[dates.length-1];}
-  ['filter-period','filter-region','filter-country'].forEach(id=>document.getElementById(id).value='');
+  ['filter-period','filter-region','filter-country'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   applyFilters();
 }
 
@@ -688,7 +688,9 @@ function mkSummary(items){
 
 function renderSummary(){
   // filter-period 선택값 기준으로 현월/전월 결정
-  const selPeriod=document.getElementById('filter-period').value;
+  const periodEl=document.getElementById('filter-period');
+  if(!periodEl) return;
+  const selPeriod=periodEl.value;
   const allPeriods=[...new Set(RAW.map(r=>r._period))].filter(Boolean).sort((a,b)=>
     Object.values(mo_name).indexOf(a)-Object.values(mo_name).indexOf(b));
 
@@ -705,8 +707,8 @@ function renderSummary(){
   // 현월: FILTERED 중 현월만, 전월: RAW에서 같은 플랫폼 조건
   const curRows=FILTERED.filter(r=>r._period===curPeriod);
   const prevRows=prevPeriod?RAW.filter(r=>r._period===prevPeriod&&activePFs.has(r.pf)&&
-    (!document.getElementById('filter-region').value||r.region===document.getElementById('filter-region').value)&&
-    (!document.getElementById('filter-country').value||r.country===document.getElementById('filter-country').value)):[];
+    (!(document.getElementById('filter-region')&&document.getElementById('filter-region').value)||r.region===document.getElementById('filter-region').value)&&
+    (!(document.getElementById('filter-country')&&document.getElementById('filter-country').value)||r.country===document.getElementById('filter-country').value)):[];
 
   const a=agg(curRows.length?curRows:FILTERED);
   const prev=agg(prevRows);
