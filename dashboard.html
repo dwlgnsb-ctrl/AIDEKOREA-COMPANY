@@ -1034,7 +1034,12 @@ function renderNatTop5() {
 
   const theadEl = document.getElementById('top5-thead');
   if (theadEl) theadEl.innerHTML = hasPrev
-    ? `<tr><th style="text-align:left">국가</th><th>${prevPeriod} 지출</th><th>${selPeriod} 지출</th><th>증감</th><th>CTR</th><th>CPC</th></tr>`
+    ? `<tr>
+        <th style="text-align:left">국가</th>
+        <th>${prevPeriod} 지출</th><th>${selPeriod} 지출</th><th>지출증감</th>
+        <th>${prevPeriod} CTR</th><th>${selPeriod} CTR</th>
+        <th>${prevPeriod} CPC</th><th>${selPeriod} CPC</th>
+      </tr>`
     : `<tr><th style="text-align:left">국가</th><th>지출</th><th>CTR</th><th>CPC</th><th>전월대비</th></tr>`;
 
   const top5 = Object.entries(curByC).sort((a,b) => b[1].spend - a[1].spend).slice(0, 5);
@@ -1042,19 +1047,32 @@ function renderNatTop5() {
     const ctr = v.imp > 0 ? v.click / v.imp : 0;
     const cpc = v.click > 0 ? v.spend / v.click : 0;
     if (hasPrev) {
-      const pv = prevByC[k] || {spend:0};
-      const diff = v.spend - pv.spend;
+      const pv   = prevByC[k] || {spend:0, imp:0, click:0};
+      const pCtr = pv.imp   > 0 ? pv.click / pv.imp   : null;
+      const pCpc = pv.click > 0 ? pv.spend / pv.click : null;
+
+      const diff    = v.spend - pv.spend;
       const diffPct = pv.spend > 0 ? diff / pv.spend * 100 : null;
       const deltaHtml = diffPct !== null
         ? `<span class="delta ${diff >= 0 ? 'up' : 'down'}">${diff >= 0 ? '▲' : '▼'}${Math.abs(diffPct).toFixed(1)}%</span>`
         : `<span class="delta neu">신규</span>`;
+
+      const ctrDelta = (pCtr !== null && pCtr > 0)
+        ? (() => { const d = (ctr - pCtr) / pCtr * 100; return `<span style="font-size:9px;color:${d>=0?'#15803d':'#b91c1c'}">${d>=0?'▲':'▼'}${Math.abs(d).toFixed(1)}%</span>`; })()
+        : '';
+      const cpcDelta = (pCpc !== null && pCpc > 0)
+        ? (() => { const d = (cpc - pCpc) / pCpc * 100; return `<span style="font-size:9px;color:${d<=0?'#15803d':'#b91c1c'}">${d>=0?'▲':'▼'}${Math.abs(d).toFixed(1)}%</span>`; })()
+        : '';
+
       return `<tr>
         <td><span class="rank">${i+1}</span>${k}</td>
         <td style="color:var(--text3)">${pv.spend > 0 ? fmtK(pv.spend)+'원' : '—'}</td>
         <td>${fmtK(v.spend)}원</td>
         <td>${deltaHtml}</td>
-        <td>${pct(ctr)}</td>
-        <td>${fmt(cpc,0)}원</td>
+        <td style="color:var(--text3)">${pCtr !== null ? pct(pCtr) : '—'}</td>
+        <td>${pct(ctr)} ${ctrDelta}</td>
+        <td style="color:var(--text3)">${pCpc !== null ? fmt(pCpc,0)+'원' : '—'}</td>
+        <td>${fmt(cpc,0)}원 ${cpcDelta}</td>
       </tr>`;
     } else {
       return `<tr><td><span class="rank">${i+1}</span>${k}</td><td>${fmtK(v.spend)}원</td><td>${pct(ctr)}</td><td>${fmt(cpc,0)}원</td><td><span class="delta neu">—</span></td></tr>`;
