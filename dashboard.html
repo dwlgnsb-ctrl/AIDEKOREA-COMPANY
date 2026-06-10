@@ -2,91 +2,91 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>AIDKOREA COMPANY — SNS 성과 대시보드</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0d1117;--bg2:#161b22;--bg3:#1c2333;--bg4:#21262d;
-  --border:#30363d;--border2:#21262d;
-  --text:#e6edf3;--text2:#8b949e;--text3:#6e7681;
-  --accent:#58a6ff;--accent2:#1f6feb;
-  --green:#3fb950;--orange:#f0883e;--red:#f85149;--purple:#bc8cff;
-  --ig:#e1306c;--tt2:#69c9d0;
-  --sidebar:220px;--header:52px;
+  --bg:#fafbfd;--bg2:#fff;--bg3:#f1f5f9;--bg4:#e2e8f0;
+  --border:#e8edf5;--border2:#f1f5f9;
+  --text:#0f172a;--text2:#475569;--text3:#94a3b8;
+  --accent:#0ea5e9;--accent2:#0284c7;--navy:#0f2044;
+  --green:#10b981;--orange:#f59e0b;--red:#ef4444;--purple:#6366f1;
+  --ig:#e1306c;--tt:#0f766e;--tt2:#14b8a6;
+  --sidebar:200px;--header:52px;
 }
 html{scroll-behavior:smooth}
 body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;display:flex;min-height:100vh}
 
 /* ── 사이드바 ── */
-.sidebar{width:var(--sidebar);background:var(--bg2);border-right:1px solid var(--border);position:fixed;top:0;left:0;height:100vh;display:flex;flex-direction:column;z-index:100;overflow-y:auto}
-.sidebar-brand{padding:18px 20px 14px;border-bottom:1px solid var(--border)}
-.brand-name{font-size:14px;font-weight:800;letter-spacing:-.3px}
-.brand-sub{font-size:10px;color:var(--text3);margin-top:2px;font-weight:400}
-.sidebar-nav{padding:10px 0;flex:1}
-.nav-section{padding:6px 16px 4px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px}
-.nav-item{display:flex;align-items:center;gap:10px;padding:9px 16px;cursor:pointer;color:var(--text2);transition:all .15s;font-size:12px;font-weight:500;border-left:3px solid transparent;margin:1px 0}
+.sidebar{width:var(--sidebar);background:var(--bg2);border-right:1px solid var(--border);position:fixed;top:0;left:0;height:100vh;display:flex;flex-direction:column;z-index:100}
+.sidebar-brand{padding:16px 18px 12px;border-bottom:1px solid var(--border)}
+.brand-name{font-size:15px;font-weight:800;letter-spacing:-.4px;color:var(--navy)}
+.brand-sub{font-size:10px;color:var(--text3);margin-top:1px}
+.sidebar-nav{padding:8px 0;flex:1;overflow-y:auto}
+.nav-section{padding:8px 16px 3px;font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px}
+.nav-item{display:flex;align-items:center;gap:8px;padding:8px 16px;cursor:pointer;color:var(--text2);transition:all .15s;font-size:12px;font-weight:500;border-left:3px solid transparent;margin:1px 0}
 .nav-item:hover{color:var(--text);background:var(--bg3)}
-.nav-item.active{color:var(--accent);background:rgba(88,166,255,.08);border-left-color:var(--accent)}
+.nav-item.active{color:var(--accent2);background:#f0f9ff;border-left-color:var(--accent)}
 .nav-item .icon{font-size:14px;width:18px;text-align:center}
-.sidebar-footer{padding:14px 16px;border-top:1px solid var(--border)}
+.sidebar-footer{padding:12px 16px;border-top:1px solid var(--border)}
 .data-status{font-size:10px;color:var(--text3);display:flex;align-items:center;gap:5px;font-family:'DM Mono',monospace}
 .status-dot{width:5px;height:5px;border-radius:50%;background:var(--text3);flex-shrink:0}
 .status-dot.ok{background:var(--green);box-shadow:0 0 5px var(--green)}
 .status-dot.loading{background:var(--orange);animation:pulse 1s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 
-/* ── 메인 레이아웃 ── */
-.main-wrap{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;min-height:100vh}
-.topbar{min-height:var(--header);height:auto;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 16px;position:sticky;top:0;z-index:50;flex-wrap:wrap;gap:6px;padding-top:8px;padding-bottom:8px}
-.topbar-left{display:flex;align-items:center;gap:8px;min-width:160px}
-.page-title{font-size:14px;font-weight:700}
-.date-badge{font-size:11px;color:var(--text3);background:var(--bg3);padding:3px 10px;border-radius:12px;border:1px solid var(--border);font-family:'DM Mono',monospace}
-.topbar-right{display:flex;align-items:center;gap:8px}
+/* ── 메인 ── */
+.main-wrap{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column}
+.topbar{min-height:var(--header);background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:8px 20px;position:sticky;top:0;z-index:50;flex-wrap:wrap;gap:8px}
+.topbar-left{display:flex;align-items:center;gap:10px}
+.page-title{font-size:13px;font-weight:700;color:var(--navy)}
+.date-badge{font-size:10px;color:var(--text3);background:var(--bg3);padding:3px 8px;border-radius:10px;border:1px solid var(--border);font-family:'DM Mono',monospace}
+.topbar-right{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
 .btn{padding:5px 12px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-size:11px;font-family:'Pretendard',sans-serif;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:5px}
-.btn:hover{background:var(--bg4);border-color:var(--accent);color:var(--accent)}
+.btn:hover{background:var(--bg4);border-color:var(--accent);color:var(--accent2)}
 .btn-primary{background:var(--accent2);border-color:var(--accent);color:#fff}
 .btn-primary:hover{background:var(--accent);color:#fff}
-.content{padding:16px 24px;flex:1}
-
-/* ── 페이지 ── */
+.content{padding:18px 20px;flex:1}
 .page{display:none}.page.active{display:block}
 
-/* ── 필터바 ── */
-.filter-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:18px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px}
-.filter-label{font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.8px}
-.chip{padding:3px 10px;border-radius:16px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-size:11px;cursor:pointer;transition:all .15s;user-select:none}
-.chip:hover{border-color:var(--accent);color:var(--accent)}
-.chip.active{background:var(--accent2);border-color:var(--accent);color:#fff}
-.chip.ig.active{background:#c13584;border-color:var(--ig)}
-.chip.tt.active{background:#1a1a2e;border-color:var(--tt2);color:var(--tt2)}
-.fdiv{width:1px;height:16px;background:var(--border);margin:0 2px}
+/* ── 필터 ── */
+.filter-select{background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:4px 8px;border-radius:6px;font-size:11px;font-family:'Pretendard',sans-serif;outline:none;cursor:pointer;transition:border-color .15s}
+.filter-select:hover,.filter-select:focus{border-color:var(--accent)}
+.filter-date{background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:4px 8px;border-radius:6px;font-size:11px;font-family:'DM Mono',monospace;outline:none;cursor:pointer;width:108px}
+.filter-date:focus{border-color:var(--accent)}
+.fdiv{width:1px;height:14px;background:var(--border);margin:0 2px;flex-shrink:0}
+.chip{padding:3px 10px;border-radius:14px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-size:11px;cursor:pointer;transition:all .15s;user-select:none}
+.chip:hover{border-color:var(--accent);color:var(--accent2)}
+.chip.active{background:#f0f9ff;border-color:var(--accent);color:var(--accent2);font-weight:600}
+.chip.ig.active{background:#fef2f5;border-color:var(--ig);color:var(--ig)}
+.chip.tt.active{background:#f0fdfa;border-color:var(--tt2);color:var(--tt)}
 
 /* ── KPI 카드 ── */
-.kpi-row{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:18px}
-.kpi-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;position:relative;overflow:hidden;transition:border-color .15s}
-.kpi-card:hover{border-color:var(--accent)}
-.kpi-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px}
-.kpi-card.c1::after{background:linear-gradient(90deg,#58a6ff,#1f6feb)}
-.kpi-card.c2::after{background:linear-gradient(90deg,#bc8cff,#8250df)}
-.kpi-card.c3::after{background:linear-gradient(90deg,#3fb950,#238636)}
-.kpi-card.c4::after{background:linear-gradient(90deg,#39d353,#196127)}
-.kpi-card.c5::after{background:linear-gradient(90deg,#f0883e,#bd561d)}
-.kpi-card.c6::after{background:linear-gradient(90deg,#f85149,#b91c1c)}
-.kpi-label{font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
-.kpi-val{font-size:22px;font-weight:800;letter-spacing:-1px;line-height:1;font-family:'DM Mono',monospace}
+.kpi-row{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:16px}
+.kpi-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;position:relative;overflow:hidden;transition:border-color .15s,box-shadow .15s}
+.kpi-card:hover{border-color:var(--accent);box-shadow:0 2px 12px rgba(14,165,233,.08)}
+.kpi-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:10px 10px 0 0}
+.kpi-card.c1::after{background:#0ea5e9}
+.kpi-card.c2::after{background:#6366f1}
+.kpi-card.c3::after{background:#10b981}
+.kpi-card.c4::after{background:#14b8a6}
+.kpi-card.c5::after{background:#f59e0b}
+.kpi-card.c6::after{background:#ef4444}
+.kpi-label{font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.kpi-val{font-size:22px;font-weight:800;letter-spacing:-1px;line-height:1;color:var(--navy);font-family:'DM Mono',monospace}
 .kpi-meta{display:flex;align-items:center;gap:6px;margin-top:5px}
 .kpi-sub{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace}
-.delta{display:inline-flex;align-items:center;gap:2px;font-size:10px;padding:1px 5px;border-radius:3px;font-family:'DM Mono',monospace;font-weight:600}
-.delta.up{background:rgba(63,185,80,.15);color:var(--green)}
-.delta.down{background:rgba(248,81,73,.15);color:var(--red)}
+.delta{display:inline-flex;align-items:center;gap:2px;font-size:10px;padding:1px 5px;border-radius:4px;font-family:'DM Mono',monospace;font-weight:600}
+.delta.up{background:#dcfce7;color:#15803d}
+.delta.down{background:#fee2e2;color:#b91c1c}
 .delta.neu{background:var(--bg3);color:var(--text3)}
 
 /* ── 패널 ── */
 .panel{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px}
-.panel-title{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.7px;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.panel-title{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px;display:flex;align-items:center;gap:6px}
 .panel-title::before{content:'';width:3px;height:12px;background:var(--accent);border-radius:2px;flex-shrink:0}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
@@ -95,108 +95,85 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg);colo
 
 /* ── 탭 ── */
 .tabs{display:flex;gap:2px;border-bottom:1px solid var(--border);margin-bottom:12px}
-.tab{padding:7px 14px;font-size:11px;font-weight:500;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s}
+.tab{padding:6px 12px;font-size:11px;font-weight:500;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s}
 .tab:hover{color:var(--text)}
-.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab.active{color:var(--accent2);border-bottom-color:var(--accent)}
 
 /* ── 테이블 ── */
 .tbl-wrap{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-size:11px}
-thead th{text-align:right;padding:7px 10px;color:var(--text3);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--border);white-space:nowrap}
-thead th:first-child{text-align:left}
+thead th{text-align:right;padding:7px 10px;color:var(--text3);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--border);white-space:nowrap;background:var(--bg3)}
+thead th:first-child{text-align:left;border-radius:6px 0 0 0}
+thead th:last-child{border-radius:0 6px 0 0}
 tbody tr{border-bottom:1px solid var(--border2);transition:background .1s}
 tbody tr:hover{background:var(--bg3)}
 tbody tr:last-child{border-bottom:none}
 tbody td{padding:8px 10px;text-align:right;font-family:'DM Mono',monospace;color:var(--text2);white-space:nowrap}
 tbody td:first-child{text-align:left;font-family:'Pretendard',sans-serif;color:var(--text);font-weight:500}
-.rank{color:var(--text3);font-size:10px;margin-right:6px;font-family:'DM Mono',monospace}
-.pf-badge{display:inline-block;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:700;font-family:'DM Mono',monospace}
-.pf-ig{background:rgba(225,48,108,.15);color:var(--ig);border:1px solid rgba(225,48,108,.3)}
-.pf-tt{background:rgba(105,201,208,.1);color:var(--tt2);border:1px solid rgba(105,201,208,.3)}
+.rank{color:var(--text3);font-size:10px;margin-right:5px;font-family:'DM Mono',monospace}
+.pf-badge{display:inline-block;padding:1px 6px;border-radius:4px;font-size:9px;font-weight:700;font-family:'DM Mono',monospace}
+.pf-ig{background:#fef2f5;color:var(--ig);border:1px solid rgba(225,48,108,.2)}
+.pf-tt{background:#f0fdfa;color:var(--tt);border:1px solid rgba(20,184,166,.2)}
 .bar-wrap{display:flex;align-items:center;gap:6px}
-.bar-inner{height:3px;border-radius:2px;background:var(--accent2);min-width:2px}
+.bar-inner{height:4px;border-radius:2px;background:var(--accent);min-width:2px}
 
 /* ── 인사이트 카드 ── */
 .insight-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
 .insight-card{border-radius:8px;padding:12px 14px;border:1px solid}
-.insight-card.best{background:rgba(63,185,80,.07);border-color:rgba(63,185,80,.3)}
-.insight-card.worst{background:rgba(248,81,73,.07);border-color:rgba(248,81,73,.3)}
-.insight-card.opp{background:rgba(88,166,255,.07);border-color:rgba(88,166,255,.3)}
-.insight-label{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px}
-.insight-card.best .insight-label{color:var(--green)}
-.insight-card.worst .insight-label{color:var(--red)}
-.insight-card.opp .insight-label{color:var(--accent)}
-.insight-name{font-size:18px;font-weight:800;letter-spacing:-.5px;margin-bottom:4px}
+.insight-card.best{background:#f0fdf4;border-color:#bbf7d0}
+.insight-card.worst{background:#fef2f2;border-color:#fecaca}
+.insight-card.opp{background:#f0f9ff;border-color:#bae6fd}
+.insight-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;margin-bottom:3px}
+.insight-card.best .insight-label{color:#15803d}
+.insight-card.worst .insight-label{color:#b91c1c}
+.insight-card.opp .insight-label{color:var(--accent2)}
+.insight-name{font-size:18px;font-weight:800;letter-spacing:-.5px;margin-bottom:3px;color:var(--navy)}
 .insight-metric{font-size:11px;color:var(--text2);font-family:'DM Mono',monospace;line-height:1.6}
 
 /* ── Heatmap ── */
-.heatmap-wrap{overflow-x:auto}
 .heatmap-table{width:100%;border-collapse:collapse;font-size:11px}
-.heatmap-table th{padding:6px 10px;text-align:center;font-size:10px;color:var(--text3);font-weight:600;border-bottom:1px solid var(--border)}
+.heatmap-table th{padding:6px 8px;text-align:center;font-size:9px;color:var(--text3);font-weight:600;border-bottom:1px solid var(--border);background:var(--bg3)}
 .heatmap-table th:first-child{text-align:left}
-.heatmap-table td{padding:6px 10px;text-align:center;font-family:'DM Mono',monospace;font-size:11px;font-weight:600;border-bottom:1px solid var(--border2)}
-.heatmap-table td:first-child{text-align:left;font-family:'Pretendard',sans-serif;color:var(--text);font-weight:500}
-.hm-cell{border-radius:4px;padding:3px 8px;display:inline-block;min-width:56px}
+.heatmap-table td{padding:5px 8px;text-align:center;border-bottom:1px solid var(--border2)}
+.heatmap-table td:first-child{text-align:left;font-family:'Pretendard',sans-serif;color:var(--text);font-weight:500;font-size:11px}
+.hm-cell{border-radius:5px;padding:3px 8px;display:inline-block;min-width:56px;font-family:'DM Mono',monospace;font-size:11px;font-weight:600}
+.hm-high{background:#dcfce7;color:#15803d}
+.hm-mid{background:#fef9c3;color:#854d0e}
+.hm-low{background:#fee2e2;color:#b91c1c}
+.hm-na{background:var(--bg3);color:var(--text3)}
 
 /* ── 소재 썸네일 ── */
-.creative-thumb{width:36px;height:36px;border-radius:5px;object-fit:cover;border:1px solid var(--border);background:var(--bg3);flex-shrink:0}
-.creative-thumb-placeholder{width:36px;height:36px;border-radius:5px;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.creative-thumb{width:34px;height:34px;border-radius:6px;object-fit:cover;border:1px solid var(--border);background:var(--bg3);flex-shrink:0}
+.creative-thumb-ph{width:34px;height:34px;border-radius:6px;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--text3);flex-shrink:0}
 .creative-row-inner{display:flex;align-items:center;gap:8px}
-.creative-name{max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px}
+.creative-name-cell{max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px}
 
-/* ── 플랫폼 비교 카드 ── */
-.pf-compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
-.pf-card{border-radius:8px;padding:14px;border:1px solid var(--border)}
-.pf-card-ig{border-color:rgba(225,48,108,.3);background:rgba(225,48,108,.05)}
-.pf-card-tt{border-color:rgba(105,201,208,.3);background:rgba(105,201,208,.05)}
-.pf-card-header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
-.pf-icon{font-size:20px}
-.pf-name{font-size:13px;font-weight:700}
-.pf-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.pf-metric{text-align:center}
-.pf-metric-label{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px}
-.pf-metric-val{font-size:14px;font-weight:700;font-family:'DM Mono',monospace;margin-top:2px}
-.pf-metric-delta{font-size:9px;margin-top:1px}
+/* ── 플랫폼 카드 ── */
+.pf-compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.pf-card{border-radius:10px;padding:16px;border:1px solid}
+.pf-card-ig{border-color:rgba(225,48,108,.2);background:#fef2f5}
+.pf-card-tt{border-color:rgba(20,184,166,.2);background:#f0fdfa}
+.pf-card-header{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.pf-name{font-size:14px;font-weight:800}
+.pf-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.pf-metric{text-align:center;background:rgba(255,255,255,.7);border-radius:8px;padding:8px 6px;border:1px solid rgba(0,0,0,.04)}
+.pf-metric-label{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px}
+.pf-metric-val{font-size:14px;font-weight:800;font-family:'DM Mono',monospace;color:var(--navy)}
+.pf-metric-delta{font-size:9px;margin-top:2px}
 
-/* ── Drill-down ── */
-.drilldown-panel{background:var(--bg3);border:1px solid var(--accent);border-radius:10px;padding:16px;margin-top:14px;display:none}
-.drilldown-panel.active{display:block}
-.drilldown-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.drilldown-title{font-size:13px;font-weight:700;color:var(--accent)}
-.drilldown-close{cursor:pointer;color:var(--text3);font-size:16px;padding:2px 6px;border-radius:4px;transition:all .15s}
-.drilldown-close:hover{background:var(--bg4);color:var(--red)}
-.drilldown-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+/* ── 추이 차트 ── */
+.trend-chart-wrap canvas{max-height:260px}
+.chart-summary{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.chart-summary-item{background:var(--bg3);border-radius:6px;padding:4px 10px;font-size:11px;font-family:'DM Mono',monospace;color:var(--text2);border:1px solid var(--border);display:flex;align-items:center;gap:5px}
+.chart-summary-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 
 /* ── 로딩 ── */
-.loading-overlay{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;gap:14px}
+.loading-overlay{position:fixed;inset:0;background:rgba(250,251,253,.95);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;gap:14px}
 .spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-text{color:var(--text2);font-size:12px;font-family:'DM Mono',monospace}
 
-/* ── URL 입력 모달 ── */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:flex;align-items:center;justify-content:center;display:none}
-.modal-overlay.active{display:flex}
-.modal{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:24px;width:520px;max-width:90vw}
-.modal-title{font-size:14px;font-weight:700;margin-bottom:16px}
-.modal input{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:6px;font-size:12px;font-family:'DM Mono',monospace;outline:none;margin-bottom:10px}
-.modal input:focus{border-color:var(--accent)}
-.modal-btns{display:flex;gap:8px;justify-content:flex-end}
-
 canvas{max-height:240px}
-.trend-chart-wrap{position:relative}
-.trend-chart-wrap canvas{max-height:280px}
-.no-data{text-align:center;padding:40px;color:var(--text3);font-size:12px}
-
-/* ── 상단 필터 추가 ── */
-.filter-select{background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:4px 8px;border-radius:6px;font-size:11px;font-family:'Pretendard',sans-serif;outline:none;cursor:pointer;transition:border-color .15s}
-.filter-select:hover,.filter-select:focus{border-color:var(--accent)}
-.filter-date{background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:4px 8px;border-radius:6px;font-size:11px;font-family:'DM Mono',monospace;outline:none;cursor:pointer;width:110px}
-.filter-date:focus{border-color:var(--accent)}
-.filter-divider{width:1px;height:16px;background:var(--border);margin:0 4px;flex-shrink:0}
-.filter-tag{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;background:rgba(88,166,255,.15);border:1px solid rgba(88,166,255,.3);border-radius:12px;font-size:10px;color:var(--accent);font-weight:600}
-.filter-tag .remove{cursor:pointer;opacity:.7;margin-left:2px}
-.filter-tag .remove:hover{opacity:1;color:var(--red)}
-#active-filters{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
 </style>
 </head>
 <body>
@@ -214,22 +191,12 @@ canvas{max-height:240px}
   </div>
   <nav class="sidebar-nav">
     <div class="nav-section">분석</div>
-    <div class="nav-item active" onclick="goPage('summary',this)">
-      <span class="icon">📊</span>요약 대시보드
-    </div>
-    <div class="nav-item" onclick="goPage('country',this)">
-      <span class="icon">🌍</span>국가별 상세
-    </div>
-    <div class="nav-item" onclick="goPage('creative',this)">
-      <span class="icon">🎨</span>소재별 상세
-    </div>
-    <div class="nav-item" onclick="goPage('platform',this)">
-      <span class="icon">📱</span>플랫폼 비교
-    </div>
+    <div class="nav-item active" onclick="goPage('summary',this)"><span class="icon">📊</span>요약 대시보드</div>
+    <div class="nav-item" onclick="goPage('country',this)"><span class="icon">🌍</span>국가별 상세</div>
+    <div class="nav-item" onclick="goPage('creative',this)"><span class="icon">🎨</span>소재별 상세</div>
+    <div class="nav-item" onclick="goPage('platform',this)"><span class="icon">📱</span>플랫폼 비교</div>
     <div class="nav-section" style="margin-top:8px">설정</div>
-    <div class="nav-item" onclick="showModal()">
-      <span class="icon">🔄</span>데이터 새로고침
-    </div>
+    <div class="nav-item" onclick="showModal()"><span class="icon">🔄</span>데이터 새로고침</div>
   </nav>
   <div class="sidebar-footer">
     <div class="data-status">
@@ -239,12 +206,12 @@ canvas{max-height:240px}
   </div>
 </div>
 
-<!-- URL 입력 모달 -->
-<div class="modal-overlay" id="modal">
-  <div class="modal">
-    <div class="modal-title">🔄 데이터 소스 설정</div>
-    <input id="modal-url" type="text" placeholder="Apps Script 웹 앱 URL (https://script.google.com/macros/s/.../exec)">
-    <div class="modal-btns">
+<!-- 모달 -->
+<div id="modal" style="position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;display:none;align-items:center;justify-content:center">
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:24px;width:520px;max-width:90vw">
+    <div style="font-size:14px;font-weight:700;margin-bottom:14px;color:var(--navy)">🔄 데이터 소스 설정</div>
+    <input id="modal-url" type="text" style="width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:6px;font-size:11px;font-family:'DM Mono',monospace;outline:none;margin-bottom:10px" placeholder="Apps Script URL">
+    <div style="display:flex;gap:8px;justify-content:flex-end">
       <button class="btn" onclick="closeModal()">취소</button>
       <button class="btn btn-primary" onclick="loadFromModal()">불러오기</button>
     </div>
@@ -258,33 +225,28 @@ canvas{max-height:240px}
       <span class="page-title" id="page-title">요약 대시보드</span>
       <span class="date-badge" id="date-range">—</span>
     </div>
-    <div class="topbar-right" style="display:flex;flex-wrap:wrap;gap:6px;align-items:center">
-      <!-- 날짜 -->
-      <input type="date" id="filter-date-from" class="filter-date" onchange="applyFilters()" title="시작일">
+    <div class="topbar-right">
+      <input type="date" id="filter-date-from" class="filter-date" onchange="applyFilters()">
       <span style="font-size:10px;color:var(--text3)">~</span>
-      <input type="date" id="filter-date-to" class="filter-date" onchange="applyFilters()" title="종료일">
-      <div class="filter-divider"></div>
-      <!-- 기간 드롭박스 (주차별) -->
-      <select id="filter-period" class="filter-select" onchange="applyFilters()" style="max-width:120px">
+      <input type="date" id="filter-date-to" class="filter-date" onchange="applyFilters()">
+      <div class="fdiv"></div>
+      <select id="filter-period" class="filter-select" onchange="applyFilters()" style="max-width:130px">
         <option value="">전체 기간</option>
         <option value="__none__">— 없음 —</option>
       </select>
-      <div class="filter-divider"></div>
-      <!-- 권역 드롭박스 -->
+      <div class="fdiv"></div>
       <select id="filter-region" class="filter-select" onchange="applyFilters()" style="max-width:110px">
         <option value="">전체 권역</option>
         <option value="__none__">— 없음 —</option>
       </select>
-      <!-- 국가 드롭박스 -->
       <select id="filter-country" class="filter-select" onchange="applyFilters()" style="max-width:100px">
         <option value="">전체 국가</option>
         <option value="__none__">— 없음 —</option>
       </select>
-      <div class="filter-divider"></div>
-      <!-- 플랫폼 -->
+      <div class="fdiv"></div>
       <div class="chip ig active" data-pf="IG" onclick="togglePF(this)">IG</div>
       <div class="chip tt active" data-pf="TT" onclick="togglePF(this)">TT</div>
-      <div class="filter-divider"></div>
+      <div class="fdiv"></div>
       <button class="btn" onclick="resetFilters()">초기화</button>
       <span id="row-count" style="font-size:10px;color:var(--text3);font-family:'DM Mono',monospace"></span>
     </div>
@@ -292,61 +254,27 @@ canvas{max-height:240px}
 
   <div class="content">
 
-    <!-- ══ 요약 페이지 ══ -->
+    <!-- ══ 요약 ══ -->
     <div class="page active" id="page-summary">
-      <!-- KPI -->
       <div class="kpi-row">
-        <div class="kpi-card c1">
-          <div class="kpi-label">💰 총 지출</div>
-          <div class="kpi-val" id="k-spend">—</div>
-          <div class="kpi-meta"><span class="kpi-sub" id="k-spend-sub"></span><span class="delta" id="k-spend-d"></span></div>
-        </div>
-        <div class="kpi-card c2">
-          <div class="kpi-label">👁 노출</div>
-          <div class="kpi-val" id="k-imp">—</div>
-          <div class="kpi-meta"><span class="kpi-sub" id="k-imp-sub"></span><span class="delta" id="k-imp-d"></span></div>
-        </div>
-        <div class="kpi-card c3">
-          <div class="kpi-label">🖱 링크 클릭</div>
-          <div class="kpi-val" id="k-click">—</div>
-          <div class="kpi-meta"><span class="kpi-sub" id="k-click-sub"></span><span class="delta" id="k-click-d"></span></div>
-        </div>
-        <div class="kpi-card c4">
-          <div class="kpi-label">🏠 랜딩 조회</div>
-          <div class="kpi-val" id="k-land">—</div>
-          <div class="kpi-meta"><span class="kpi-sub" id="k-land-sub"></span><span class="delta" id="k-land-d"></span></div>
-        </div>
-        <div class="kpi-card c5">
-          <div class="kpi-label">📡 CPM</div>
-          <div class="kpi-val" id="k-cpm">—</div>
-          <div class="kpi-meta"><span class="kpi-sub">원/1,000노출</span><span class="delta" id="k-cpm-d"></span></div>
-        </div>
-        <div class="kpi-card c6">
-          <div class="kpi-label">💡 CPC</div>
-          <div class="kpi-val" id="k-cpc">—</div>
-          <div class="kpi-meta"><span class="kpi-sub">원/클릭</span><span class="delta" id="k-cpc-d"></span></div>
-        </div>
+        <div class="kpi-card c1"><div class="kpi-label">💰 총 지출</div><div class="kpi-val" id="k-spend">—</div><div class="kpi-meta"><span class="kpi-sub" id="k-spend-sub"></span><span class="delta" id="k-spend-d"></span></div></div>
+        <div class="kpi-card c2"><div class="kpi-label">👁 노출</div><div class="kpi-val" id="k-imp">—</div><div class="kpi-meta"><span class="kpi-sub" id="k-imp-sub"></span><span class="delta" id="k-imp-d"></span></div></div>
+        <div class="kpi-card c3"><div class="kpi-label">🖱 링크 클릭</div><div class="kpi-val" id="k-click">—</div><div class="kpi-meta"><span class="kpi-sub" id="k-click-sub"></span><span class="delta" id="k-click-d"></span></div></div>
+        <div class="kpi-card c4"><div class="kpi-label">🏠 랜딩 조회</div><div class="kpi-val" id="k-land">—</div><div class="kpi-meta"><span class="kpi-sub" id="k-land-sub"></span><span class="delta" id="k-land-d"></span></div></div>
+        <div class="kpi-card c5"><div class="kpi-label">📡 CPM</div><div class="kpi-val" id="k-cpm">—</div><div class="kpi-meta"><span class="kpi-sub">원/1,000노출</span><span class="delta" id="k-cpm-d"></span></div></div>
+        <div class="kpi-card c6"><div class="kpi-label">💡 CPC</div><div class="kpi-val" id="k-cpc">—</div><div class="kpi-meta"><span class="kpi-sub">원/클릭</span><span class="delta" id="k-cpc-d"></span></div></div>
       </div>
-
-      <!-- 인사이트 -->
       <div class="insight-grid" id="insight-cards"></div>
-
-      <!-- 차트 행 -->
       <div class="grid2">
         <div class="panel">
           <div class="panel-title">월별·주차별 지출 추이</div>
           <canvas id="ch-period"></canvas>
         </div>
         <div class="panel">
-          <div class="panel-title">국가별 지출 분포</div>
-          <div style="display:grid;grid-template-columns:160px 1fr;gap:12px;align-items:center">
-            <canvas id="ch-pie" style="max-height:160px"></canvas>
-            <div id="pie-legend" style="display:flex;flex-direction:column;gap:4px;max-height:200px;overflow-y:auto"></div>
-          </div>
+          <div class="panel-title">국가 × 플랫폼 Heatmap (CTR)</div>
+          <div id="heatmap-wrap" style="overflow-x:auto"></div>
         </div>
       </div>
-
-      <!-- 국가 TOP5 + Heatmap -->
       <div class="grid2">
         <div class="panel">
           <div class="panel-title">국가 성과 TOP 5</div>
@@ -356,15 +284,17 @@ canvas{max-height:240px}
           </table>
         </div>
         <div class="panel">
-          <div class="panel-title">국가 × 플랫폼 Heatmap (CTR)</div>
-          <div class="heatmap-wrap" id="heatmap-wrap"></div>
+          <div class="panel-title">국가별 지출 분포</div>
+          <div style="display:grid;grid-template-columns:150px 1fr;gap:12px;align-items:center">
+            <canvas id="ch-pie" style="max-height:150px"></canvas>
+            <div id="pie-legend" style="display:flex;flex-direction:column;gap:3px;max-height:180px;overflow-y:auto"></div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- ══ 국가별 상세 페이지 ══ -->
+    <!-- ══ 국가별 상세 ══ -->
     <div class="page" id="page-country">
-      <!-- 국가별 성과 테이블 + 바차트 -->
       <div class="grid2" style="margin-bottom:14px">
         <div class="panel">
           <div class="panel-title">국가별 성과 (지출 순)</div>
@@ -376,22 +306,21 @@ canvas{max-height:240px}
           </div>
         </div>
         <div class="panel">
-          <div class="panel-title">국가별 지출 바차트</div>
+          <div class="panel-title">국가별 바차트</div>
           <div class="tabs">
-            <div class="tab active" onclick="switchTab(this,'country-chart','spend')">지출</div>
-            <div class="tab" onclick="switchTab(this,'country-chart','cpm')">CPM</div>
-            <div class="tab" onclick="switchTab(this,'country-chart','ctr')">CTR</div>
+            <div class="tab active" onclick="switchCTab(this,'spend')">지출</div>
+            <div class="tab" onclick="switchCTab(this,'cpm')">CPM</div>
+            <div class="tab" onclick="switchCTab(this,'ctr')">CTR</div>
           </div>
           <canvas id="ch-country" style="max-height:260px"></canvas>
         </div>
       </div>
       <!-- 국가별 성과 추이 -->
       <div class="panel">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
           <div class="panel-title" style="margin-bottom:0">국가별 성과 추이 (일별)</div>
-          <div style="display:flex;gap:8px;align-items:center">
-            <span style="font-size:10px;color:var(--text3)">지표</span>
-            <select id="trend-metric" class="filter-select" onchange="renderCountryTrend()">
+          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+            <select id="trend-metric1" class="filter-select" onchange="renderCountryTrend()" style="max-width:110px">
               <option value="spend">지출</option>
               <option value="imp">노출</option>
               <option value="click">링크 클릭</option>
@@ -399,23 +328,41 @@ canvas{max-height:240px}
               <option value="ctr">CTR</option>
               <option value="cpm">CPM</option>
             </select>
-            <span style="font-size:10px;color:var(--text3)">국가 선택 (최대 5개)</span>
-            <div id="trend-country-chips" style="display:flex;gap:4px;flex-wrap:wrap;max-width:400px"></div>
+            <select id="trend-metric2" class="filter-select" onchange="renderCountryTrend()" style="max-width:110px">
+              <option value="">+ 지표 추가</option>
+              <option value="spend">지출</option>
+              <option value="imp">노출</option>
+              <option value="click">링크 클릭</option>
+              <option value="land">랜딩 조회</option>
+              <option value="ctr">CTR</option>
+              <option value="cpm">CPM</option>
+            </select>
+            <div class="fdiv"></div>
+            <select id="trend-region" class="filter-select" onchange="filterTrendCountries()" style="max-width:110px">
+              <option value="">전체 권역</option>
+            </select>
+            <select id="trend-country-sel" class="filter-select" onchange="addTrendCountry(this.value)" style="max-width:110px">
+              <option value="">국가 선택</option>
+            </select>
           </div>
         </div>
+        <!-- 선택된 국가 칩 -->
+        <div id="trend-country-chips" style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px"></div>
+        <!-- 수치 요약 -->
+        <div class="chart-summary" id="trend-summary"></div>
         <div class="trend-chart-wrap"><canvas id="ch-country-trend"></canvas></div>
-        <div style="font-size:10px;color:var(--text3);margin-top:8px">※ 국가 칩을 클릭해서 선택/해제하세요 (최대 5개)</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:8px">※ 국가를 드롭박스에서 선택하거나 칩을 클릭해 제거 (최대 5개)</div>
       </div>
     </div>
 
-    <!-- ══ 소재별 상세 페이지 ══ -->
+    <!-- ══ 소재별 상세 ══ -->
     <div class="page" id="page-creative">
       <div class="grid31" style="margin-bottom:14px">
         <div class="panel">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:6px">
             <div class="panel-title" style="margin-bottom:0">소재 성과 전체</div>
             <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-              <select id="filter-product" class="filter-select" onchange="renderCreativePage()" style="max-width:140px">
+              <select id="filter-product" class="filter-select" style="max-width:140px" onchange="renderCreativePage()">
                 <option value="">전체 상품</option>
                 <option value="__none__">— 없음 —</option>
               </select>
@@ -441,181 +388,172 @@ canvas{max-height:240px}
             <div id="creative-insight"></div>
           </div>
           <div class="panel">
-            <div class="panel-title">소재별 CTR vs CPC 버블</div>
+            <div class="panel-title">CTR vs CPC 버블</div>
             <canvas id="ch-bubble" style="max-height:200px"></canvas>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ══ 플랫폼 비교 페이지 ══ -->
+    <!-- ══ 플랫폼 비교 ══ -->
     <div class="page" id="page-platform">
+      <!-- 수치 카드 -->
       <div class="pf-compare-grid" style="margin-bottom:14px">
         <div class="pf-card pf-card-ig">
-          <div class="pf-card-header"><span class="pf-icon">📸</span><span class="pf-name" style="color:var(--ig)">Instagram</span></div>
+          <div class="pf-card-header"><span style="font-size:20px">📸</span><span class="pf-name" style="color:var(--ig)">Instagram</span></div>
           <div class="pf-metrics" id="pf-ig-metrics"></div>
         </div>
         <div class="pf-card pf-card-tt">
-          <div class="pf-card-header"><span class="pf-icon">🎵</span><span class="pf-name" style="color:var(--tt2)">TikTok</span></div>
+          <div class="pf-card-header"><span style="font-size:20px">🎵</span><span class="pf-name" style="color:var(--tt)">TikTok</span></div>
           <div class="pf-metrics" id="pf-tt-metrics"></div>
         </div>
       </div>
+      <!-- 차트 -->
       <div class="grid2">
         <div class="panel">
-          <div class="panel-title">플랫폼별 지출 추이 비교</div>
+          <div class="panel-title">플랫폼별 지출 추이</div>
+          <div class="chart-summary" id="pf-trend-summary"></div>
           <canvas id="ch-pf-trend"></canvas>
         </div>
         <div class="panel">
-          <div class="panel-title">주요 지표 비교</div>
+          <div class="panel-title">지표 비교</div>
           <div class="tabs">
-            <div class="tab active" onclick="switchTab(this,'pf-metric','ctr')">CTR</div>
-            <div class="tab" onclick="switchTab(this,'pf-metric','cpc')">CPC</div>
-            <div class="tab" onclick="switchTab(this,'pf-metric','cpm')">CPM</div>
+            <div class="tab active" onclick="switchPFTab(this,'ctr')">CTR</div>
+            <div class="tab" onclick="switchPFTab(this,'cpc')">CPC</div>
+            <div class="tab" onclick="switchPFTab(this,'cpm')">CPM</div>
           </div>
+          <div class="chart-summary" id="pf-metric-summary"></div>
           <canvas id="ch-pf-metric" style="max-height:180px"></canvas>
         </div>
       </div>
+      <!-- 국가별 추이 -->
       <div class="panel" style="margin-top:14px">
-        <div class="panel-title">플랫폼별 강점 분석</div>
-        <div id="pf-strengths" style="display:grid;grid-template-columns:1fr 1fr;gap:12px"></div>
-      </div>
-      <!-- 국가별 추이 (플랫폼별) -->
-      <div class="panel" style="margin-top:14px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
           <div class="panel-title" style="margin-bottom:0">국가별 성과 추이 (플랫폼 비교)</div>
-          <div style="display:flex;gap:8px;align-items:center">
-            <select id="pf-trend-metric" class="filter-select" onchange="renderPFCountryTrend()">
+          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+            <select id="pf-trend-metric" class="filter-select" onchange="renderPFCountryTrend()" style="max-width:110px">
               <option value="spend">지출</option>
               <option value="imp">노출</option>
               <option value="click">링크 클릭</option>
               <option value="ctr">CTR</option>
               <option value="cpm">CPM</option>
             </select>
+            <select id="pf-trend-region" class="filter-select" onchange="filterPFTrendCountries()" style="max-width:110px">
+              <option value="">전체 권역</option>
+            </select>
             <select id="pf-trend-country" class="filter-select" onchange="renderPFCountryTrend()" style="max-width:110px">
               <option value="">국가 선택</option>
             </select>
           </div>
         </div>
-        <div class="trend-chart-wrap"><canvas id="ch-pf-country-trend"></canvas></div>
+        <div class="chart-summary" id="pf-country-summary"></div>
+        <canvas id="ch-pf-country-trend" style="max-height:260px"></canvas>
+      </div>
+      <!-- 강점 분석 -->
+      <div class="panel" style="margin-top:14px">
+        <div class="panel-title">플랫폼별 강점 분석</div>
+        <div id="pf-strengths" style="display:grid;grid-template-columns:1fr 1fr;gap:12px"></div>
       </div>
     </div>
 
-  </div><!-- /content -->
-</div><!-- /main-wrap -->
+  </div>
+</div>
 
 <script>
-// ══════════════════════════════════════════════
-// 상태
-// ══════════════════════════════════════════════
-const APPS_URL = 'https://script.google.com/macros/s/AKfycbzQn-tRH0Jg6csQOEj3V6s0YL1nh8uNlEYUxixA6J69a_VWJ8LGECyHhYK0CWVM_V8h/exec';
-let RAW = [], FILTERED = [];
-let activePeriods = new Set(), activePFs = new Set(['IG','TT']);
-let charts = {};
-let countryChartMetric = 'spend', pfMetricTab = 'ctr';
-let selectedCountry = null;
-let selectedTrendCountries = new Set();
+const APPS_URL='https://script.google.com/macros/s/AKfycbzQn-tRH0Jg6csQOEj3V6s0YL1nh8uNlEYUxixA6J69a_VWJ8LGECyHhYK0CWVM_V8h/exec';
+let RAW=[],FILTERED=[];
+let activePFs=new Set(['IG','TT']);
+let charts={};
+let countryChartMetric='spend',pfMetricTab='ctr';
+let selectedTrendCountries=new Set();
 
-// ── 포맷 ──
-const fmt = (n,d=0) => n==null||isNaN(n)?'—':n.toLocaleString('ko-KR',{minimumFractionDigits:d,maximumFractionDigits:d});
-const fmtK = n => {
-  if(n==null||isNaN(n)) return '—';
-  if(Math.abs(n)>=1e8) return (n/1e8).toFixed(1)+'억';
-  if(Math.abs(n)>=1e4) return (n/1e4).toFixed(1)+'만';
-  return fmt(n);
-};
-const pct = n => n==null||isNaN(n)?'—':(n*100).toFixed(2)+'%';
-const mo_name = {1:'Jan',2:'Feb',3:'Mar',4:'Apr',5:'May',6:'Jun',7:'Jul',8:'Aug',9:'Sep',10:'Oct',11:'Nov',12:'Dec'};
+const mo_name={1:'Jan',2:'Feb',3:'Mar',4:'Apr',5:'May',6:'Jun',7:'Jul',8:'Aug',9:'Sep',10:'Oct',11:'Nov',12:'Dec'};
+const PALETTE=['#0ea5e9','#6366f1','#10b981','#f59e0b','#ef4444','#14b8a6','#8b5cf6','#f97316','#06b6d4','#84cc16','#ec4899','#a855f7'];
+const IG_COLOR='rgba(225,48,108,';const TT_COLOR='rgba(20,184,166,';
 
-// ── 집계 ──
-function agg(rows) {
+const fmt=(n,d=0)=>n==null||isNaN(n)?'—':n.toLocaleString('ko-KR',{minimumFractionDigits:d,maximumFractionDigits:d});
+const fmtK=n=>{if(n==null||isNaN(n))return'—';if(Math.abs(n)>=1e8)return(n/1e8).toFixed(1)+'억';if(Math.abs(n)>=1e4)return(n/1e4).toFixed(1)+'만';return fmt(n);};
+const pct=n=>n==null||isNaN(n)?'—':(n*100).toFixed(2)+'%';
+
+function agg(rows){
   const spend=rows.reduce((s,r)=>s+r.spend,0);
   const imp=rows.reduce((s,r)=>s+r.imp,0);
   const click=rows.reduce((s,r)=>s+r.click,0);
   const land=rows.reduce((s,r)=>s+r.land,0);
   const reach=rows.reduce((s,r)=>s+r.reach,0);
-  return {spend,imp,click,land,reach,
+  return{spend,imp,click,land,reach,
     cpm:imp>0?spend/imp*1000:0,
     cpc:click>0?spend/click:0,
     ctr:imp>0?click/imp:0,
     ltr:imp>0?land/imp:0};
 }
 
-function normalizeRow(r) {
+function extractProduct(name){
+  if(!name)return'기타';
+  const n=name.trim();
+  const m=n.match(/^([^\[]+)/);
+  if(m){let p=m[1].trim().replace(/[-_]+$/,'').replace(/^Copy\s+(\d+\s+)?of\s+/i,'').trim();if(p)return p;}
+  return n.split(' ')[0]||'기타';
+}
+
+function normalizeRow(r){
   const o={...r};
-  for(const c of ['도달','노출','지출 금액 (KRW)','링크 클릭','랜딩 페이지 조회','동영상 25% 재생','동영상 75% 재생']) {
+  for(const c of['도달','노출','지출 금액 (KRW)','링크 클릭','랜딩 페이지 조회','동영상 25% 재생','동영상 75% 재생']){
     o[c]=parseFloat(String(o[c]||'').replace(/,/g,''))||0;
   }
   if(o['일']){
     const d=new Date(o['일']);
-    o._month=d.getMonth()+1; o._day=d.getDate(); o._date=o['일'];
+    o._month=d.getMonth()+1;o._day=d.getDate();o._date=o['일'];
     o._wk=o._day<=14?'1-2주차':'3-4주차';
     o._period=(mo_name[o._month]||'?')+' '+o._wk;
-    o._monthName=mo_name[o._month]||'?';
   }
-  o.spend=o['지출 금액 (KRW)']; o.imp=o['노출']; o.click=o['링크 클릭'];
-  o.land=o['랜딩 페이지 조회']; o.reach=o['도달'];
+  o.spend=o['지출 금액 (KRW)'];o.imp=o['노출'];o.click=o['링크 클릭'];
+  o.land=o['랜딩 페이지 조회'];o.reach=o['도달'];
   o.name=String(o['광고 이름']||'').trim();
   o.country=String(o['국가']||'').trim();
   o.pf=String(o['플랫폼']||'').trim();
-  o.region=String(o['권역']||o['AB열']||'').replace(/\n/g,' ').trim();
+  o.region=String(o['권역']||'').replace(/\n/g,' ').trim();
   o.url=String(o['소재링크']||o['광고URL']||o['URL']||'').trim();
   o.product=extractProduct(o.name);
   return o;
 }
 
-// ══════════════════════════════════════════════
-// 데이터 로드
-// ══════════════════════════════════════════════
-function setStatus(state, text) {
+function setStatus(s,t){
   const dot=document.getElementById('s-dot');
-  dot.className='status-dot'+(state==='ok'?' ok':state==='loading'?' loading':'');
-  document.getElementById('s-text').textContent=text;
+  dot.className='status-dot'+(s==='ok'?' ok':s==='loading'?' loading':'');
+  document.getElementById('s-text').textContent=t;
 }
 function showLoading(t){document.getElementById('loading').style.display='flex';document.getElementById('loading-text').textContent=t||'로딩 중...';}
 function hideLoading(){document.getElementById('loading').style.display='none';}
-function showModal(){document.getElementById('modal').classList.add('active');document.getElementById('modal-url').value=APPS_URL;}
-function closeModal(){document.getElementById('modal').classList.remove('active');}
-function loadFromModal(){
-  const url=document.getElementById('modal-url').value.trim();
-  if(!url)return;
-  closeModal(); loadViaJSONP(url);
-}
+function showModal(){document.getElementById('modal').style.display='flex';document.getElementById('modal-url').value=APPS_URL;}
+function closeModal(){document.getElementById('modal').style.display='none';}
+function loadFromModal(){const u=document.getElementById('modal-url').value.trim();if(!u)return;closeModal();loadViaJSONP(u);}
 
 function loadViaJSONP(baseUrl){
   setStatus('loading','불러오는 중...');
   showLoading('Google Sheets에서 데이터 불러오는 중...');
-  const old=document.getElementById('jsonp-script');
-  if(old) old.remove();
+  const old=document.getElementById('jsonp-script');if(old)old.remove();
   window.__jsonpCallback=function(data){
     try{
-      RAW=data.map(normalizeRow).filter(r=>r.country&&r.country!==''&&r.country!=='국가'&&r.spend>=0);
-      initDashboard();
-      hideLoading();
+      RAW=data.map(normalizeRow).filter(r=>r.country&&r.country!==''&&r.country!=='국가');
+      initDashboard();hideLoading();
       setStatus('ok',RAW.length.toLocaleString()+'행 로드됨');
     }catch(e){hideLoading();setStatus('','오류: '+e.message);console.error(e);}
-    const s=document.getElementById('jsonp-script');
-    if(s) s.remove();
+    const s=document.getElementById('jsonp-script');if(s)s.remove();
   };
   const script=document.createElement('script');
-  script.id='jsonp-script';
-  script.src=baseUrl+'?callback=__jsonpCallback';
+  script.id='jsonp-script';script.src=baseUrl+'?callback=__jsonpCallback';
   script.onerror=()=>{hideLoading();setStatus('','로드 실패');};
   document.head.appendChild(script);
 }
 
-// ══════════════════════════════════════════════
-// 초기화
-// ══════════════════════════════════════════════
 function initDashboard(){
-  // 날짜 범위 표시 + 날짜 필터 기본값
   const dates=RAW.map(r=>r._date).filter(Boolean).sort();
   if(dates.length){
     document.getElementById('date-range').textContent=dates[0]+' ~ '+dates[dates.length-1];
     document.getElementById('filter-date-from').value=dates[0];
     document.getElementById('filter-date-to').value=dates[dates.length-1];
   }
-
-  // 기간 드롭박스 (월/주차)
   const periods=[...new Set(RAW.map(r=>r._period))].filter(Boolean).sort((a,b)=>{
     const mo=s=>Object.values(mo_name).indexOf(s.split(' ')[0]);
     const wk=s=>s.includes('1-2')?0:1;
@@ -625,37 +563,29 @@ function initDashboard(){
   pSel.innerHTML='<option value="">전체 기간</option><option value="__none__">— 없음 —</option>';
   periods.forEach(p=>{const o=document.createElement('option');o.value=p;o.textContent=p;pSel.appendChild(o);});
 
-  // 권역 드롭박스
-  const rSel=document.getElementById('filter-region');
-  rSel.innerHTML='<option value="">전체 권역</option><option value="__none__">— 없음 —</option>';
   const regions=[...new Set(RAW.map(r=>r.region))].filter(Boolean).sort();
-  regions.forEach(r=>{const o=document.createElement('option');o.value=r;o.textContent=r;rSel.appendChild(o);});
+  ['filter-region','trend-region','pf-trend-region'].forEach(id=>{
+    const s=document.getElementById(id);if(!s)return;
+    s.innerHTML='<option value="">전체 권역</option>';
+    regions.forEach(r=>{const o=document.createElement('option');o.value=r;o.textContent=r;s.appendChild(o);});
+  });
 
-  // 국가 드롭박스
+  const countries=[...new Set(RAW.map(r=>r.country))].filter(Boolean).sort();
   const cSel=document.getElementById('filter-country');
   cSel.innerHTML='<option value="">전체 국가</option><option value="__none__">— 없음 —</option>';
-  const countries=[...new Set(RAW.map(r=>r.country))].filter(Boolean).sort();
   countries.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;cSel.appendChild(o);});
 
-  // 상품명 드롭박스 (소재명 앞부분 추출)
-  const products=[...new Set(RAW.map(r=>extractProduct(r.name)))].filter(Boolean).sort();
+  ['trend-country-sel','pf-trend-country'].forEach(id=>{
+    const s=document.getElementById(id);if(!s)return;
+    s.innerHTML='<option value="">국가 선택</option>';
+    countries.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;s.appendChild(o);});
+  });
+
+  const products=[...new Set(RAW.map(r=>r.product))].filter(Boolean).sort();
   const prSel=document.getElementById('filter-product');
-  if(prSel){
-    prSel.innerHTML='<option value="">전체 상품</option><option value="__none__">— 없음 —</option>';
-    products.forEach(p=>{const o=document.createElement('option');o.value=p;o.textContent=p;prSel.appendChild(o);});
-  }
+  if(prSel){prSel.innerHTML='<option value="">전체 상품</option><option value="__none__">— 없음 —</option>';products.forEach(p=>{const o=document.createElement('option');o.value=p;o.textContent=p;prSel.appendChild(o);});}
 
-  // 플랫폼 비교 국가 드롭박스
-  const pfCSel=document.getElementById('pf-trend-country');
-  if(pfCSel){
-    pfCSel.innerHTML='<option value="">국가 선택</option>';
-    countries.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;pfCSel.appendChild(o);});
-  }
-
-  // 국가 추이 칩 초기화 (상위 3개 자동 선택)
   selectedTrendCountries=new Set(countries.slice(0,3));
-  renderTrendCountryChips(countries);
-
   applyFilters();
 }
 
@@ -665,30 +595,23 @@ function applyFilters(){
   const filterPeriod=document.getElementById('filter-period').value;
   const filterRegion=document.getElementById('filter-region').value;
   const filterCountry=document.getElementById('filter-country').value;
-
   FILTERED=RAW.filter(r=>{
-    if(!activePFs.has(r.pf)) return false;
-    // 기간 필터 (없음 = 데이터 없음)
-    if(filterPeriod==='__none__') return false;
-    if(filterPeriod && r._period!==filterPeriod) return false;
-    // 권역 필터
-    if(filterRegion==='__none__') return false;
-    if(filterRegion && r.region!==filterRegion) return false;
-    // 국가 필터
-    if(filterCountry==='__none__') return false;
-    if(filterCountry && r.country!==filterCountry) return false;
-    // 날짜 필터
-    if(dateFrom && r._date && r._date < dateFrom) return false;
-    if(dateTo && r._date && r._date > dateTo) return false;
+    if(!activePFs.has(r.pf))return false;
+    if(filterPeriod==='__none__')return false;
+    if(filterPeriod&&r._period!==filterPeriod)return false;
+    if(filterRegion==='__none__')return false;
+    if(filterRegion&&r.region!==filterRegion)return false;
+    if(filterCountry==='__none__')return false;
+    if(filterCountry&&r.country!==filterCountry)return false;
+    if(dateFrom&&r._date&&r._date<dateFrom)return false;
+    if(dateTo&&r._date&&r._date>dateTo)return false;
     return true;
   });
-
   const fdates=FILTERED.map(r=>r._date).filter(Boolean).sort();
-  if(fdates.length) document.getElementById('date-range').textContent=fdates[0]+' ~ '+fdates[fdates.length-1];
+  if(fdates.length)document.getElementById('date-range').textContent=fdates[0]+' ~ '+fdates[fdates.length-1];
   document.getElementById('row-count').textContent=FILTERED.length.toLocaleString()+' / '+RAW.length.toLocaleString()+'행';
   renderAll();
 }
-
 
 function togglePF(el){
   const pf=el.dataset.pf;
@@ -696,521 +619,373 @@ function togglePF(el){
   else{activePFs.add(pf);el.classList.add('active');}
   applyFilters();
 }
+
 function resetFilters(){
   activePFs=new Set(['IG','TT']);
   document.querySelectorAll('.chip[data-pf]').forEach(c=>c.classList.add('active'));
   const dates=RAW.map(r=>r._date).filter(Boolean).sort();
-  if(dates.length){
-    document.getElementById('filter-date-from').value=dates[0];
-    document.getElementById('filter-date-to').value=dates[dates.length-1];
-  }
-  document.getElementById('filter-period').value='';
-  document.getElementById('filter-region').value='';
-  document.getElementById('filter-country').value='';
+  if(dates.length){document.getElementById('filter-date-from').value=dates[0];document.getElementById('filter-date-to').value=dates[dates.length-1];}
+  ['filter-period','filter-region','filter-country'].forEach(id=>document.getElementById(id).value='');
   applyFilters();
 }
 
-// ══════════════════════════════════════════════
-// 네비게이션
-// ══════════════════════════════════════════════
-const pageTitles={'summary':'요약 대시보드','country':'국가별 상세','creative':'소재별 상세','platform':'플랫폼 비교'};
-function goPage(id, navEl){
+const pageTitles={summary:'요약 대시보드',country:'국가별 상세',creative:'소재별 상세',platform:'플랫폼 비교'};
+function goPage(id,el){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
-  if(navEl) navEl.classList.add('active');
+  if(el)el.classList.add('active');
   document.getElementById('page-title').textContent=pageTitles[id]||id;
   renderPage(id);
 }
-function renderAll(){
-  const activePage=document.querySelector('.page.active');
-  if(!activePage) return;
-  const id=activePage.id.replace('page-','');
-  renderPage(id);
-}
+function renderAll(){const p=document.querySelector('.page.active');if(p)renderPage(p.id.replace('page-',''));}
 function renderPage(id){
-  if(id==='summary') renderSummary();
-  else if(id==='country') renderCountryPage();
-  else if(id==='creative') renderCreativePage();
-  else if(id==='platform') renderPlatformPage();
+  if(id==='summary')renderSummary();
+  else if(id==='country')renderCountryPage();
+  else if(id==='creative')renderCreativePage();
+  else if(id==='platform')renderPlatformPage();
 }
 
-// ══════════════════════════════════════════════
-// 차트 공통
-// ══════════════════════════════════════════════
-const PALETTE=['#58a6ff','#bc8cff','#3fb950','#f0883e','#f85149','#39d353','#79c0ff','#d2a8ff','#56d364','#ffa657','#ff7b72','#20d5c4','#e8b04b','#a371f7','#7ee787','#ffb86c','#ff5555','#8be9fd','#50fa7b','#bd93f9','#ff79c6','#6272a4','#f1fa8c','#ffb86c'];
-const CHART_OPT={responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false},tooltip:{backgroundColor:'#161b22',borderColor:'#30363d',borderWidth:1,titleColor:'#e6edf3',bodyColor:'#8b949e',padding:10}},scales:{x:{grid:{color:'#21262d'},ticks:{color:'#6e7681',font:{size:10}}},y:{grid:{color:'#21262d'},ticks:{color:'#6e7681',font:{size:10}}}}};
+const CHART_BASE={responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false},tooltip:{backgroundColor:'#fff',borderColor:'#e8edf5',borderWidth:1,titleColor:'#0f172a',bodyColor:'#475569',padding:10,boxShadow:'0 2px 8px rgba(0,0,0,.08)'}},scales:{x:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:10}}},y:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:10}}}}};
 function dc(id){if(charts[id]){charts[id].destroy();delete charts[id];}}
 
-// ══════════════════════════════════════════════
-// 요약 페이지
-// ══════════════════════════════════════════════
+function mkSummary(items){
+  return items.map(({label,val,color})=>`<div class="chart-summary-item"><div class="chart-summary-dot" style="background:${color}"></div>${label}: <strong>${val}</strong></div>`).join('');
+}
+
 function renderSummary(){
   const a=agg(FILTERED);
-  // 전기간 대비 (전 기간 = 첫번째 기간, 현재 = 마지막 기간)
-  const periods=[...activePeriods].sort((a,b)=>{
+  const periods=[...new Set(FILTERED.map(r=>r._period))].sort((x,y)=>{
     const mo=s=>Object.values(mo_name).indexOf(s.split(' ')[0]);
     const wk=s=>s.includes('1-2')?0:1;
-    return mo(a)!==mo(b)?mo(a)-mo(b):wk(a)-wk(b);
+    return mo(x)!==mo(y)?mo(x)-mo(y):wk(x)-wk(y);
   });
-  const prevRows=FILTERED.filter(r=>r._period===periods[0]);
-  const curRows=FILTERED.filter(r=>r._period===periods[periods.length-1]);
-  const prev=agg(prevRows), cur=agg(curRows);
-  const deltaFn=(c,p)=>{
-    if(!p||p===0) return null;
-    return (c-p)/Math.abs(p)*100;
-  };
-  const setKPI=(id,valId,subId,dId,val,sub,d,isRate)=>{
-    document.getElementById(valId).textContent=val;
-    document.getElementById(subId).textContent=sub;
-    if(dId&&d!==null&&!isNaN(d)){
-      const el=document.getElementById(dId);
-      el.textContent=(d>=0?'▲':'▼')+Math.abs(d).toFixed(1)+'%'+(periods.length>1?' vs '+periods[0]:'');
-      el.className='delta '+(d>=0?'up':'down');
-    }
-  };
-  setKPI('spend','k-spend','k-spend-sub','k-spend-d',fmtK(a.spend)+'원',fmt(a.spend)+' KRW',deltaFn(cur.spend,prev.spend));
-  setKPI('imp','k-imp','k-imp-sub','k-imp-d',fmtK(a.imp),'도달 '+fmtK(a.reach),deltaFn(cur.imp,prev.imp));
-  setKPI('click','k-click','k-click-sub','k-click-d',fmtK(a.click),'CTR '+pct(a.ctr),deltaFn(cur.click,prev.click));
-  setKPI('land','k-land','k-land-sub','k-land-d',fmtK(a.land),'랜딩율 '+pct(a.ltr),deltaFn(cur.land,prev.land));
-  setKPI('cpm','k-cpm','k-cpm-d','k-cpm-d',fmt(a.cpm,0),'',deltaFn(cur.cpm,prev.cpm));
-  setKPI('cpc','k-cpc','k-cpc-d','k-cpc-d',fmt(a.cpc,0),'',deltaFn(cur.cpc,prev.cpc));
+  const prev=agg(FILTERED.filter(r=>r._period===periods[0]));
+  const cur=agg(FILTERED.filter(r=>r._period===periods[periods.length-1]));
+  const dFn=(c,p)=>p?((c-p)/Math.abs(p)*100):null;
 
-  renderInsights();
-  renderPeriodChart();
-  renderPieChart();
-  renderNatTop5();
-  renderHeatmap();
+  const setK=(vid,sid,did,val,sub,d)=>{
+    document.getElementById(vid).textContent=val;
+    document.getElementById(sid).textContent=sub;
+    if(did){const el=document.getElementById(did);if(d!==null&&!isNaN(d)){el.textContent=(d>=0?'▲':'▼')+Math.abs(d).toFixed(1)+'%';el.className='delta '+(d>=0?'up':'down');}else el.textContent='';}
+  };
+  setK('k-spend','k-spend-sub','k-spend-d',fmtK(a.spend)+'원',fmt(a.spend)+' KRW',dFn(cur.spend,prev.spend));
+  setK('k-imp','k-imp-sub','k-imp-d',fmtK(a.imp),'도달 '+fmtK(a.reach),dFn(cur.imp,prev.imp));
+  setK('k-click','k-click-sub','k-click-d',fmtK(a.click),'CTR '+pct(a.ctr),dFn(cur.click,prev.click));
+  setK('k-land','k-land-sub','k-land-d',fmtK(a.land),'랜딩율 '+pct(a.ltr),dFn(cur.land,prev.land));
+  setK('k-cpm','k-cpm-sub','k-cpm-d',fmt(a.cpm,0),'',dFn(cur.cpm,prev.cpm));
+  setK('k-cpc','k-cpc-sub','k-cpc-d',fmt(a.cpc,0),'',dFn(cur.cpc,prev.cpc));
+
+  renderInsights();renderPeriodChart();renderHeatmap();renderNatTop5();renderPieChart();
 }
 
 function renderInsights(){
-  const byCountry={};
-  FILTERED.forEach(r=>{
-    if(!byCountry[r.country]) byCountry[r.country]={spend:0,imp:0,click:0,land:0,reach:0};
-    byCountry[r.country].spend+=r.spend; byCountry[r.country].imp+=r.imp;
-    byCountry[r.country].click+=r.click; byCountry[r.country].land+=r.land;
-  });
-  const stats=Object.entries(byCountry).map(([k,v])=>({name:k,...v,ctr:v.imp>0?v.click/v.imp:0,cpc:v.click>0?v.spend/v.click:0})).filter(r=>r.imp>1000);
+  const byC={};
+  FILTERED.forEach(r=>{if(!byC[r.country])byC[r.country]={spend:0,imp:0,click:0};byC[r.country].spend+=r.spend;byC[r.country].imp+=r.imp;byC[r.country].click+=r.click;});
+  const stats=Object.entries(byC).map(([k,v])=>({name:k,...v,ctr:v.imp>0?v.click/v.imp:0,cpc:v.click>0?v.spend/v.click:0})).filter(r=>r.imp>500);
   if(!stats.length){document.getElementById('insight-cards').innerHTML='';return;}
   stats.sort((a,b)=>b.ctr-a.ctr);
-  const best=stats[0], worst=stats[stats.length-1];
-  const opp=stats.filter(r=>r.ctr<0.02&&r.spend>100000).sort((a,b)=>b.spend-a.spend)[0]||stats[1];
+  const best=stats[0],worst=stats[stats.length-1];
+  const opp=stats.filter(r=>r.ctr<0.02&&r.spend>50000).sort((a,b)=>b.spend-a.spend)[0]||stats[Math.floor(stats.length/2)];
   document.getElementById('insight-cards').innerHTML=`
-    <div class="insight-card best">
-      <div class="insight-label">✅ Best Country</div>
-      <div class="insight-name">${best.name}</div>
-      <div class="insight-metric">CTR ${pct(best.ctr)} · CPC ${fmt(best.cpc,0)}원<br>지출 ${fmtK(best.spend)}원</div>
-    </div>
-    <div class="insight-card worst">
-      <div class="insight-label">⚠️ Worst Country</div>
-      <div class="insight-name">${worst.name}</div>
-      <div class="insight-metric">CTR ${pct(worst.ctr)} · CPC ${fmt(worst.cpc,0)}원<br>지출 ${fmtK(worst.spend)}원</div>
-    </div>
-    <div class="insight-card opp">
-      <div class="insight-label">💡 Opportunity</div>
-      <div class="insight-name">${opp?opp.name:'—'}</div>
-      <div class="insight-metric">${opp?`CTR ${pct(opp.ctr)} · 지출 ${fmtK(opp.spend)}원<br>CTR 개선 여지 있음`:'데이터 부족'}</div>
-    </div>`;
+    <div class="insight-card best"><div class="insight-label">✅ Best Country</div><div class="insight-name">${best.name}</div><div class="insight-metric">CTR ${pct(best.ctr)} · CPC ${fmt(best.cpc,0)}원<br>지출 ${fmtK(best.spend)}원</div></div>
+    <div class="insight-card worst"><div class="insight-label">⚠️ Worst Country</div><div class="insight-name">${worst.name}</div><div class="insight-metric">CTR ${pct(worst.ctr)} · CPC ${fmt(worst.cpc,0)}원<br>지출 ${fmtK(worst.spend)}원</div></div>
+    <div class="insight-card opp"><div class="insight-label">💡 Opportunity</div><div class="insight-name">${opp?opp.name:'—'}</div><div class="insight-metric">${opp?`CTR ${pct(opp.ctr)} · 지출 ${fmtK(opp.spend)}원<br>CTR 개선 여지 있음`:''}</div></div>`;
 }
 
 function renderPeriodChart(){
-  const periods=[...new Set(FILTERED.map(r=>r._period))].sort((a,b)=>{
+  const periods=[...new Set(FILTERED.map(r=>r._period))].filter(Boolean).sort((a,b)=>{
     const mo=s=>Object.values(mo_name).indexOf(s.split(' ')[0]);
     const wk=s=>s.includes('1-2')?0:1;
     return mo(a)!==mo(b)?mo(a)-mo(b):wk(a)-wk(b);
   });
-  const igData=periods.map(p=>FILTERED.filter(r=>r._period===p&&r.pf==='IG').reduce((s,r)=>s+r.spend,0));
-  const ttData=periods.map(p=>FILTERED.filter(r=>r._period===p&&r.pf==='TT').reduce((s,r)=>s+r.spend,0));
+  const igD=periods.map(p=>FILTERED.filter(r=>r._period===p&&r.pf==='IG').reduce((s,r)=>s+r.spend,0));
+  const ttD=periods.map(p=>FILTERED.filter(r=>r._period===p&&r.pf==='TT').reduce((s,r)=>s+r.spend,0));
   dc('period');
   const ctx=document.getElementById('ch-period').getContext('2d');
   charts['period']=new Chart(ctx,{type:'bar',data:{labels:periods,datasets:[
-    {label:'Instagram',data:igData,backgroundColor:'rgba(225,48,108,.75)',borderRadius:4,borderSkipped:false},
-    {label:'TikTok',data:ttData,backgroundColor:'rgba(105,201,208,.75)',borderRadius:4,borderSkipped:false}
-  ]},options:{...JSON.parse(JSON.stringify(CHART_OPT)),plugins:{legend:{display:true,position:'bottom',labels:{color:'#8b949e',font:{size:10},boxWidth:8,padding:10}},tooltip:{...CHART_OPT.plugins.tooltip,callbacks:{label:c=>` ${c.dataset.label}: ${fmtK(c.raw)}원`}}},scales:{x:{grid:{color:'#21262d'},ticks:{color:'#6e7681',font:{size:10}}},y:{grid:{color:'#21262d'},ticks:{color:'#6e7681',font:{size:10},callback:v=>fmtK(v)}}}}});
-}
-
-function renderPieChart(){
-  const byC={};
-  FILTERED.forEach(r=>{if(!byC[r.country])byC[r.country]=0;byC[r.country]+=r.spend;});
-  const sorted=Object.entries(byC).sort((a,b)=>b[1]-a[1]);
-  const total=sorted.reduce((s,[,v])=>s+v,0);
-  dc('pie');
-  const ctx=document.getElementById('ch-pie').getContext('2d');
-  charts['pie']=new Chart(ctx,{type:'doughnut',data:{labels:sorted.map(([k])=>k),datasets:[{data:sorted.map(([,v])=>v),backgroundColor:PALETTE.slice(0,sorted.length),borderColor:'#0d1117',borderWidth:2}]},options:{responsive:true,maintainAspectRatio:true,cutout:'60%',plugins:{legend:{display:false},tooltip:{backgroundColor:'#161b22',borderColor:'#30363d',borderWidth:1,titleColor:'#e6edf3',bodyColor:'#8b949e',padding:10,callbacks:{label:c=>` ${fmtK(c.raw)}원 (${(c.raw/total*100).toFixed(1)}%)`}}}}});
-  document.getElementById('pie-legend').innerHTML=sorted.slice(0,12).map(([k,v],i)=>`<div style="display:flex;align-items:center;gap:6px;font-size:11px"><div style="width:7px;height:7px;border-radius:50%;background:${PALETTE[i]};flex-shrink:0"></div><span style="color:var(--text2);flex:1">${k}</span><span style="font-family:'DM Mono',monospace;color:var(--text3);font-size:10px">${(v/total*100).toFixed(1)}%</span></div>`).join('');
-}
-
-function renderNatTop5(){
-  const byC={};
-  FILTERED.forEach(r=>{
-    if(!byC[r.country])byC[r.country]={spend:0,imp:0,click:0,land:0};
-    byC[r.country].spend+=r.spend;byC[r.country].imp+=r.imp;byC[r.country].click+=r.click;byC[r.country].land+=r.land;
-  });
-  const top5=Object.entries(byC).sort((a,b)=>b[1].spend-a[1].spend).slice(0,5);
-  document.getElementById('nat-top5').innerHTML=top5.map(([k,v],i)=>{
-    const ctr=v.imp>0?v.click/v.imp:0;
-    const cpc=v.click>0?v.spend/v.click:0;
-    return `<tr onclick="drillCountry('${k}')" style="cursor:pointer">
-      <td><span class="rank">${i+1}</span>${k}</td>
-      <td>${fmtK(v.spend)}원</td>
-      <td>${pct(ctr)}</td>
-      <td>${fmt(cpc,0)}원</td>
-      <td><span class="delta neu">—</span></td>
-    </tr>`;
-  }).join('');
+    {label:'Instagram',data:igD,backgroundColor:IG_COLOR+'0.7)',borderRadius:5,borderSkipped:false},
+    {label:'TikTok',data:ttD,backgroundColor:TT_COLOR+'0.7)',borderRadius:5,borderSkipped:false}
+  ]},options:{...JSON.parse(JSON.stringify(CHART_BASE)),plugins:{legend:{display:true,position:'bottom',labels:{color:'#475569',font:{size:10},boxWidth:8,padding:10}},tooltip:{...JSON.parse(JSON.stringify(CHART_BASE.plugins.tooltip)),callbacks:{label:c=>` ${c.dataset.label}: ${fmtK(c.raw)}원`}}},scales:{x:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:10}}},y:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:10},callback:v=>fmtK(v)}}}}});
 }
 
 function renderHeatmap(){
-  const countries=[...new Set(FILTERED.map(r=>r.country))];
   const byCP={};
-  FILTERED.forEach(r=>{
-    const k=r.country+'|'+r.pf;
-    if(!byCP[k])byCP[k]={imp:0,click:0};
-    byCP[k].imp+=r.imp;byCP[k].click+=r.click;
-  });
-  const top8=Object.entries(
-    FILTERED.reduce((acc,r)=>{acc[r.country]=(acc[r.country]||0)+r.spend;return acc;},{}))
-    .sort((a,b)=>b[1]-a[1]).slice(0,8).map(([k])=>k);
-  const allCtrs=top8.flatMap(c=>['IG','TT'].map(pf=>{const d=byCP[c+'|'+pf];return d&&d.imp>0?d.click/d.imp:null;})).filter(v=>v!==null);
-  const minCtr=Math.min(...allCtrs),maxCtr=Math.max(...allCtrs);
-  const heatColor=(v)=>{
-    if(v===null)return 'background:var(--bg3);color:var(--text3)';
-    const t=(v-minCtr)/(maxCtr-minCtr||1);
-    const r=Math.round(31+t*(63-31)),g=Math.round(185*t),b=Math.round(80*t);
-    return `background:rgba(${r},${g},${b},.3);color:${t>0.5?'var(--green)':'var(--text2)'}`;
-  };
+  FILTERED.forEach(r=>{const k=r.country+'|'+r.pf;if(!byCP[k])byCP[k]={imp:0,click:0};byCP[k].imp+=r.imp;byCP[k].click+=r.click;});
+  const top10=Object.entries(FILTERED.reduce((acc,r)=>{acc[r.country]=(acc[r.country]||0)+r.spend;return acc;},{})).sort((a,b)=>b[1]-a[1]).slice(0,10).map(([k])=>k);
+  const allCtrs=top10.flatMap(c=>['IG','TT'].map(pf=>{const d=byCP[c+'|'+pf];return d&&d.imp>0?d.click/d.imp:null;})).filter(v=>v!==null);
+  const minC=Math.min(...allCtrs),maxC=Math.max(...allCtrs),range=maxC-minC||1;
+  const hmClass=v=>{if(v===null)return 'hm-na';const t=(v-minC)/range;return t>0.6?'hm-high':t>0.3?'hm-mid':'hm-low';};
   let html=`<table class="heatmap-table"><thead><tr><th>국가</th><th>Instagram</th><th>TikTok</th></tr></thead><tbody>`;
-  top8.forEach(c=>{
+  top10.forEach(c=>{
     html+=`<tr><td>${c}</td>`;
-    ['IG','TT'].forEach(pf=>{
-      const d=byCP[c+'|'+pf];
-      const ctr=d&&d.imp>0?d.click/d.imp:null;
-      html+=`<td><span class="hm-cell" style="${heatColor(ctr)}">${ctr!==null?pct(ctr):'—'}</span></td>`;
-    });
+    ['IG','TT'].forEach(pf=>{const d=byCP[c+'|'+pf];const ctr=d&&d.imp>0?d.click/d.imp:null;html+=`<td><span class="hm-cell ${hmClass(ctr)}">${ctr!==null?pct(ctr):'—'}</span></td>`;});
     html+=`</tr>`;
   });
   html+=`</tbody></table>`;
   document.getElementById('heatmap-wrap').innerHTML=html;
 }
 
-// ══════════════════════════════════════════════
-// 국가별 상세 페이지
-// ══════════════════════════════════════════════
+function renderNatTop5(){
+  const byC={};
+  FILTERED.forEach(r=>{if(!byC[r.country])byC[r.country]={spend:0,imp:0,click:0};byC[r.country].spend+=r.spend;byC[r.country].imp+=r.imp;byC[r.country].click+=r.click;});
+  const top5=Object.entries(byC).sort((a,b)=>b[1].spend-a[1].spend).slice(0,5);
+  document.getElementById('nat-top5').innerHTML=top5.map(([k,v],i)=>{
+    const ctr=v.imp>0?v.click/v.imp:0,cpc=v.click>0?v.spend/v.click:0;
+    return `<tr><td><span class="rank">${i+1}</span>${k}</td><td>${fmtK(v.spend)}원</td><td>${pct(ctr)}</td><td>${fmt(cpc,0)}원</td><td><span class="delta neu">—</span></td></tr>`;
+  }).join('');
+}
+
+function renderPieChart(){
+  const byC={};FILTERED.forEach(r=>{if(!byC[r.country])byC[r.country]=0;byC[r.country]+=r.spend;});
+  const sorted=Object.entries(byC).sort((a,b)=>b[1]-a[1]);
+  const total=sorted.reduce((s,[,v])=>s+v,0);
+  dc('pie');
+  const ctx=document.getElementById('ch-pie').getContext('2d');
+  charts['pie']=new Chart(ctx,{type:'doughnut',data:{labels:sorted.map(([k])=>k),datasets:[{data:sorted.map(([,v])=>v),backgroundColor:PALETTE.slice(0,sorted.length),borderColor:'#fff',borderWidth:2}]},options:{responsive:true,maintainAspectRatio:true,cutout:'60%',plugins:{legend:{display:false},tooltip:{backgroundColor:'#fff',borderColor:'#e8edf5',borderWidth:1,titleColor:'#0f172a',bodyColor:'#475569',padding:8,callbacks:{label:c=>` ${fmtK(c.raw)}원 (${(c.raw/total*100).toFixed(1)}%)`}}}}});
+  document.getElementById('pie-legend').innerHTML=sorted.slice(0,12).map(([k,v],i)=>`<div style="display:flex;align-items:center;gap:5px;font-size:10px"><div style="width:7px;height:7px;border-radius:50%;background:${PALETTE[i]};flex-shrink:0"></div><span style="color:var(--text2);flex:1">${k}</span><span style="font-family:'DM Mono',monospace;color:var(--text3);font-size:9px">${(v/total*100).toFixed(1)}%</span></div>`).join('');
+}
+
 function renderCountryPage(){
   const byC={};
-  FILTERED.forEach(r=>{
-    if(!byC[r.country])byC[r.country]={spend:0,imp:0,click:0,land:0};
-    byC[r.country].spend+=r.spend;byC[r.country].imp+=r.imp;byC[r.country].click+=r.click;byC[r.country].land+=r.land;
-  });
+  FILTERED.forEach(r=>{if(!byC[r.country])byC[r.country]={spend:0,imp:0,click:0,land:0};byC[r.country].spend+=r.spend;byC[r.country].imp+=r.imp;byC[r.country].click+=r.click;byC[r.country].land+=r.land;});
   const sorted=Object.entries(byC).sort((a,b)=>b[1].spend-a[1].spend);
   document.getElementById('country-tbl').innerHTML=sorted.map(([k,v],i)=>{
     const ctr=v.imp>0?v.click/v.imp:0,cpc=v.click>0?v.spend/v.click:0,cpm=v.imp>0?v.spend/v.imp*1000:0;
-    return `<tr onclick="drillCountry('${k}')" style="cursor:pointer" title="클릭하면 상세보기">
-      <td><span class="rank">${i+1}</span>${k}</td>
-      <td>${fmtK(v.spend)}원</td><td>${fmtK(v.imp)}</td><td>${fmtK(v.click)}</td>
-      <td>${pct(ctr)}</td><td>${fmt(cpc,0)}원</td><td>${fmt(cpm,0)}원</td>
-    </tr>`;
+    return `<tr><td><span class="rank">${i+1}</span>${k}</td><td>${fmtK(v.spend)}원</td><td>${fmtK(v.imp)}</td><td>${fmtK(v.click)}</td><td>${pct(ctr)}</td><td>${fmt(cpc,0)}원</td><td>${fmt(cpm,0)}원</td></tr>`;
   }).join('');
   renderCountryChart(countryChartMetric);
-  // 추이 칩 업데이트
-  const allCountries=[...new Set(FILTERED.map(r=>r.country))].filter(Boolean).sort();
-  renderTrendCountryChips(allCountries);
+  updateTrendCountrySelects();
   renderCountryTrend();
 }
 
-function switchTab(el, chartId, metric){
-  el.parentElement.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  el.classList.add('active');
-  if(chartId==='country-chart'){countryChartMetric=metric;renderCountryChart(metric);}
-  else if(chartId==='pf-metric'){pfMetricTab=metric;renderPFMetricChart(metric);}
+function switchCTab(el,metric){
+  el.parentElement.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');
+  countryChartMetric=metric;renderCountryChart(metric);
 }
 
 function renderCountryChart(metric){
-  const byC={};
-  FILTERED.forEach(r=>{
-    if(!byC[r.country])byC[r.country]={spend:0,imp:0,click:0};
-    byC[r.country].spend+=r.spend;byC[r.country].imp+=r.imp;byC[r.country].click+=r.click;
-  });
+  const byC={};FILTERED.forEach(r=>{if(!byC[r.country])byC[r.country]={spend:0,imp:0,click:0};byC[r.country].spend+=r.spend;byC[r.country].imp+=r.imp;byC[r.country].click+=r.click;});
   const sorted=Object.entries(byC).sort((a,b)=>b[1].spend-a[1].spend).slice(0,12);
-  const labels=sorted.map(([k])=>k);
   const fn=metric==='spend'?v=>v.spend:metric==='cpm'?v=>(v.imp>0?v.spend/v.imp*1000:0):v=>(v.imp>0?v.click/v.imp:0);
   dc('country');
   const ctx=document.getElementById('ch-country').getContext('2d');
-  charts['country']=new Chart(ctx,{type:'bar',data:{labels,datasets:[{data:sorted.map(([,v])=>fn(v)),backgroundColor:PALETTE.slice(0,sorted.length),borderRadius:4,borderSkipped:false}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#161b22',borderColor:'#30363d',borderWidth:1,titleColor:'#e6edf3',bodyColor:'#8b949e',padding:10,callbacks:{label:c=>` ${metric==='ctr'?pct(c.raw):fmt(c.raw,0)+(metric==='spend'?'원':'')}`}}},scales:{x:{grid:{color:'#21262d'},ticks:{color:'#6e7681',font:{size:10},callback:v=>metric==='ctr'?pct(v):fmtK(v)}},y:{grid:{display:false},ticks:{color:'#e6edf3',font:{size:11}}}}}});
+  charts['country']=new Chart(ctx,{type:'bar',data:{labels:sorted.map(([k])=>k),datasets:[{data:sorted.map(([,v])=>fn(v)),backgroundColor:PALETTE.slice(0,sorted.length),borderRadius:4,borderSkipped:false}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#fff',borderColor:'#e8edf5',borderWidth:1,titleColor:'#0f172a',bodyColor:'#475569',padding:8,callbacks:{label:c=>` ${metric==='ctr'?pct(c.raw):fmt(c.raw,0)+(metric==='spend'?'원':'')}`}}},scales:{x:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:10},callback:v=>metric==='ctr'?pct(v):fmtK(v)}},y:{grid:{display:false},ticks:{color:'#0f172a',font:{size:11}}}}}});
 }
 
-function drillCountry(country){
-  selectedCountry=country;
-  const panel=document.getElementById('drilldown');
-  panel.classList.add('active');
-  document.getElementById('dd-title').textContent='▼ '+country+' 상세';
-  // 소재 TOP5
-  const rows=FILTERED.filter(r=>r.country===country);
-  const byCr={};
-  rows.forEach(r=>{
-    const k=r.name+'|'+r.pf;
-    if(!byCr[k])byCr[k]={name:r.name,pf:r.pf,spend:0,imp:0,click:0};
-    byCr[k].spend+=r.spend;byCr[k].imp+=r.imp;byCr[k].click+=r.click;
+function updateTrendCountrySelects(){
+  const allC=[...new Set(FILTERED.map(r=>r.country))].filter(Boolean).sort();
+  const sel=document.getElementById('trend-country-sel');
+  sel.innerHTML='<option value="">국가 선택</option>';
+  allC.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;sel.appendChild(o);});
+}
+
+function filterTrendCountries(){
+  const region=document.getElementById('trend-region').value;
+  const allC=[...new Set(FILTERED.map(r=>r.country))].filter(Boolean).sort();
+  const filtered=region?FILTERED.filter(r=>r.region===region):FILTERED;
+  const filteredC=[...new Set(filtered.map(r=>r.country))].filter(Boolean).sort();
+  const sel=document.getElementById('trend-country-sel');
+  sel.innerHTML='<option value="">국가 선택</option>';
+  filteredC.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;sel.appendChild(o);});
+  selectedTrendCountries=new Set([...selectedTrendCountries].filter(c=>filteredC.includes(c)));
+  renderCountryTrend();
+}
+
+function addTrendCountry(country){
+  if(!country)return;
+  if(selectedTrendCountries.size>=5)return;
+  selectedTrendCountries.add(country);
+  document.getElementById('trend-country-sel').value='';
+  renderCountryTrend();
+}
+
+function removeTrendCountry(country){
+  if(selectedTrendCountries.size<=1)return;
+  selectedTrendCountries.delete(country);
+  renderCountryTrend();
+}
+
+function renderCountryTrend(){
+  const metric1=document.getElementById('trend-metric1').value;
+  const metric2=document.getElementById('trend-metric2').value;
+  const countries=[...selectedTrendCountries];
+
+  // 칩 렌더
+  const chipsWrap=document.getElementById('trend-country-chips');
+  chipsWrap.innerHTML=countries.map((c,i)=>`<div style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:#f0f9ff;border:1px solid ${PALETTE[i%PALETTE.length]}44;border-radius:12px;font-size:10px;color:${PALETTE[i%PALETTE.length]};font-weight:600;cursor:pointer" onclick="removeTrendCountry('${c}')"><div style="width:6px;height:6px;border-radius:50%;background:${PALETTE[i%PALETTE.length]}"></div>${c} ✕</div>`).join('');
+
+  if(!countries.length)return;
+  const allDates=[...new Set(FILTERED.map(r=>r._date))].filter(Boolean).sort();
+  if(!allDates.length){dc('country-trend');return;}
+
+  const metricFn=(m,rows)=>{const a=agg(rows);return m==='spend'?a.spend:m==='imp'?a.imp:m==='click'?a.click:m==='land'?a.land:m==='ctr'?a.ctr*100:a.cpm;};
+  const metricLabel=(m,v)=>m==='ctr'?v.toFixed(2)+'%':m==='cpm'?fmt(v,0)+'원':fmtK(v);
+
+  const datasets=[];
+  countries.forEach((c,i)=>{
+    const color=PALETTE[i%PALETTE.length];
+    datasets.push({label:c,data:allDates.map(d=>{const rows=FILTERED.filter(r=>r.country===c&&r._date===d);return rows.length?metricFn(metric1,rows):null;}),borderColor:color,backgroundColor:color+'22',tension:.3,fill:false,pointRadius:3,pointBackgroundColor:color,spanGaps:true,yAxisID:'y'});
+    if(metric2){
+      datasets.push({label:c+' ('+metric2+')',data:allDates.map(d=>{const rows=FILTERED.filter(r=>r.country===c&&r._date===d);return rows.length?metricFn(metric2,rows):null;}),borderColor:color,backgroundColor:color+'11',tension:.3,fill:false,pointRadius:3,pointBackgroundColor:color,borderDash:[4,4],spanGaps:true,yAxisID:'y2'});
+    }
   });
-  const top5=Object.values(byCr).sort((a,b)=>b.spend-a.spend).slice(0,5);
-  document.getElementById('dd-creatives').innerHTML=top5.map((r,i)=>`
-    <tr><td><span class="rank">${i+1}</span><span style="font-size:11px;max-width:160px;display:inline-block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.name}</span></td>
-    <td><span class="pf-badge pf-${r.pf.toLowerCase()}">${r.pf}</span></td>
-    <td>${fmtK(r.spend)}원</td>
-    <td>${pct(r.imp>0?r.click/r.imp:0)}</td></tr>`).join('');
-  // 날짜별 추이
-  const byDate={};
-  rows.forEach(r=>{if(!byDate[r._date])byDate[r._date]=0;byDate[r._date]+=r.spend;});
-  const dates=Object.keys(byDate).sort();
-  dc('dd');
-  const ctx=document.getElementById('ch-dd').getContext('2d');
-  charts['dd']=new Chart(ctx,{type:'line',data:{labels:dates,datasets:[{label:'지출',data:dates.map(d=>byDate[d]),borderColor:'#58a6ff',backgroundColor:'rgba(88,166,255,.1)',tension:.3,fill:true,pointRadius:3,pointBackgroundColor:'#58a6ff'}]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false},tooltip:{backgroundColor:'#161b22',borderColor:'#30363d',borderWidth:1,titleColor:'#e6edf3',bodyColor:'#8b949e',padding:8}},scales:{x:{grid:{color:'#21262d'},ticks:{color:'#6e7681',font:{size:9}}},y:{grid:{color:'#21262d'},ticks:{color:'#6e7681',font:{size:9},callback:v=>fmtK(v)}}}}});
-  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+
+  // 수치 요약
+  const summaryItems=countries.map((c,i)=>{
+    const rows=FILTERED.filter(r=>r.country===c);
+    const v=metricFn(metric1,rows);
+    return{label:c,val:metricLabel(metric1,v),color:PALETTE[i%PALETTE.length]};
+  });
+  document.getElementById('trend-summary').innerHTML=mkSummary(summaryItems);
+
+  dc('country-trend');
+  const ctx=document.getElementById('ch-country-trend').getContext('2d');
+  const scales={x:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:9},maxTicksLimit:12}},y:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:9},callback:v=>metric1==='ctr'?v.toFixed(1)+'%':fmtK(v)},title:{display:true,text:metric1,color:'#94a3b8',font:{size:9}}}};
+  if(metric2)scales.y2={position:'right',grid:{display:false},ticks:{color:'#cbd5e1',font:{size:9},callback:v=>metric2==='ctr'?v.toFixed(1)+'%':fmtK(v)},title:{display:true,text:metric2,color:'#cbd5e1',font:{size:9}}};
+  charts['country-trend']=new Chart(ctx,{type:'line',data:{labels:allDates,datasets},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:true,position:'bottom',labels:{color:'#475569',font:{size:10},boxWidth:8,padding:6}},tooltip:{backgroundColor:'#fff',borderColor:'#e8edf5',borderWidth:1,titleColor:'#0f172a',bodyColor:'#475569',padding:8}},scales}});
 }
 
-function closeDrilldown(){
-  document.getElementById('drilldown').classList.remove('active');
-  selectedCountry=null;
-}
-
-// ══════════════════════════════════════════════
-// 소재별 상세 페이지
-// ══════════════════════════════════════════════
 function renderCreativePage(){
-  const sort=document.getElementById('creative-sort').value;
   const filterProduct=document.getElementById('filter-product')?document.getElementById('filter-product').value:'';
+  const sort=document.getElementById('creative-sort').value;
   const srcRows=filterProduct==='__none__'?[]:filterProduct?FILTERED.filter(r=>r.product===filterProduct):FILTERED;
   const byCr={};
-  srcRows.forEach(r=>{
-    const k=r.name+'|'+r.pf;
-    if(!byCr[k])byCr[k]={name:r.name,pf:r.pf,url:r.url,spend:0,imp:0,click:0,land:0};
-    byCr[k].spend+=r.spend;byCr[k].imp+=r.imp;byCr[k].click+=r.click;byCr[k].land+=r.land;
-  });
+  srcRows.forEach(r=>{const k=r.name+'|'+r.pf;if(!byCr[k])byCr[k]={name:r.name,pf:r.pf,url:r.url,spend:0,imp:0,click:0,land:0};byCr[k].spend+=r.spend;byCr[k].imp+=r.imp;byCr[k].click+=r.click;byCr[k].land+=r.land;});
   let rows=Object.values(byCr).map(r=>({...r,ctr:r.imp>0?r.click/r.imp:0,cpc:r.click>0?r.spend/r.click:0,cpm:r.imp>0?r.spend/r.imp*1000:0}));
   rows.sort((a,b)=>sort==='cpc'?a.cpc-b.cpc:sort==='ctr'?b.ctr-a.ctr:b[sort]-a[sort]);
-  const top20=rows;
-  const maxSpend=Math.max(...top20.map(r=>r.spend),1);
-  document.getElementById('creative-tbl').innerHTML=top20.map((r,i)=>{
-    const thumb=r.url?`<img src="${r.url}" class="creative-thumb" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" loading="lazy"><div class="creative-thumb-placeholder" style="display:none">${r.pf}</div>`:`<div class="creative-thumb-placeholder">${r.pf}</div>`;
-    const nameEl=r.url?`<a href="${r.url}" target="_blank" rel="noopener" style="color:var(--text);text-decoration:none;border-bottom:1px dashed var(--border)" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text)'">${r.name} <span style="font-size:9px;opacity:.5">↗</span></a>`:r.name;
-    return `<tr>
-      <td><div class="creative-row-inner">${thumb}<div class="creative-name" title="${r.name}">${nameEl}</div></div></td>
-      <td><span class="pf-badge pf-${r.pf.toLowerCase()}">${r.pf}</span></td>
-      <td><div class="bar-wrap"><div class="bar-inner" style="width:${r.spend/maxSpend*60}px;background:${r.pf==='IG'?'rgba(225,48,108,.6)':'rgba(105,201,208,.6)'}"></div><span>${fmtK(r.spend)}원</span></div></td>
-      <td>${fmtK(r.imp)}</td><td>${fmtK(r.click)}</td><td>${fmtK(r.land)}</td>
-      <td>${pct(r.ctr)}</td><td>${fmt(r.cpc,0)}</td><td>${fmt(r.cpm,0)}</td>
-    </tr>`;
+  const maxSpend=Math.max(...rows.map(r=>r.spend),1);
+  document.getElementById('creative-tbl').innerHTML=rows.map((r,i)=>{
+    const thumb=r.url?`<img src="${r.url}" class="creative-thumb" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" loading="lazy"><div class="creative-thumb-ph" style="display:none">${r.pf}</div>`:`<div class="creative-thumb-ph">${r.pf}</div>`;
+    const nameEl=r.url?`<a href="${r.url}" target="_blank" rel="noopener" style="color:var(--text);text-decoration:none;border-bottom:1px dashed var(--border)" onmouseover="this.style.color='var(--accent2)'" onmouseout="this.style.color='var(--text)'">${r.name} <span style="font-size:9px;opacity:.4">↗</span></a>`:r.name;
+    return `<tr><td><div class="creative-row-inner">${thumb}<div class="creative-name-cell" title="${r.name}">${nameEl}</div></div></td><td><span class="pf-badge pf-${r.pf.toLowerCase()}">${r.pf}</span></td><td><div class="bar-wrap"><div class="bar-inner" style="width:${r.spend/maxSpend*60}px;background:${r.pf==='IG'?IG_COLOR+'0.6)':TT_COLOR+'0.6)'}"></div><span>${fmtK(r.spend)}원</span></div></td><td>${fmtK(r.imp)}</td><td>${fmtK(r.click)}</td><td>${fmtK(r.land)}</td><td>${pct(r.ctr)}</td><td>${fmt(r.cpc,0)}</td><td>${fmt(r.cpm,0)}</td></tr>`;
   }).join('');
-
-  // 인사이트
   const best=rows.sort((a,b)=>b.ctr-a.ctr)[0];
-  const worst=rows.filter(r=>r.imp>1000).sort((a,b)=>a.ctr-b.ctr)[0];
+  const worst=[...rows].filter(r=>r.imp>1000).sort((a,b)=>a.ctr-b.ctr)[0];
   document.getElementById('creative-insight').innerHTML=`
-    <div style="margin-bottom:10px;padding:10px;background:rgba(63,185,80,.07);border:1px solid rgba(63,185,80,.2);border-radius:6px">
-      <div style="font-size:9px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:.7px;margin-bottom:4px">🏆 Best CTR 소재</div>
-      <div style="font-size:12px;font-weight:600;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${best?best.name:'—'}</div>
-      <div style="font-size:10px;color:var(--text2);font-family:'DM Mono',monospace">${best?`CTR ${pct(best.ctr)} · ${best.pf} · ${fmtK(best.spend)}원`:''}</div>
-    </div>
-    <div style="padding:10px;background:rgba(248,81,73,.07);border:1px solid rgba(248,81,73,.2);border-radius:6px">
-      <div style="font-size:9px;font-weight:800;color:var(--red);text-transform:uppercase;letter-spacing:.7px;margin-bottom:4px">⚠️ 개선 필요 소재</div>
-      <div style="font-size:12px;font-weight:600;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${worst?worst.name:'—'}</div>
-      <div style="font-size:10px;color:var(--text2);font-family:'DM Mono',monospace">${worst?`CTR ${pct(worst.ctr)} · ${worst.pf} · ${fmtK(worst.spend)}원`:''}</div>
-    </div>`;
-
-  // 버블차트
+    <div style="margin-bottom:8px;padding:10px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px"><div style="font-size:9px;font-weight:700;color:#15803d;text-transform:uppercase;letter-spacing:.6px;margin-bottom:3px">🏆 Best CTR 소재</div><div style="font-size:12px;font-weight:700;margin-bottom:2px;color:var(--navy);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${best?best.name:'—'}</div><div style="font-size:10px;color:var(--text2);font-family:'DM Mono',monospace">${best?`CTR ${pct(best.ctr)} · ${best.pf} · ${fmtK(best.spend)}원`:''}</div></div>
+    <div style="padding:10px;background:#fef2f2;border:1px solid #fecaca;border-radius:6px"><div style="font-size:9px;font-weight:700;color:#b91c1c;text-transform:uppercase;letter-spacing:.6px;margin-bottom:3px">⚠️ 개선 필요 소재</div><div style="font-size:12px;font-weight:700;margin-bottom:2px;color:var(--navy);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${worst?worst.name:'—'}</div><div style="font-size:10px;color:var(--text2);font-family:'DM Mono',monospace">${worst?`CTR ${pct(worst.ctr)} · ${worst.pf} · ${fmtK(worst.spend)}원`:''}</div></div>`;
   dc('bubble');
   const ctx=document.getElementById('ch-bubble').getContext('2d');
-  const bubbleData=top20.map(r=>({x:r.cpc,y:r.ctr*100,r:Math.max(3,Math.sqrt(r.spend/5000)),label:r.name,pf:r.pf}));
-  charts['bubble']=new Chart(ctx,{type:'bubble',data:{datasets:[
-    {label:'IG',data:bubbleData.filter(d=>d.pf==='IG').map(d=>({x:d.x,y:d.y,r:d.r})),backgroundColor:'rgba(225,48,108,.5)',borderColor:'rgba(225,48,108,.8)'},
-    {label:'TT',data:bubbleData.filter(d=>d.pf==='TT').map(d=>({x:d.x,y:d.y,r:d.r})),backgroundColor:'rgba(105,201,208,.5)',borderColor:'rgba(105,201,208,.8)'}
-  ]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:true,position:'bottom',labels:{color:'#8b949e',font:{size:10},boxWidth:8}},tooltip:{backgroundColor:'#161b22',borderColor:'#30363d',borderWidth:1,titleColor:'#e6edf3',bodyColor:'#8b949e',padding:8,callbacks:{label:c=>`CPC: ${fmt(c.parsed.x,0)}원 · CTR: ${c.parsed.y.toFixed(2)}%`}}},scales:{x:{grid:{color:'#21262d'},ticks:{color:'#6e7681',font:{size:9}},title:{display:true,text:'CPC (원)',color:'#6e7681',font:{size:9}}},y:{grid:{color:'#21262d'},ticks:{color:'#6e7681',font:{size:9}},title:{display:true,text:'CTR (%)',color:'#6e7681',font:{size:9}}}}}});
+  const bRows=rows.slice(0,20);
+  charts['bubble']=new Chart(ctx,{type:'bubble',data:{datasets:[{label:'IG',data:bRows.filter(r=>r.pf==='IG').map(r=>({x:r.cpc,y:r.ctr*100,r:Math.max(3,Math.sqrt(r.spend/5000))})),backgroundColor:IG_COLOR+'0.5)',borderColor:IG_COLOR+'0.8)'},{label:'TT',data:bRows.filter(r=>r.pf==='TT').map(r=>({x:r.cpc,y:r.ctr*100,r:Math.max(3,Math.sqrt(r.spend/5000))})),backgroundColor:TT_COLOR+'0.5)',borderColor:TT_COLOR+'0.8)'}]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:true,position:'bottom',labels:{color:'#475569',font:{size:10},boxWidth:8}},tooltip:{backgroundColor:'#fff',borderColor:'#e8edf5',borderWidth:1,titleColor:'#0f172a',bodyColor:'#475569',padding:8,callbacks:{label:c=>`CPC: ${fmt(c.parsed.x,0)}원 · CTR: ${c.parsed.y.toFixed(2)}%`}}},scales:{x:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:9}},title:{display:true,text:'CPC (원)',color:'#94a3b8',font:{size:9}}},y:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:9}},title:{display:true,text:'CTR (%)',color:'#94a3b8',font:{size:9}}}}}});
 }
 
-// ══════════════════════════════════════════════
-// 플랫폼 비교 페이지
-// ══════════════════════════════════════════════
+function switchPFTab(el,metric){
+  el.parentElement.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');
+  pfMetricTab=metric;renderPFMetricChart(metric);
+}
+
 function renderPlatformPage(){
-  const igRows=FILTERED.filter(r=>r.pf==='IG');
-  const ttRows=FILTERED.filter(r=>r.pf==='TT');
-  const ig=agg(igRows), tt=agg(ttRows);
+  const igRows=FILTERED.filter(r=>r.pf==='IG'),ttRows=FILTERED.filter(r=>r.pf==='TT');
+  const ig=agg(igRows),tt=agg(ttRows);
+  const mkM=(data,color)=>([
+    {l:'지출',v:fmtK(data.spend)+'원'},{l:'노출',v:fmtK(data.imp)},{l:'클릭',v:fmtK(data.click)},
+    {l:'CTR',v:pct(data.ctr)},{l:'CPC',v:fmt(data.cpc,0)+'원'},{l:'CPM',v:fmt(data.cpm,0)+'원'},
+  ].map(m=>`<div class="pf-metric"><div class="pf-metric-label">${m.l}</div><div class="pf-metric-val" style="color:${color}">${m.v}</div></div>`).join(''));
+  document.getElementById('pf-ig-metrics').innerHTML=mkM(ig,'var(--ig)');
+  document.getElementById('pf-tt-metrics').innerHTML=mkM(tt,'var(--tt)');
 
-  const mkMetrics=(data,color)=>[
-    {l:'지출',v:fmtK(data.spend)+'원',d:null},
-    {l:'CTR',v:pct(data.ctr),d:null},
-    {l:'CPC',v:fmt(data.cpc,0)+'원',d:null},
-    {l:'CPM',v:fmt(data.cpm,0)+'원',d:null},
-    {l:'노출',v:fmtK(data.imp),d:null},
-    {l:'링크클릭',v:fmtK(data.click),d:null},
-  ].map(m=>`<div class="pf-metric"><div class="pf-metric-label">${m.l}</div><div class="pf-metric-val" style="color:${color}">${m.v}</div></div>`).join('');
-
-  document.getElementById('pf-ig-metrics').innerHTML=mkMetrics(ig,'var(--ig)');
-  document.getElementById('pf-tt-metrics').innerHTML=mkMetrics(tt,'var(--tt2)');
-
-  // 추이 라인차트
-  const periods=[...new Set(FILTERED.map(r=>r._period))].sort((a,b)=>{
+  const periods=[...new Set(FILTERED.map(r=>r._period))].filter(Boolean).sort((a,b)=>{
     const mo=s=>Object.values(mo_name).indexOf(s.split(' ')[0]);
     const wk=s=>s.includes('1-2')?0:1;
     return mo(a)!==mo(b)?mo(a)-mo(b):wk(a)-wk(b);
   });
+  const igSpend=periods.map(p=>igRows.filter(r=>r._period===p).reduce((s,r)=>s+r.spend,0));
+  const ttSpend=periods.map(p=>ttRows.filter(r=>r._period===p).reduce((s,r)=>s+r.spend,0));
+
+  document.getElementById('pf-trend-summary').innerHTML=mkSummary([
+    {label:'Instagram',val:fmtK(ig.spend)+'원',color:IG_COLOR+'0.8)'},
+    {label:'TikTok',val:fmtK(tt.spend)+'원',color:TT_COLOR+'0.8)'},
+  ]);
+
   dc('pf-trend');
   const ctx1=document.getElementById('ch-pf-trend').getContext('2d');
   charts['pf-trend']=new Chart(ctx1,{type:'line',data:{labels:periods,datasets:[
-    {label:'Instagram',data:periods.map(p=>igRows.filter(r=>r._period===p).reduce((s,r)=>s+r.spend,0)),borderColor:'rgba(225,48,108,.9)',backgroundColor:'rgba(225,48,108,.1)',tension:.3,fill:true,pointRadius:4,pointBackgroundColor:'rgba(225,48,108,.9)'},
-    {label:'TikTok',data:periods.map(p=>ttRows.filter(r=>r._period===p).reduce((s,r)=>s+r.spend,0)),borderColor:'rgba(105,201,208,.9)',backgroundColor:'rgba(105,201,208,.1)',tension:.3,fill:true,pointRadius:4,pointBackgroundColor:'rgba(105,201,208,.9)'}
-  ]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:true,position:'bottom',labels:{color:'#8b949e',font:{size:10},boxWidth:8,padding:10}},tooltip:{backgroundColor:'#161b22',borderColor:'#30363d',borderWidth:1,titleColor:'#e6edf3',bodyColor:'#8b949e',padding:8,callbacks:{label:c=>` ${c.dataset.label}: ${fmtK(c.raw)}원`}}},scales:{x:{grid:{color:'#21262d'},ticks:{color:'#6e7681',font:{size:10}}},y:{grid:{color:'#21262d'},ticks:{color:'#6e7681',font:{size:10},callback:v=>fmtK(v)}}}}});
+    {label:'Instagram',data:igSpend,borderColor:IG_COLOR+'0.9)',backgroundColor:IG_COLOR+'0.1)',tension:.3,fill:true,pointRadius:4,pointBackgroundColor:IG_COLOR+'0.9)'},
+    {label:'TikTok',data:ttSpend,borderColor:TT_COLOR+'0.9)',backgroundColor:TT_COLOR+'0.1)',tension:.3,fill:true,pointRadius:4,pointBackgroundColor:TT_COLOR+'0.9)'}
+  ]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:true,position:'bottom',labels:{color:'#475569',font:{size:10},boxWidth:8,padding:10}},tooltip:{backgroundColor:'#fff',borderColor:'#e8edf5',borderWidth:1,titleColor:'#0f172a',bodyColor:'#475569',padding:8,callbacks:{label:c=>` ${c.dataset.label}: ${fmtK(c.raw)}원`}}},scales:{x:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:10}}},y:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:10},callback:v=>fmtK(v)}}}}});
 
   renderPFMetricChart(pfMetricTab);
-  renderPFCountryTrend();
 
-  // 강점 분석
   document.getElementById('pf-strengths').innerHTML=`
-    <div style="padding:14px;background:rgba(225,48,108,.07);border:1px solid rgba(225,48,108,.2);border-radius:8px">
+    <div style="padding:14px;background:#fef2f5;border:1px solid rgba(225,48,108,.15);border-radius:8px">
       <div style="font-size:11px;font-weight:700;color:var(--ig);margin-bottom:8px">📸 Instagram 강점</div>
-      <div style="font-size:11px;color:var(--text2);line-height:1.8">
-        · CTR ${pct(ig.ctr)} ${ig.ctr>tt.ctr?'(TT 대비 높음)':'(TT 대비 낮음)'}<br>
+      <div style="font-size:11px;color:var(--text2);line-height:1.9">
+        · CTR ${pct(ig.ctr)} ${ig.ctr>tt.ctr?'<span style="color:var(--green)">▲ TT 대비 높음</span>':'<span style="color:var(--red)">▼ TT 대비 낮음</span>'}<br>
         · CPM ${fmt(ig.cpm,0)}원 · CPC ${fmt(ig.cpc,0)}원<br>
         · 랜딩 전환율 ${pct(ig.ltr)}
       </div>
     </div>
-    <div style="padding:14px;background:rgba(105,201,208,.07);border:1px solid rgba(105,201,208,.2);border-radius:8px">
-      <div style="font-size:11px;font-weight:700;color:var(--tt2);margin-bottom:8px">🎵 TikTok 강점</div>
-      <div style="font-size:11px;color:var(--text2);line-height:1.8">
-        · CTR ${pct(tt.ctr)} ${tt.ctr>ig.ctr?'(IG 대비 높음)':'(IG 대비 낮음)'}<br>
+    <div style="padding:14px;background:#f0fdfa;border:1px solid rgba(20,184,166,.15);border-radius:8px">
+      <div style="font-size:11px;font-weight:700;color:var(--tt);margin-bottom:8px">🎵 TikTok 강점</div>
+      <div style="font-size:11px;color:var(--text2);line-height:1.9">
+        · CTR ${pct(tt.ctr)} ${tt.ctr>ig.ctr?'<span style="color:var(--green)">▲ IG 대비 높음</span>':'<span style="color:var(--red)">▼ IG 대비 낮음</span>'}<br>
         · CPM ${fmt(tt.cpm,0)}원 · CPC ${fmt(tt.cpc,0)}원<br>
         · 랜딩 전환율 ${pct(tt.ltr)}
       </div>
     </div>`;
+
+  updatePFTrendCountrySelects();
+  renderPFCountryTrend();
 }
 
 function renderPFMetricChart(metric){
-  const igRows=FILTERED.filter(r=>r.pf==='IG');
-  const ttRows=FILTERED.filter(r=>r.pf==='TT');
-  const labels=['Instagram','TikTok'];
-  const ig=agg(igRows),tt=agg(ttRows);
+  const ig=agg(FILTERED.filter(r=>r.pf==='IG')),tt=agg(FILTERED.filter(r=>r.pf==='TT'));
   const fn=m=>m==='ctr'?[ig.ctr*100,tt.ctr*100]:m==='cpc'?[ig.cpc,tt.cpc]:[ig.cpm,tt.cpm];
+  const vals=fn(metric);
+  document.getElementById('pf-metric-summary').innerHTML=mkSummary([
+    {label:'Instagram',val:metric==='ctr'?vals[0].toFixed(2)+'%':fmt(vals[0],0)+'원',color:IG_COLOR+'0.8)'},
+    {label:'TikTok',val:metric==='ctr'?vals[1].toFixed(2)+'%':fmt(vals[1],0)+'원',color:TT_COLOR+'0.8)'},
+  ]);
   dc('pf-metric');
   const ctx=document.getElementById('ch-pf-metric').getContext('2d');
-  charts['pf-metric']=new Chart(ctx,{type:'bar',data:{labels,datasets:[{data:fn(metric),backgroundColor:['rgba(225,48,108,.7)','rgba(105,201,208,.7)'],borderRadius:6,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false},tooltip:{backgroundColor:'#161b22',borderColor:'#30363d',borderWidth:1,titleColor:'#e6edf3',bodyColor:'#8b949e',padding:8,callbacks:{label:c=>metric==='ctr'?` ${c.raw.toFixed(2)}%`:` ${fmt(c.raw,0)}원`}}},scales:{x:{grid:{display:false},ticks:{color:'#e6edf3',font:{size:11}}},y:{grid:{color:'#21262d'},ticks:{color:'#6e7681',font:{size:10},callback:v=>metric==='ctr'?v.toFixed(2)+'%':fmt(v,0)}}}}});
+  charts['pf-metric']=new Chart(ctx,{type:'bar',data:{labels:['Instagram','TikTok'],datasets:[{data:vals,backgroundColor:[IG_COLOR+'0.7)',TT_COLOR+'0.7)'],borderRadius:6,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false},tooltip:{backgroundColor:'#fff',borderColor:'#e8edf5',borderWidth:1,titleColor:'#0f172a',bodyColor:'#475569',padding:8,callbacks:{label:c=>metric==='ctr'?` ${c.raw.toFixed(2)}%`:` ${fmt(c.raw,0)}원`}}},scales:{x:{grid:{display:false},ticks:{color:'#0f172a',font:{size:11}}},y:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:10},callback:v=>metric==='ctr'?v.toFixed(1)+'%':fmt(v,0)}}}}});
 }
 
-// ══════════════════════════════════════════════
-// 시작
-// ══════════════════════════════════════════════
-
-// ── 상품명 추출 (소재명 앞부분) ──────────────────────────
-function extractProduct(name) {
-  if(!name) return '기타';
-  const n=name.trim();
-  // '[' 앞 텍스트 추출
-  const m=n.match(/^([^\[]+)/);
-  if(m){
-    let p=m[1].trim().replace(/[-_]+$/, '').trim();
-    // Copy of / Copy N of 제거
-    p=p.replace(/^Copy\s+(\d+\s+)?of\s+/i,'');
-    if(p) return p;
-  }
-  return n.split(' ')[0]||'기타';
+function updatePFTrendCountrySelects(){
+  const allC=[...new Set(FILTERED.map(r=>r.country))].filter(Boolean).sort();
+  const sel=document.getElementById('pf-trend-country');
+  const current=sel.value;
+  sel.innerHTML='<option value="">국가 선택</option>';
+  allC.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;sel.appendChild(o);});
+  if(current)sel.value=current;
 }
 
-// ── 국가 추이 칩 렌더 ────────────────────────────────────
-function renderTrendCountryChips(countries) {
-  const wrap=document.getElementById('trend-country-chips');
-  if(!wrap) return;
-  wrap.innerHTML=countries.map(c=>{
-    const active=selectedTrendCountries.has(c)?'active':'';
-    return `<div class="chip ${active}" onclick="toggleTrendCountry('${c}',this)" style="font-size:10px;padding:2px 8px">${c}</div>`;
-  }).join('');
+function filterPFTrendCountries(){
+  const region=document.getElementById('pf-trend-region').value;
+  const allC=[...new Set(FILTERED.map(r=>r.country))].filter(Boolean).sort();
+  const filteredC=region?[...new Set(FILTERED.filter(r=>r.region===region).map(r=>r.country))].sort():allC;
+  const sel=document.getElementById('pf-trend-country');
+  sel.innerHTML='<option value="">국가 선택</option>';
+  filteredC.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;sel.appendChild(o);});
+  renderPFCountryTrend();
 }
 
-function toggleTrendCountry(country, el) {
-  if(selectedTrendCountries.has(country)){
-    if(selectedTrendCountries.size===1) return;
-    selectedTrendCountries.delete(country);
-    el.classList.remove('active');
-  } else {
-    if(selectedTrendCountries.size>=5) return;
-    selectedTrendCountries.add(country);
-    el.classList.add('active');
-  }
-  renderCountryTrend();
-}
-
-// ── 국가별 성과 추이 (국가별 상세) ──────────────────────
-function renderCountryTrend() {
-  const metric=document.getElementById('trend-metric')?document.getElementById('trend-metric').value:'spend';
-  const countries=[...selectedTrendCountries];
-  if(!countries.length) return;
-
-  // 날짜별 집계
+function renderPFCountryTrend(){
+  const metric=document.getElementById('pf-trend-metric').value;
+  const country=document.getElementById('pf-trend-country').value;
+  if(!country){dc('pf-country-trend');document.getElementById('pf-country-summary').innerHTML='';return;}
   const allDates=[...new Set(FILTERED.map(r=>r._date))].filter(Boolean).sort();
-  if(!allDates.length){dc('country-trend');return;}
-
-  const metricFn=(rows)=>{
-    const a=agg(rows);
-    return metric==='spend'?a.spend:metric==='imp'?a.imp:metric==='click'?a.click:metric==='land'?a.land:metric==='ctr'?a.ctr*100:a.cpm;
-  };
-  const fmtLabel=metric==='ctr'?v=>v.toFixed(2)+'%':metric==='cpm'?v=>fmt(v,0)+'원':v=>fmtK(v);
-
-  const colors=['#58a6ff','#3fb950','#f0883e','#bc8cff','#f85149'];
-  const datasets=countries.map((c,i)=>({
-    label:c,
-    data:allDates.map(d=>{
-      const rows=FILTERED.filter(r=>r.country===c&&r._date===d);
-      return rows.length?metricFn(rows):null;
-    }),
-    borderColor:colors[i%colors.length],
-    backgroundColor:colors[i%colors.length]+'22',
-    tension:.3,fill:false,pointRadius:3,
-    pointBackgroundColor:colors[i%colors.length],
-    spanGaps:true
-  }));
-
-  dc('country-trend');
-  const ctx=document.getElementById('ch-country-trend').getContext('2d');
-  charts['country-trend']=new Chart(ctx,{type:'line',data:{labels:allDates,datasets},options:{
-    responsive:true,maintainAspectRatio:true,
-    plugins:{legend:{display:true,position:'bottom',labels:{color:'#8b949e',font:{size:10},boxWidth:8,padding:8}},
-      tooltip:{backgroundColor:'#161b22',borderColor:'#30363d',borderWidth:1,titleColor:'#e6edf3',bodyColor:'#8b949e',padding:8,
-        callbacks:{label:c=>`${c.dataset.label}: ${fmtLabel(c.raw)}`}}},
-    scales:{
-      x:{grid:{color:'#21262d'},ticks:{color:'#6e7681',font:{size:9},maxTicksLimit:12}},
-      y:{grid:{color:'#21262d'},ticks:{color:'#6e7681',font:{size:9},callback:v=>metric==='ctr'?v.toFixed(1)+'%':fmtK(v)}}
-    }
-  }});
-}
-
-// ── 플랫폼별 국가 추이 ───────────────────────────────────
-function renderPFCountryTrend() {
-  const metric=document.getElementById('pf-trend-metric')?document.getElementById('pf-trend-metric').value:'spend';
-  const country=document.getElementById('pf-trend-country')?document.getElementById('pf-trend-country').value:'';
-  if(!country){dc('pf-country-trend');return;}
-
-  const allDates=[...new Set(FILTERED.map(r=>r._date))].filter(Boolean).sort();
-  const metricFn=(rows)=>{const a=agg(rows);return metric==='spend'?a.spend:metric==='imp'?a.imp:metric==='click'?a.click:metric==='ctr'?a.ctr*100:a.cpm;};
-
-  const igData=allDates.map(d=>{const rows=FILTERED.filter(r=>r.country===country&&r.pf==='IG'&&r._date===d);return rows.length?metricFn(rows):null;});
-  const ttData=allDates.map(d=>{const rows=FILTERED.filter(r=>r.country===country&&r.pf==='TT'&&r._date===d);return rows.length?metricFn(rows):null;});
-
+  const mFn=(rows)=>{const a=agg(rows);return metric==='spend'?a.spend:metric==='imp'?a.imp:metric==='click'?a.click:metric==='ctr'?a.ctr*100:a.cpm;};
+  const mLabel=v=>metric==='ctr'?v.toFixed(2)+'%':fmtK(v);
+  const igData=allDates.map(d=>{const rows=FILTERED.filter(r=>r.country===country&&r.pf==='IG'&&r._date===d);return rows.length?mFn(rows):null;});
+  const ttData=allDates.map(d=>{const rows=FILTERED.filter(r=>r.country===country&&r.pf==='TT'&&r._date===d);return rows.length?mFn(rows):null;});
+  const igTotal=mFn(FILTERED.filter(r=>r.country===country&&r.pf==='IG'));
+  const ttTotal=mFn(FILTERED.filter(r=>r.country===country&&r.pf==='TT'));
+  document.getElementById('pf-country-summary').innerHTML=mkSummary([
+    {label:'Instagram',val:mLabel(igTotal),color:IG_COLOR+'0.8)'},
+    {label:'TikTok',val:mLabel(ttTotal),color:TT_COLOR+'0.8)'},
+  ]);
   dc('pf-country-trend');
   const ctx=document.getElementById('ch-pf-country-trend').getContext('2d');
   charts['pf-country-trend']=new Chart(ctx,{type:'line',data:{labels:allDates,datasets:[
-    {label:'Instagram',data:igData,borderColor:'rgba(225,48,108,.9)',backgroundColor:'rgba(225,48,108,.1)',tension:.3,fill:true,pointRadius:3,pointBackgroundColor:'rgba(225,48,108,.9)',spanGaps:true},
-    {label:'TikTok',data:ttData,borderColor:'rgba(105,201,208,.9)',backgroundColor:'rgba(105,201,208,.1)',tension:.3,fill:true,pointRadius:3,pointBackgroundColor:'rgba(105,201,208,.9)',spanGaps:true}
-  ]},options:{
-    responsive:true,maintainAspectRatio:true,
-    plugins:{legend:{display:true,position:'bottom',labels:{color:'#8b949e',font:{size:10},boxWidth:8,padding:8}},
-      tooltip:{backgroundColor:'#161b22',borderColor:'#30363d',borderWidth:1,titleColor:'#e6edf3',bodyColor:'#8b949e',padding:8}},
-    scales:{
-      x:{grid:{color:'#21262d'},ticks:{color:'#6e7681',font:{size:9},maxTicksLimit:12}},
-      y:{grid:{color:'#21262d'},ticks:{color:'#6e7681',font:{size:9},callback:v=>metric==='ctr'?v.toFixed(2)+'%':fmtK(v)}}
-    }
-  }});
+    {label:'Instagram',data:igData,borderColor:IG_COLOR+'0.9)',backgroundColor:IG_COLOR+'0.1)',tension:.3,fill:true,pointRadius:3,pointBackgroundColor:IG_COLOR+'0.9)',spanGaps:true},
+    {label:'TikTok',data:ttData,borderColor:TT_COLOR+'0.9)',backgroundColor:TT_COLOR+'0.1)',tension:.3,fill:true,pointRadius:3,pointBackgroundColor:TT_COLOR+'0.9)',spanGaps:true}
+  ]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:true,position:'bottom',labels:{color:'#475569',font:{size:10},boxWidth:8,padding:10}},tooltip:{backgroundColor:'#fff',borderColor:'#e8edf5',borderWidth:1,titleColor:'#0f172a',bodyColor:'#475569',padding:8}},scales:{x:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:9},maxTicksLimit:12}},y:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:9},callback:v=>metric==='ctr'?v.toFixed(2)+'%':fmtK(v)}}}}});
 }
 
-window.onload=()=>{
-  loadViaJSONP(APPS_URL);
-};
+window.onload=()=>{ loadViaJSONP(APPS_URL); };
 </script>
 </body>
 </html>
