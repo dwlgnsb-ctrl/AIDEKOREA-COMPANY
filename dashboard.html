@@ -600,37 +600,27 @@ function initDashboard(){
 }
 
 function applyFilters(){
-  const dateFrom='', dateTo='';
-  
-  
-  const filterRegion=document.getElementById('filter-region').value;
-  const filterCountry=document.getElementById('filter-country').value;
+  const filterPeriod=(document.getElementById('filter-period')||{}).value||'';
+  const filterRegion=(document.getElementById('filter-region')||{}).value||'';
+  const filterCountry=(document.getElementById('filter-country')||{}).value||'';
 
-  const baseFilter=r=>{
-    if(!activePFs.has(r.pf))return false;
-    if(filterRegion==='__none__')return false;
-    if(filterRegion&&r.region!==filterRegion)return false;
-    if(filterCountry==='__none__')return false;
-    if(filterCountry&&r.country!==filterCountry)return false;
-    if(dateFrom&&r._date&&r._date<dateFrom)return false;
-    if(dateTo&&r._date&&r._date>dateTo)return false;
+  FILTERED=RAW.filter(r=>{
+    if(!activePFs.has(r.pf)) return false;
+    if(filterPeriod==='__none__') return false;
+    if(filterPeriod && r._period!==filterPeriod) return false;
+    if(filterRegion==='__none__') return false;
+    if(filterRegion && r.region!==filterRegion) return false;
+    if(filterCountry==='__none__') return false;
+    if(filterCountry && r.country!==filterCountry) return false;
     return true;
-  };
+  });
 
-  // 현월 데이터 (메인)
-  FILTERED=RAW.filter(r=>baseFilter(r)&&(!curMonth||r._period===curMonth));
-  // 전월 데이터 (비교용)
-  
-
-  const allRows=[...FILTERED,...(
-  const fdates=allRows.map(r=>r._date).filter(Boolean).sort();
-  if(fdates.length)document.getElementById('date-range').textContent=fdates[0]+' ~ '+fdates[fdates.length-1];
-
-  // 월 선택 표시
-  const prevLabel=prevMonth||'전월';const curLabel=curMonth||'현월';
-  document.getElementById('row-count').textContent=`${prevLabel} vs ${curLabel}  |  ${FILTERED.length.toLocaleString()}행`;
+  const fdates=FILTERED.map(r=>r._date).filter(Boolean).sort();
+  if(fdates.length) document.getElementById('date-range').textContent=fdates[0]+' ~ '+fdates[fdates.length-1];
+  document.getElementById('row-count').textContent=FILTERED.length.toLocaleString()+' / '+RAW.length.toLocaleString()+'행';
   renderAll();
 }
+
 
 function togglePF(el){
   const pf=el.dataset.pf;
