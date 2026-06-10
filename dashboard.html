@@ -56,7 +56,6 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg);colo
 /* ── 필터 ── */
 .filter-select{background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:4px 8px;border-radius:6px;font-size:11px;font-family:'Pretendard',sans-serif;outline:none;cursor:pointer;transition:border-color .15s}
 .filter-select:hover,.filter-select:focus{border-color:var(--accent)}
-
 .fdiv{width:1px;height:14px;background:var(--border);margin:0 2px;flex-shrink:0}
 .chip{padding:3px 10px;border-radius:14px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-size:11px;cursor:pointer;transition:all .15s;user-select:none}
 .chip:hover{border-color:var(--accent);color:var(--accent2)}
@@ -159,7 +158,6 @@ tbody td:first-child{text-align:left;font-family:'Pretendard',sans-serif;color:v
 .pf-metric{text-align:center;background:rgba(255,255,255,.7);border-radius:8px;padding:8px 6px;border:1px solid rgba(0,0,0,.04)}
 .pf-metric-label{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px}
 .pf-metric-val{font-size:14px;font-weight:800;font-family:'DM Mono',monospace;color:var(--navy)}
-.pf-metric-delta{font-size:9px;margin-top:2px}
 
 /* ── 추이 차트 ── */
 .trend-chart-wrap canvas{max-height:260px}
@@ -172,7 +170,6 @@ tbody td:first-child{text-align:left;font-family:'Pretendard',sans-serif;color:v
 .spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-text{color:var(--text2);font-size:12px;font-family:'DM Mono',monospace}
-
 canvas{max-height:240px}
 </style>
 </head>
@@ -206,7 +203,7 @@ canvas{max-height:240px}
   </div>
 </div>
 
-<!-- 모달 -->
+<!-- URL 설정 모달 -->
 <div id="modal" style="position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;display:none;align-items:center;justify-content:center">
   <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:24px;width:520px;max-width:90vw">
     <div style="font-size:14px;font-weight:700;margin-bottom:14px;color:var(--navy)">🔄 데이터 소스 설정</div>
@@ -218,7 +215,7 @@ canvas{max-height:240px}
   </div>
 </div>
 
-<!-- 메인 -->
+<!-- 메인 영역 -->
 <div class="main-wrap">
   <div class="topbar">
     <div class="topbar-left">
@@ -250,20 +247,50 @@ canvas{max-height:240px}
 
   <div class="content">
 
-    <!-- ══ 요약 ══ -->
+    <!-- ══ 요약 대시보드 ══ -->
     <div class="page active" id="page-summary">
       <div class="kpi-row">
-        <div class="kpi-card c1"><div class="kpi-label">💰 총 지출</div><div class="kpi-val" id="k-spend">—</div><div class="kpi-meta"><span class="delta" id="k-spend-d"></span></div><div style="font-size:10px;color:var(--text3);margin-top:3px;font-family:'DM Mono',monospace" id="k-spend-prev"></div></div>
-        <div class="kpi-card c2"><div class="kpi-label">👁 노출</div><div class="kpi-val" id="k-imp">—</div><div class="kpi-meta"><span class="delta" id="k-imp-d"></span></div><div style="font-size:10px;color:var(--text3);margin-top:3px;font-family:'DM Mono',monospace" id="k-imp-prev"></div></div>
-        <div class="kpi-card c3"><div class="kpi-label">🖱 링크 클릭</div><div class="kpi-val" id="k-click">—</div><div class="kpi-meta"><span class="delta" id="k-click-d"></span></div><div style="font-size:10px;color:var(--text3);margin-top:3px;font-family:'DM Mono',monospace" id="k-click-prev"></div></div>
-        <div class="kpi-card c4"><div class="kpi-label">🏠 랜딩 조회</div><div class="kpi-val" id="k-land">—</div><div class="kpi-meta"><span class="delta" id="k-land-d"></span></div><div style="font-size:10px;color:var(--text3);margin-top:3px;font-family:'DM Mono',monospace" id="k-land-prev"></div></div>
-        <div class="kpi-card c5"><div class="kpi-label">📡 CPM</div><div class="kpi-val" id="k-cpm">—</div><div class="kpi-meta"><span class="delta" id="k-cpm-d"></span></div><div style="font-size:10px;color:var(--text3);margin-top:3px;font-family:'DM Mono',monospace" id="k-cpm-prev"></div></div>
-        <div class="kpi-card c6"><div class="kpi-label">💡 CPC</div><div class="kpi-val" id="k-cpc">—</div><div class="kpi-meta"><span class="delta" id="k-cpc-d"></span></div><div style="font-size:10px;color:var(--text3);margin-top:3px;font-family:'DM Mono',monospace" id="k-cpc-prev"></div></div>
+        <div class="kpi-card c1">
+          <div class="kpi-label">💰 총 지출</div>
+          <div class="kpi-val" id="k-spend">—</div>
+          <div class="kpi-meta"><span class="delta" id="k-spend-d"></span></div>
+          <div style="font-size:10px;color:var(--text3);margin-top:3px;font-family:'DM Mono',monospace" id="k-spend-prev"></div>
+        </div>
+        <div class="kpi-card c2">
+          <div class="kpi-label">👁 노출</div>
+          <div class="kpi-val" id="k-imp">—</div>
+          <div class="kpi-meta"><span class="delta" id="k-imp-d"></span></div>
+          <div style="font-size:10px;color:var(--text3);margin-top:3px;font-family:'DM Mono',monospace" id="k-imp-prev"></div>
+        </div>
+        <div class="kpi-card c3">
+          <div class="kpi-label">🖱 링크 클릭</div>
+          <div class="kpi-val" id="k-click">—</div>
+          <div class="kpi-meta"><span class="delta" id="k-click-d"></span></div>
+          <div style="font-size:10px;color:var(--text3);margin-top:3px;font-family:'DM Mono',monospace" id="k-click-prev"></div>
+        </div>
+        <div class="kpi-card c4">
+          <div class="kpi-label">🏠 랜딩 조회</div>
+          <div class="kpi-val" id="k-land">—</div>
+          <div class="kpi-meta"><span class="delta" id="k-land-d"></span></div>
+          <div style="font-size:10px;color:var(--text3);margin-top:3px;font-family:'DM Mono',monospace" id="k-land-prev"></div>
+        </div>
+        <div class="kpi-card c5">
+          <div class="kpi-label">📡 CPM</div>
+          <div class="kpi-val" id="k-cpm">—</div>
+          <div class="kpi-meta"><span class="delta" id="k-cpm-d"></span></div>
+          <div style="font-size:10px;color:var(--text3);margin-top:3px;font-family:'DM Mono',monospace" id="k-cpm-prev"></div>
+        </div>
+        <div class="kpi-card c6">
+          <div class="kpi-label">💡 CPC</div>
+          <div class="kpi-val" id="k-cpc">—</div>
+          <div class="kpi-meta"><span class="delta" id="k-cpc-d"></span></div>
+          <div style="font-size:10px;color:var(--text3);margin-top:3px;font-family:'DM Mono',monospace" id="k-cpc-prev"></div>
+        </div>
       </div>
       <div class="insight-grid" id="insight-cards"></div>
       <div class="grid2">
         <div class="panel">
-          <div class="panel-title">월별·주차별 지출 추이</div>
+          <div class="panel-title">월별 지출 추이 (IG vs TT)</div>
           <canvas id="ch-period"></canvas>
         </div>
         <div class="panel">
@@ -311,7 +338,6 @@ canvas{max-height:240px}
           <canvas id="ch-country" style="max-height:260px"></canvas>
         </div>
       </div>
-      <!-- 국가별 성과 추이 -->
       <div class="panel">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
           <div class="panel-title" style="margin-bottom:0">국가별 성과 추이 (일별)</div>
@@ -344,9 +370,7 @@ canvas{max-height:240px}
             </select>
           </div>
         </div>
-        <!-- 선택된 국가 칩 -->
         <div id="trend-country-chips" style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px"></div>
-        <!-- 수치 요약 -->
         <div class="chart-summary" id="trend-summary"></div>
         <div class="trend-chart-wrap"><canvas id="ch-country-trend"></canvas></div>
         <div style="font-size:10px;color:var(--text3);margin-top:8px">※ 국가를 드롭박스에서 선택하거나 칩을 클릭해 제거 (최대 5개)</div>
@@ -355,7 +379,6 @@ canvas{max-height:240px}
 
     <!-- ══ 소재별 상세 ══ -->
     <div class="page" id="page-creative">
-      <!-- 공통 필터 -->
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px">
         <span style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.6px">필터</span>
         <select id="filter-product" class="filter-select" style="max-width:150px" onchange="renderCreativePage()">
@@ -372,13 +395,12 @@ canvas{max-height:240px}
         <div class="fdiv"></div>
         <span style="font-size:10px;color:var(--text3)">월 비교</span>
         <select id="creative-month-left" class="filter-select" onchange="renderCreativePage()" style="max-width:130px">
-          <option value="">월 선택 (좌)</option>
+          <option value="">전체 (좌)</option>
         </select>
         <select id="creative-month-right" class="filter-select" onchange="renderCreativePage()" style="max-width:130px">
-          <option value="">월 선택 (우)</option>
+          <option value="">전체 (우)</option>
         </select>
       </div>
-      <!-- 좌우 비교 테이블 -->
       <div class="grid2">
         <div class="panel">
           <div class="panel-title" id="creative-left-title">소재 성과 (좌)</div>
@@ -403,8 +425,7 @@ canvas{max-height:240px}
 
     <!-- ══ 플랫폼 비교 ══ -->
     <div class="page" id="page-platform">
-      <!-- 수치 카드 -->
-      <div class="pf-compare-grid" style="margin-bottom:14px">
+      <div class="pf-compare-grid">
         <div class="pf-card pf-card-ig">
           <div class="pf-card-header"><span style="font-size:20px">📸</span><span class="pf-name" style="color:var(--ig)">Instagram</span></div>
           <div class="pf-metrics" id="pf-ig-metrics"></div>
@@ -414,7 +435,6 @@ canvas{max-height:240px}
           <div class="pf-metrics" id="pf-tt-metrics"></div>
         </div>
       </div>
-      <!-- 차트 -->
       <div class="grid2">
         <div class="panel">
           <div class="panel-title">플랫폼별 지출 추이</div>
@@ -432,7 +452,6 @@ canvas{max-height:240px}
           <canvas id="ch-pf-metric" style="max-height:180px"></canvas>
         </div>
       </div>
-      <!-- 국가별 추이 -->
       <div class="panel" style="margin-top:14px">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
           <div class="panel-title" style="margin-bottom:0">국가별 성과 추이 (플랫폼 비교)</div>
@@ -455,359 +474,469 @@ canvas{max-height:240px}
         <div class="chart-summary" id="pf-country-summary"></div>
         <canvas id="ch-pf-country-trend" style="max-height:260px"></canvas>
       </div>
-      <!-- 강점 분석 -->
       <div class="panel" style="margin-top:14px">
         <div class="panel-title">플랫폼별 강점 분석</div>
         <div id="pf-strengths" style="display:grid;grid-template-columns:1fr 1fr;gap:12px"></div>
       </div>
     </div>
 
-  </div>
-</div>
+  </div><!-- /content -->
+</div><!-- /main-wrap -->
 
 <script>
 Chart.register(ChartDataLabels);
-const APPS_URL='https://script.google.com/macros/s/AKfycbzQn-tRH0Jg6csQOEj3V6s0YL1nh8uNlEYUxixA6J69a_VWJ8LGECyHhYK0CWVM_V8h/exec';
-let RAW=[],FILTERED=[];
-let activePFs=new Set(['IG','TT']);
-let charts={};
-let countryChartMetric='spend',pfMetricTab='ctr';
-let selectedTrendCountries=new Set();
 
-const mo_name={1:'Jan',2:'Feb',3:'Mar',4:'Apr',5:'May',6:'Jun',7:'Jul',8:'Aug',9:'Sep',10:'Oct',11:'Nov',12:'Dec'};
-const PALETTE=['#0ea5e9','#6366f1','#10b981','#f59e0b','#ef4444','#14b8a6','#8b5cf6','#f97316','#06b6d4','#84cc16','#ec4899','#a855f7'];
-const IG_COLOR='rgba(225,48,108,';const TT_COLOR='rgba(20,184,166,';
+/* ── 상수 ── */
+const APPS_URL = 'https://script.google.com/macros/s/AKfycbzQn-tRH0Jg6csQOEj3V6s0YL1nh8uNlEYUxixA6J69a_VWJ8LGECyHhYK0CWVM_V8h/exec';
+const mo_name = {1:'Jan',2:'Feb',3:'Mar',4:'Apr',5:'May',6:'Jun',7:'Jul',8:'Aug',9:'Sep',10:'Oct',11:'Nov',12:'Dec'};
+const PALETTE = ['#0ea5e9','#6366f1','#10b981','#f59e0b','#ef4444','#14b8a6','#8b5cf6','#f97316','#06b6d4','#84cc16','#ec4899','#a855f7'];
+const IG_COLOR = 'rgba(225,48,108,';
+const TT_COLOR = 'rgba(20,184,166,';
 
-const fmt=(n,d=0)=>n==null||isNaN(n)?'—':n.toLocaleString('ko-KR',{minimumFractionDigits:d,maximumFractionDigits:d});
-const fmtK=n=>{if(n==null||isNaN(n))return'—';if(Math.abs(n)>=1e8)return(n/1e8).toFixed(1)+'억';if(Math.abs(n)>=1e4)return(n/1e4).toFixed(1)+'만';return fmt(n);};
-const pct=n=>n==null||isNaN(n)?'—':(n*100).toFixed(2)+'%';
+/* ── 상태 ── */
+let RAW = [], FILTERED = [];
+let activePFs = new Set(['IG','TT']);
+let charts = {};
+let countryChartMetric = 'spend', pfMetricTab = 'ctr';
+let selectedTrendCountries = new Set();
 
-function agg(rows){
-  const spend=rows.reduce((s,r)=>s+r.spend,0);
-  const imp=rows.reduce((s,r)=>s+r.imp,0);
-  const click=rows.reduce((s,r)=>s+r.click,0);
-  const land=rows.reduce((s,r)=>s+r.land,0);
-  const reach=rows.reduce((s,r)=>s+r.reach,0);
-  return{spend,imp,click,land,reach,
-    cpm:imp>0?spend/imp*1000:0,
-    cpc:click>0?spend/click:0,
-    ctr:imp>0?click/imp:0,
-    ltr:imp>0?land/imp:0};
+/* ── 포맷 함수 ── */
+const fmt  = (n, d=0) => n == null || isNaN(n) ? '—' : n.toLocaleString('ko-KR', {minimumFractionDigits:d, maximumFractionDigits:d});
+const fmtK = n => {
+  if (n == null || isNaN(n)) return '—';
+  if (Math.abs(n) >= 1e8) return (n/1e8).toFixed(1) + '억';
+  if (Math.abs(n) >= 1e4) return (n/1e4).toFixed(1) + '만';
+  return fmt(n);
+};
+const pct = n => n == null || isNaN(n) ? '—' : (n * 100).toFixed(2) + '%';
+
+/* ── 집계 함수 ── */
+function agg(rows) {
+  const spend = rows.reduce((s,r) => s + r.spend, 0);
+  const imp   = rows.reduce((s,r) => s + r.imp,   0);
+  const click = rows.reduce((s,r) => s + r.click,  0);
+  const land  = rows.reduce((s,r) => s + r.land,   0);
+  const reach = rows.reduce((s,r) => s + r.reach,  0);
+  return {
+    spend, imp, click, land, reach,
+    cpm: imp   > 0 ? spend / imp * 1000 : 0,
+    cpc: click > 0 ? spend / click      : 0,
+    ctr: imp   > 0 ? click / imp        : 0,
+    ltr: imp   > 0 ? land  / imp        : 0,
+  };
 }
 
-function extractProduct(name){
-  if(!name)return'기타';
-  const n=name.trim();
-  const m=n.match(/^([^\[]+)/);
-  if(m){let p=m[1].trim().replace(/[-_]+$/,'').replace(/^Copy\s+(\d+\s+)?of\s+/i,'').trim();if(p)return p;}
-  return n.split(' ')[0]||'기타';
+/* ── 데이터 정규화 ── */
+function extractProduct(name) {
+  if (!name) return '기타';
+  const n = name.trim();
+  const m = n.match(/^([^\[]+)/);
+  if (m) {
+    let p = m[1].trim().replace(/[-_]+$/, '').replace(/^Copy\s+(\d+\s+)?of\s+/i, '').trim();
+    if (p) return p;
+  }
+  return n.split(' ')[0] || '기타';
 }
 
-function normalizeRow(r){
-  const o={...r};
-  for(const c of['도달','노출','지출 금액 (KRW)','링크 클릭','랜딩 페이지 조회','동영상 25% 재생','동영상 75% 재생']){
-    o[c]=parseFloat(String(o[c]||'').replace(/,/g,''))||0;
+function normalizeRow(r) {
+  const o = {...r};
+  for (const c of ['도달','노출','지출 금액 (KRW)','링크 클릭','랜딩 페이지 조회','동영상 25% 재생','동영상 75% 재생']) {
+    o[c] = parseFloat(String(o[c] || '').replace(/,/g, '')) || 0;
   }
-  if(o['일']){
-    const d=new Date(o['일']);
-    const yr=d.getFullYear();
-    const mo=String(d.getMonth()+1).padStart(2,'0');
-    const dy=String(d.getDate()).padStart(2,'0');
-    o._date=yr+'-'+mo+'-'+dy;
-    o._month=d.getMonth()+1;o._day=d.getDate();
-    o._wk=o._day<=14?'1-2주차':'3-4주차';
-    o._period=mo_name[o._month]||'?';  // 월 단위
+  if (o['일']) {
+    const d  = new Date(o['일']);
+    const yr = d.getFullYear();
+    const mo = String(d.getMonth() + 1).padStart(2, '0');
+    const dy = String(d.getDate()).padStart(2, '0');
+    o._date   = yr + '-' + mo + '-' + dy;
+    o._month  = d.getMonth() + 1;
+    o._day    = d.getDate();
+    o._wk     = o._day <= 14 ? '1-2주차' : '3-4주차';
+    o._period = mo_name[o._month] || '?';
   }
-  o.spend=o['지출 금액 (KRW)'];o.imp=o['노출'];o.click=o['링크 클릭'];
-  o.land=o['랜딩 페이지 조회'];o.reach=o['도달'];
-  o.name=String(o['광고 이름']||'').trim();
-  o.country=String(o['국가']||'').trim();
-  o.pf=String(o['플랫폼']||'').trim();
-  o.region=String(o['권역']||'').replace(/\n/g,' ').trim();
-  o.url=String(o['소재링크']||o['광고URL']||o['URL']||'').trim();
-  o.product=extractProduct(o.name);
+  o.spend   = o['지출 금액 (KRW)'];
+  o.imp     = o['노출'];
+  o.click   = o['링크 클릭'];
+  o.land    = o['랜딩 페이지 조회'];
+  o.reach   = o['도달'];
+  o.name    = String(o['광고 이름'] || '').trim();
+  o.country = String(o['국가'] || '').trim();
+  o.pf      = String(o['플랫폼'] || '').trim();
+  o.region  = String(o['권역'] || '').replace(/\n/g, ' ').trim();
+  o.url     = String(o['소재링크'] || o['광고URL'] || o['URL'] || '').trim();
+  o.product = extractProduct(o.name);
   return o;
 }
 
-function setStatus(s,t){
-  const dot=document.getElementById('s-dot');
-  dot.className='status-dot'+(s==='ok'?' ok':s==='loading'?' loading':'');
-  document.getElementById('s-text').textContent=t;
+/* ── UI 헬퍼 ── */
+function setStatus(s, t) {
+  const dot = document.getElementById('s-dot');
+  dot.className = 'status-dot' + (s === 'ok' ? ' ok' : s === 'loading' ? ' loading' : '');
+  document.getElementById('s-text').textContent = t;
 }
-function showLoading(t){document.getElementById('loading').style.display='flex';document.getElementById('loading-text').textContent=t||'로딩 중...';}
-function hideLoading(){document.getElementById('loading').style.display='none';}
-function showModal(){document.getElementById('modal').style.display='flex';document.getElementById('modal-url').value=APPS_URL;}
-function closeModal(){document.getElementById('modal').style.display='none';}
-function loadFromModal(){const u=document.getElementById('modal-url').value.trim();if(!u)return;closeModal();loadViaJSONP(u);}
+function showLoading(t) { document.getElementById('loading').style.display = 'flex'; document.getElementById('loading-text').textContent = t || '로딩 중...'; }
+function hideLoading()  { document.getElementById('loading').style.display = 'none'; }
+function showModal()    { document.getElementById('modal').style.display = 'flex'; document.getElementById('modal-url').value = APPS_URL; }
+function closeModal()   { document.getElementById('modal').style.display = 'none'; }
+function loadFromModal(){ const u = document.getElementById('modal-url').value.trim(); if (!u) return; closeModal(); loadViaJSONP(u); }
+function dc(id)         { if (charts[id]) { charts[id].destroy(); delete charts[id]; } }
+function mkSummary(items) {
+  return items.map(({label, val, color}) =>
+    `<div class="chart-summary-item"><div class="chart-summary-dot" style="background:${color}"></div>${label}: <strong>${val}</strong></div>`
+  ).join('');
+}
 
-function loadViaJSONP(baseUrl){
-  setStatus('loading','불러오는 중...');
+/* ── 데이터 로드 (JSONP) ── */
+function loadViaJSONP(baseUrl) {
+  setStatus('loading', '불러오는 중...');
   showLoading('Google Sheets에서 데이터 불러오는 중...');
-  const old=document.getElementById('jsonp-script');if(old)old.remove();
-  window.__jsonpCallback=function(data){
-    try{
-      RAW=data.map(normalizeRow).filter(r=>r.country&&r.country!==''&&r.country!=='국가');
-      initDashboard();hideLoading();
-      setStatus('ok',RAW.length.toLocaleString()+'행 로드됨');
-    }catch(e){hideLoading();setStatus('','오류: '+e.message);console.error(e);}
-    const s=document.getElementById('jsonp-script');if(s)s.remove();
+  const old = document.getElementById('jsonp-script');
+  if (old) old.remove();
+  window.__jsonpCallback = function(data) {
+    try {
+      RAW = data.map(normalizeRow).filter(r => r.country && r.country !== '' && r.country !== '국가');
+      initDashboard();
+      hideLoading();
+      setStatus('ok', RAW.length.toLocaleString() + '행 로드됨');
+    } catch(e) {
+      hideLoading();
+      setStatus('', '오류: ' + e.message);
+      console.error(e);
+    }
+    const s = document.getElementById('jsonp-script');
+    if (s) s.remove();
   };
-  const script=document.createElement('script');
-  script.id='jsonp-script';script.src=baseUrl+'?callback=__jsonpCallback';
-  script.onerror=()=>{hideLoading();setStatus('','로드 실패');};
+  const script = document.createElement('script');
+  script.id = 'jsonp-script';
+  script.src = baseUrl + '?callback=__jsonpCallback';
+  script.onerror = () => { hideLoading(); setStatus('', '로드 실패'); };
   document.head.appendChild(script);
 }
 
-function initDashboard(){
-  const dates=RAW.map(r=>r._date).filter(Boolean).sort();
-  if(dates.length){
-    document.getElementById('date-range').textContent=dates[0]+' ~ '+dates[dates.length-1];
-  }
-  const periods=[...new Set(RAW.map(r=>r._period))].filter(Boolean).sort((a,b)=>{
-    return Object.values(mo_name).indexOf(a)-Object.values(mo_name).indexOf(b);
-  });
-  const pSel=document.getElementById('filter-period');
-  if(pSel){
-    pSel.innerHTML='<option value="">전체 월</option><option value="__none__">— 없음 —</option>';
-    periods.forEach(p=>{const o=document.createElement('option');o.value=p;o.textContent=p;pSel.appendChild(o);});
+/* ── 대시보드 초기화 ── */
+function initDashboard() {
+  const dates = RAW.map(r => r._date).filter(Boolean).sort();
+  if (dates.length) {
+    document.getElementById('date-range').textContent = dates[0] + ' ~ ' + dates[dates.length - 1];
   }
 
-  const regions=[...new Set(RAW.map(r=>r.region))].filter(Boolean).sort();
-  ['filter-region','trend-region','pf-trend-region'].forEach(id=>{
-    const s=document.getElementById(id);if(!s)return;
-    s.innerHTML='<option value="">전체 권역</option>';
-    regions.forEach(r=>{const o=document.createElement('option');o.value=r;o.textContent=r;s.appendChild(o);});
+  // 월 필터
+  const periods = [...new Set(RAW.map(r => r._period))].filter(Boolean).sort((a,b) =>
+    Object.values(mo_name).indexOf(a) - Object.values(mo_name).indexOf(b)
+  );
+  const pSel = document.getElementById('filter-period');
+  pSel.innerHTML = '<option value="">전체 월</option><option value="__none__">— 없음 —</option>';
+  periods.forEach(p => { const o = document.createElement('option'); o.value = p; o.textContent = p; pSel.appendChild(o); });
+
+  // 권역 필터 (공통)
+  const regions = [...new Set(RAW.map(r => r.region))].filter(Boolean).sort();
+  ['filter-region','trend-region','pf-trend-region'].forEach(id => {
+    const s = document.getElementById(id); if (!s) return;
+    s.innerHTML = '<option value="">전체 권역</option>';
+    if (id === 'filter-region') s.innerHTML += '<option value="__none__">— 없음 —</option>';
+    regions.forEach(r => { const o = document.createElement('option'); o.value = r; o.textContent = r; s.appendChild(o); });
   });
 
-  const countries=[...new Set(RAW.map(r=>r.country))].filter(Boolean).sort();
-  const cSel=document.getElementById('filter-country');
-  cSel.innerHTML='<option value="">전체 국가</option><option value="__none__">— 없음 —</option>';
-  countries.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;cSel.appendChild(o);});
+  // 국가 필터
+  const countries = [...new Set(RAW.map(r => r.country))].filter(Boolean).sort();
+  const cSel = document.getElementById('filter-country');
+  cSel.innerHTML = '<option value="">전체 국가</option><option value="__none__">— 없음 —</option>';
+  countries.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; cSel.appendChild(o); });
 
-  ['trend-country-sel','pf-trend-country'].forEach(id=>{
-    const s=document.getElementById(id);if(!s)return;
-    s.innerHTML='<option value="">국가 선택</option>';
-    countries.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;s.appendChild(o);});
+  ['trend-country-sel','pf-trend-country'].forEach(id => {
+    const s = document.getElementById(id); if (!s) return;
+    s.innerHTML = '<option value="">국가 선택</option>';
+    countries.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; s.appendChild(o); });
   });
 
-  const products=[...new Set(RAW.map(r=>r.product))].filter(Boolean).sort();
-  const prSel=document.getElementById('filter-product');
-  if(prSel){prSel.innerHTML='<option value="">전체 상품</option><option value="__none__">— 없음 —</option>';products.forEach(p=>{const o=document.createElement('option');o.value=p;o.textContent=p;prSel.appendChild(o);});}
+  // 상품 필터
+  const products = [...new Set(RAW.map(r => r.product))].filter(Boolean).sort();
+  const prSel = document.getElementById('filter-product');
+  if (prSel) {
+    prSel.innerHTML = '<option value="">전체 상품</option><option value="__none__">— 없음 —</option>';
+    products.forEach(p => { const o = document.createElement('option'); o.value = p; o.textContent = p; prSel.appendChild(o); });
+  }
 
-  selectedTrendCountries=new Set(countries.slice(0,3));
+  selectedTrendCountries = new Set(countries.slice(0, 3));
   initCreativeMonthSelects();
   applyFilters();
 }
 
-function applyFilters(){
-  const filterPeriod=(document.getElementById('filter-period')||{}).value||'';
-  const filterRegion=(document.getElementById('filter-region')||{}).value||'';
-  const filterCountry=(document.getElementById('filter-country')||{}).value||'';
+/* ── 필터 적용 ── */
+function applyFilters() {
+  const filterPeriod  = (document.getElementById('filter-period')  || {}).value || '';
+  const filterRegion  = (document.getElementById('filter-region')  || {}).value || '';
+  const filterCountry = (document.getElementById('filter-country') || {}).value || '';
 
-  FILTERED=RAW.filter(r=>{
-    if(!activePFs.has(r.pf)) return false;
-    if(filterPeriod==='__none__') return false;
-    if(filterPeriod && r._period!==filterPeriod) return false;
-    if(filterRegion==='__none__') return false;
-    if(filterRegion && r.region!==filterRegion) return false;
-    if(filterCountry==='__none__') return false;
-    if(filterCountry && r.country!==filterCountry) return false;
+  FILTERED = RAW.filter(r => {
+    if (!activePFs.has(r.pf))              return false;
+    if (filterPeriod  === '__none__')      return false;
+    if (filterPeriod  && r._period  !== filterPeriod)  return false;
+    if (filterRegion  === '__none__')      return false;
+    if (filterRegion  && r.region   !== filterRegion)  return false;
+    if (filterCountry === '__none__')      return false;
+    if (filterCountry && r.country  !== filterCountry) return false;
     return true;
   });
 
-  const fdates=FILTERED.map(r=>r._date).filter(Boolean).sort();
-  if(fdates.length) document.getElementById('date-range').textContent=fdates[0]+' ~ '+fdates[fdates.length-1];
-  document.getElementById('row-count').textContent=FILTERED.length.toLocaleString()+' / '+RAW.length.toLocaleString()+'행';
+  const fdates = FILTERED.map(r => r._date).filter(Boolean).sort();
+  if (fdates.length) document.getElementById('date-range').textContent = fdates[0] + ' ~ ' + fdates[fdates.length - 1];
+  document.getElementById('row-count').textContent = FILTERED.length.toLocaleString() + ' / ' + RAW.length.toLocaleString() + '행';
   renderAll();
 }
 
-
-function togglePF(el){
-  const pf=el.dataset.pf;
-  if(activePFs.has(pf)){if(activePFs.size===1)return;activePFs.delete(pf);el.classList.remove('active');}
-  else{activePFs.add(pf);el.classList.add('active');}
+function togglePF(el) {
+  const pf = el.dataset.pf;
+  if (activePFs.has(pf)) {
+    if (activePFs.size === 1) return;
+    activePFs.delete(pf); el.classList.remove('active');
+  } else {
+    activePFs.add(pf); el.classList.add('active');
+  }
   applyFilters();
 }
 
-function resetFilters(){
-  activePFs=new Set(['IG','TT']);
-  document.querySelectorAll('.chip[data-pf]').forEach(c=>c.classList.add('active'));
-
-  ['filter-period','filter-region','filter-country'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+function resetFilters() {
+  activePFs = new Set(['IG','TT']);
+  document.querySelectorAll('.chip[data-pf]').forEach(c => c.classList.add('active'));
+  ['filter-period','filter-region','filter-country'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
   applyFilters();
 }
 
-const pageTitles={summary:'요약 대시보드',country:'국가별 상세',creative:'소재별 상세',platform:'플랫폼 비교'};
-function goPage(id,el){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.getElementById('page-'+id).classList.add('active');
-  if(el)el.classList.add('active');
-  document.getElementById('page-title').textContent=pageTitles[id]||id;
+/* ── 페이지 라우팅 ── */
+const pageTitles = {summary:'요약 대시보드', country:'국가별 상세', creative:'소재별 상세', platform:'플랫폼 비교'};
+function goPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  if (el) el.classList.add('active');
+  document.getElementById('page-title').textContent = pageTitles[id] || id;
   renderPage(id);
 }
-function renderAll(){const p=document.querySelector('.page.active');if(p)renderPage(p.id.replace('page-',''));}
-function renderPage(id){
-  if(id==='summary')renderSummary();
-  else if(id==='country')renderCountryPage();
-  else if(id==='creative')renderCreativePage();
-  else if(id==='platform')renderPlatformPage();
+function renderAll()    { const p = document.querySelector('.page.active'); if (p) renderPage(p.id.replace('page-','')); }
+function renderPage(id) {
+  if      (id === 'summary')  renderSummary();
+  else if (id === 'country')  renderCountryPage();
+  else if (id === 'creative') renderCreativePage();
+  else if (id === 'platform') renderPlatformPage();
 }
 
-const CHART_BASE={responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false},tooltip:{backgroundColor:'#fff',borderColor:'#e8edf5',borderWidth:1,titleColor:'#0f172a',bodyColor:'#475569',padding:10,boxShadow:'0 2px 8px rgba(0,0,0,.08)'}},scales:{x:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:10}}},y:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:10}}}}};
-function dc(id){if(charts[id]){charts[id].destroy();delete charts[id];}}
+/* ════════════════════════════════════════
+   요약 대시보드
+════════════════════════════════════════ */
+function renderSummary() {
+  const periodEl = document.getElementById('filter-period');
+  if (!periodEl) return;
+  const selPeriod = periodEl.value;
 
-function mkSummary(items){
-  return items.map(({label,val,color})=>`<div class="chart-summary-item"><div class="chart-summary-dot" style="background:${color}"></div>${label}: <strong>${val}</strong></div>`).join('');
-}
+  let curRows, prevRows = [], prevLabel = null;
 
-function renderSummary(){
-  const periodEl=document.getElementById('filter-period');
-  if(!periodEl) return;
-  const selPeriod=periodEl.value;
-
-  // 현월 데이터 결정
-  let curRows, prevRows=[], curLabel, prevLabel;
-
-  if(selPeriod && selPeriod!=='__none__'){
-    // 특정 월 선택
-    curRows=FILTERED.filter(r=>r._period===selPeriod);
-    curLabel=selPeriod;
-    // 전월: RAW에서 선택월 이전 월
-    const allPeriods=[...new Set(RAW.map(r=>r._period))].filter(Boolean).sort((a,b)=>
-      Object.values(mo_name).indexOf(a)-Object.values(mo_name).indexOf(b));
-    const idx=allPeriods.indexOf(selPeriod);
-    if(idx>0){
-      const prev=allPeriods[idx-1];
-      prevLabel=prev;
-      prevRows=RAW.filter(r=>r._period===prev&&activePFs.has(r.pf));
+  if (selPeriod && selPeriod !== '__none__') {
+    curRows = FILTERED.filter(r => r._period === selPeriod);
+    const allPeriods = [...new Set(RAW.map(r => r._period))].filter(Boolean).sort((a,b) =>
+      Object.values(mo_name).indexOf(a) - Object.values(mo_name).indexOf(b)
+    );
+    const idx = allPeriods.indexOf(selPeriod);
+    if (idx > 0) {
+      const prev = allPeriods[idx - 1];
+      prevLabel = prev;
+      prevRows  = RAW.filter(r => r._period === prev && activePFs.has(r.pf));
     }
   } else {
-    // 전체 선택 → FILTERED 전체 집계
-    curRows=FILTERED;
-    curLabel='전체';
+    curRows = FILTERED;
   }
 
-  const a=agg(curRows);
-  const prev=prevRows.length?agg(prevRows):null;
-  setKPICards(a, prev, prevLabel||null, curLabel);
-  renderInsights();renderPeriodChart();renderHeatmap();renderNatTop5();renderPieChart();
+  const a    = agg(curRows);
+  const prev = prevRows.length ? agg(prevRows) : null;
+  setKPICards(a, prev, prevLabel);
+  renderInsights();
+  renderPeriodChart();
+  renderHeatmap();
+  renderNatTop5();
+  renderPieChart();
 }
 
+function setKPICards(a, prev, prevPeriod) {
+  const dFn = (c, p) => p && p !== 0 ? ((c - p) / Math.abs(p) * 100) : null;
 
-function setKPICards(a, prev, prevPeriod, curPeriod){
-  const dFn=(c,p)=>p&&p!==0?((c-p)/Math.abs(p)*100):null;
-  const prevLabel=prevPeriod||'';
-
-  const setKPI=(valId,deltaId,prevId,curVal,prevVal,fmtFn)=>{
-    const ve=document.getElementById(valId); if(ve) ve.textContent=fmtFn(curVal);
-    const de=document.getElementById(deltaId);
-    if(de){
-      const d=dFn(curVal,prevVal);
-      if(d!==null&&!isNaN(d)&&prevPeriod){
-        de.textContent=(d>=0?'▲':'▼')+Math.abs(d).toFixed(1)+'% vs '+prevLabel;
-        de.className='delta '+(d>=0?'up':'down');
-      } else { de.textContent=''; de.className='delta'; }
+  const setKPI = (valId, deltaId, prevId, curVal, prevVal, fmtFn) => {
+    const ve = document.getElementById(valId);
+    if (ve) ve.textContent = fmtFn(curVal);
+    const de = document.getElementById(deltaId);
+    if (de) {
+      const d = dFn(curVal, prevVal);
+      if (d !== null && !isNaN(d) && prevPeriod) {
+        de.textContent = (d >= 0 ? '▲' : '▼') + Math.abs(d).toFixed(1) + '% vs ' + prevPeriod;
+        de.className = 'delta ' + (d >= 0 ? 'up' : 'down');
+      } else {
+        de.textContent = ''; de.className = 'delta';
+      }
     }
-    const pe=document.getElementById(prevId);
-    if(pe) pe.textContent=prev&&prevPeriod?prevLabel+': '+fmtFn(prevVal):'';
+    const pe = document.getElementById(prevId);
+    if (pe) pe.textContent = prev && prevPeriod ? prevPeriod + ': ' + fmtFn(prevVal) : '';
   };
 
-  setKPI('k-spend','k-spend-d','k-spend-prev',a.spend,prev?prev.spend:0,v=>fmtK(v)+'원');
-  setKPI('k-imp','k-imp-d','k-imp-prev',a.imp,prev?prev.imp:0,v=>fmtK(v));
-  setKPI('k-click','k-click-d','k-click-prev',a.click,prev?prev.click:0,v=>fmtK(v));
-  setKPI('k-land','k-land-d','k-land-prev',a.land,prev?prev.land:0,v=>fmtK(v));
-  setKPI('k-cpm','k-cpm-d','k-cpm-prev',a.cpm,prev?prev.cpm:0,v=>fmt(v,0)+'원');
-  setKPI('k-cpc','k-cpc-d','k-cpc-prev',a.cpc,prev?prev.cpc:0,v=>fmt(v,0)+'원');
+  setKPI('k-spend', 'k-spend-d', 'k-spend-prev', a.spend,  prev ? prev.spend  : 0, v => fmtK(v) + '원');
+  setKPI('k-imp',   'k-imp-d',   'k-imp-prev',   a.imp,    prev ? prev.imp    : 0, v => fmtK(v));
+  setKPI('k-click', 'k-click-d', 'k-click-prev', a.click,  prev ? prev.click  : 0, v => fmtK(v));
+  setKPI('k-land',  'k-land-d',  'k-land-prev',  a.land,   prev ? prev.land   : 0, v => fmtK(v));
+  setKPI('k-cpm',   'k-cpm-d',   'k-cpm-prev',   a.cpm,    prev ? prev.cpm    : 0, v => fmt(v, 0) + '원');
+  setKPI('k-cpc',   'k-cpc-d',   'k-cpc-prev',   a.cpc,    prev ? prev.cpc    : 0, v => fmt(v, 0) + '원');
 }
 
-
-function renderInsights(){
-  const byC={};
-  FILTERED.forEach(r=>{if(!byC[r.country])byC[r.country]={spend:0,imp:0,click:0};byC[r.country].spend+=r.spend;byC[r.country].imp+=r.imp;byC[r.country].click+=r.click;});
-  const stats=Object.entries(byC).map(([k,v])=>({name:k,...v,ctr:v.imp>0?v.click/v.imp:0,cpc:v.click>0?v.spend/v.click:0})).filter(r=>r.imp>500);
-  if(!stats.length){document.getElementById('insight-cards').innerHTML='';return;}
-  stats.sort((a,b)=>b.ctr-a.ctr);
-  const best=stats[0],worst=stats[stats.length-1];
-  const opp=stats.filter(r=>r.ctr<0.02&&r.spend>50000).sort((a,b)=>b.spend-a.spend)[0]||stats[Math.floor(stats.length/2)];
-  document.getElementById('insight-cards').innerHTML=`
+function renderInsights() {
+  const byC = {};
+  FILTERED.forEach(r => {
+    if (!byC[r.country]) byC[r.country] = {spend:0, imp:0, click:0};
+    byC[r.country].spend += r.spend;
+    byC[r.country].imp   += r.imp;
+    byC[r.country].click += r.click;
+  });
+  const stats = Object.entries(byC)
+    .map(([k,v]) => ({name:k, ...v, ctr: v.imp > 0 ? v.click/v.imp : 0, cpc: v.click > 0 ? v.spend/v.click : 0}))
+    .filter(r => r.imp > 500);
+  if (!stats.length) { document.getElementById('insight-cards').innerHTML = ''; return; }
+  stats.sort((a,b) => b.ctr - a.ctr);
+  const best  = stats[0];
+  const worst = stats[stats.length - 1];
+  const opp   = stats.filter(r => r.ctr < 0.02 && r.spend > 50000).sort((a,b) => b.spend - a.spend)[0]
+              || stats[Math.floor(stats.length / 2)];
+  document.getElementById('insight-cards').innerHTML = `
     <div class="insight-card best"><div class="insight-label">✅ Best Country</div><div class="insight-name">${best.name}</div><div class="insight-metric">CTR ${pct(best.ctr)} · CPC ${fmt(best.cpc,0)}원<br>지출 ${fmtK(best.spend)}원</div></div>
     <div class="insight-card worst"><div class="insight-label">⚠️ Worst Country</div><div class="insight-name">${worst.name}</div><div class="insight-metric">CTR ${pct(worst.ctr)} · CPC ${fmt(worst.cpc,0)}원<br>지출 ${fmtK(worst.spend)}원</div></div>
-    <div class="insight-card opp"><div class="insight-label">💡 Opportunity</div><div class="insight-name">${opp?opp.name:'—'}</div><div class="insight-metric">${opp?`CTR ${pct(opp.ctr)} · 지출 ${fmtK(opp.spend)}원<br>CTR 개선 여지 있음`:''}</div></div>`;
+    <div class="insight-card opp"><div class="insight-label">💡 Opportunity</div><div class="insight-name">${opp ? opp.name : '—'}</div><div class="insight-metric">${opp ? `CTR ${pct(opp.ctr)} · 지출 ${fmtK(opp.spend)}원<br>CTR 개선 여지 있음` : ''}</div></div>`;
 }
 
-function renderPeriodChart(){
-  
-  
-  const prevLabel=prevMonth||'전월';
-  const curLabel=curMonth||'현월';
-  const prevRows=
-  const curRows=FILTERED;
-  // 레이블: [전월 IG, 전월 TT, 현월 IG, 현월 TT] → 그룹 비교
-  const labels=[prevLabel+' IG', prevLabel+' TT', curLabel+' IG', curLabel+' TT'];
-  const vals=[
-    prevRows.filter(r=>r.pf==='IG').reduce((s,r)=>s+r.spend,0),
-    prevRows.filter(r=>r.pf==='TT').reduce((s,r)=>s+r.spend,0),
-    curRows.filter(r=>r.pf==='IG').reduce((s,r)=>s+r.spend,0),
-    curRows.filter(r=>r.pf==='TT').reduce((s,r)=>s+r.spend,0),
-  ];
-  const bgColors=[IG_COLOR+'0.4)',TT_COLOR+'0.4)',IG_COLOR+'0.85)',TT_COLOR+'0.85)'];
-  const periods=['dummy'];// 하위호환용
-  const igD=[0];const ttD=[0];// 하위호환용
+function renderPeriodChart() {
+  // 월별 IG/TT 지출 그룹바 차트
+  const periods = [...new Set(FILTERED.map(r => r._period))].filter(Boolean).sort((a,b) =>
+    Object.values(mo_name).indexOf(a) - Object.values(mo_name).indexOf(b)
+  );
+  const igData = periods.map(p => FILTERED.filter(r => r._period === p && r.pf === 'IG').reduce((s,r) => s + r.spend, 0));
+  const ttData = periods.map(p => FILTERED.filter(r => r._period === p && r.pf === 'TT').reduce((s,r) => s + r.spend, 0));
+
   dc('period');
-  const ctx=document.getElementById('ch-period').getContext('2d');
-  charts['period']=new Chart(ctx,{type:'bar',data:{labels,datasets:[
-    {data:vals,backgroundColor:bgColors,borderRadius:5,borderSkipped:false}
-  ]},options:{responsive:true,maintainAspectRatio:true,plugins:{
-    legend:{display:false},
-    datalabels:{display:true,anchor:'end',align:'top',formatter:v=>v>0?fmtK(v):'',font:{size:9,weight:'700'},color:'#475569',padding:{bottom:2}},
-    tooltip:{backgroundColor:'#fff',borderColor:'#e8edf5',borderWidth:1,titleColor:'#0f172a',bodyColor:'#475569',padding:10,callbacks:{label:c=>` ${c.label}: ${fmtK(c.raw)}원`}}
-  },scales:{x:{grid:{display:false},ticks:{color:'#475569',font:{size:10}}},y:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:10},callback:v=>fmtK(v)}}}}});
-}
-
-function renderHeatmap(){
-  const byCP={};
-  FILTERED.forEach(r=>{const k=r.country+'|'+r.pf;if(!byCP[k])byCP[k]={imp:0,click:0};byCP[k].imp+=r.imp;byCP[k].click+=r.click;});
-  const top10=Object.entries(FILTERED.reduce((acc,r)=>{acc[r.country]=(acc[r.country]||0)+r.spend;return acc;},{})).sort((a,b)=>b[1]-a[1]).slice(0,10).map(([k])=>k);
-  const allCtrs=top10.flatMap(c=>['IG','TT'].map(pf=>{const d=byCP[c+'|'+pf];return d&&d.imp>0?d.click/d.imp:null;})).filter(v=>v!==null);
-  const minC=Math.min(...allCtrs),maxC=Math.max(...allCtrs),range=maxC-minC||1;
-  const hmClass=v=>{if(v===null)return 'hm-na';const t=(v-minC)/range;return t>0.6?'hm-high':t>0.3?'hm-mid':'hm-low';};
-  let html=`<table class="heatmap-table"><thead><tr><th>국가</th><th>Instagram</th><th>TikTok</th></tr></thead><tbody>`;
-  top10.forEach(c=>{
-    html+=`<tr><td>${c}</td>`;
-    ['IG','TT'].forEach(pf=>{const d=byCP[c+'|'+pf];const ctr=d&&d.imp>0?d.click/d.imp:null;html+=`<td><span class="hm-cell ${hmClass(ctr)}">${ctr!==null?pct(ctr):'—'}</span></td>`;});
-    html+=`</tr>`;
+  const ctx = document.getElementById('ch-period').getContext('2d');
+  charts['period'] = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: periods,
+      datasets: [
+        {label:'Instagram', data:igData, backgroundColor:IG_COLOR+'0.75)', borderRadius:4, borderSkipped:false},
+        {label:'TikTok',    data:ttData, backgroundColor:TT_COLOR+'0.75)', borderRadius:4, borderSkipped:false},
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: {
+        legend: {display:true, position:'bottom', labels:{color:'#475569', font:{size:10}, boxWidth:8, padding:10}},
+        datalabels: {display:false},
+        tooltip: {backgroundColor:'#fff', borderColor:'#e8edf5', borderWidth:1, titleColor:'#0f172a', bodyColor:'#475569', padding:10,
+          callbacks: {label: c => ` ${c.dataset.label}: ${fmtK(c.raw)}원`}},
+      },
+      scales: {
+        x: {grid:{display:false}, ticks:{color:'#475569', font:{size:10}}},
+        y: {grid:{color:'#f1f5f9'}, ticks:{color:'#94a3b8', font:{size:10}, callback:v => fmtK(v)}},
+      }
+    }
   });
-  html+=`</tbody></table>`;
-  document.getElementById('heatmap-wrap').innerHTML=html;
 }
 
-function renderNatTop5(){
-  const byC={};
-  FILTERED.forEach(r=>{if(!byC[r.country])byC[r.country]={spend:0,imp:0,click:0};byC[r.country].spend+=r.spend;byC[r.country].imp+=r.imp;byC[r.country].click+=r.click;});
-  const top5=Object.entries(byC).sort((a,b)=>b[1].spend-a[1].spend).slice(0,5);
-  document.getElementById('nat-top5').innerHTML=top5.map(([k,v],i)=>{
-    const ctr=v.imp>0?v.click/v.imp:0,cpc=v.click>0?v.spend/v.click:0;
+function renderHeatmap() {
+  const byCP = {};
+  FILTERED.forEach(r => {
+    const k = r.country + '|' + r.pf;
+    if (!byCP[k]) byCP[k] = {imp:0, click:0};
+    byCP[k].imp   += r.imp;
+    byCP[k].click += r.click;
+  });
+  const top10 = Object.entries(
+    FILTERED.reduce((acc,r) => { acc[r.country] = (acc[r.country] || 0) + r.spend; return acc; }, {})
+  ).sort((a,b) => b[1] - a[1]).slice(0, 10).map(([k]) => k);
+
+  const allCtrs = top10.flatMap(c => ['IG','TT'].map(pf => {
+    const d = byCP[c + '|' + pf];
+    return d && d.imp > 0 ? d.click / d.imp : null;
+  })).filter(v => v !== null);
+
+  const minC = Math.min(...allCtrs), maxC = Math.max(...allCtrs), range = maxC - minC || 1;
+  const hmClass = v => { if (v === null) return 'hm-na'; const t = (v - minC) / range; return t > 0.6 ? 'hm-high' : t > 0.3 ? 'hm-mid' : 'hm-low'; };
+
+  let html = `<table class="heatmap-table"><thead><tr><th>국가</th><th>Instagram</th><th>TikTok</th></tr></thead><tbody>`;
+  top10.forEach(c => {
+    html += `<tr><td>${c}</td>`;
+    ['IG','TT'].forEach(pf => {
+      const d   = byCP[c + '|' + pf];
+      const ctr = d && d.imp > 0 ? d.click / d.imp : null;
+      html += `<td><span class="hm-cell ${hmClass(ctr)}">${ctr !== null ? pct(ctr) : '—'}</span></td>`;
+    });
+    html += `</tr>`;
+  });
+  html += `</tbody></table>`;
+  document.getElementById('heatmap-wrap').innerHTML = html;
+}
+
+function renderNatTop5() {
+  const byC = {};
+  FILTERED.forEach(r => {
+    if (!byC[r.country]) byC[r.country] = {spend:0, imp:0, click:0};
+    byC[r.country].spend += r.spend;
+    byC[r.country].imp   += r.imp;
+    byC[r.country].click += r.click;
+  });
+  const top5 = Object.entries(byC).sort((a,b) => b[1].spend - a[1].spend).slice(0, 5);
+  document.getElementById('nat-top5').innerHTML = top5.map(([k,v], i) => {
+    const ctr = v.imp > 0 ? v.click / v.imp : 0;
+    const cpc = v.click > 0 ? v.spend / v.click : 0;
     return `<tr><td><span class="rank">${i+1}</span>${k}</td><td>${fmtK(v.spend)}원</td><td>${pct(ctr)}</td><td>${fmt(cpc,0)}원</td><td><span class="delta neu">—</span></td></tr>`;
   }).join('');
 }
 
-function renderPieChart(){
-  const byC={};FILTERED.forEach(r=>{if(!byC[r.country])byC[r.country]=0;byC[r.country]+=r.spend;});
-  const sorted=Object.entries(byC).sort((a,b)=>b[1]-a[1]);
-  const total=sorted.reduce((s,[,v])=>s+v,0);
+function renderPieChart() {
+  const byC = {};
+  FILTERED.forEach(r => { if (!byC[r.country]) byC[r.country] = 0; byC[r.country] += r.spend; });
+  const sorted = Object.entries(byC).sort((a,b) => b[1] - a[1]);
+  const total  = sorted.reduce((s,[,v]) => s + v, 0);
   dc('pie');
-  const ctx=document.getElementById('ch-pie').getContext('2d');
-  charts['pie']=new Chart(ctx,{type:'doughnut',data:{labels:sorted.map(([k])=>k),datasets:[{data:sorted.map(([,v])=>v),backgroundColor:PALETTE.slice(0,sorted.length),borderColor:'#fff',borderWidth:2}]},options:{responsive:true,maintainAspectRatio:true,cutout:'60%',plugins:{legend:{display:false},tooltip:{backgroundColor:'#fff',borderColor:'#e8edf5',borderWidth:1,titleColor:'#0f172a',bodyColor:'#475569',padding:8,callbacks:{label:c=>` ${fmtK(c.raw)}원 (${(c.raw/total*100).toFixed(1)}%)`}}}}});
-  document.getElementById('pie-legend').innerHTML=sorted.slice(0,12).map(([k,v],i)=>`<div style="display:flex;align-items:center;gap:5px;font-size:10px"><div style="width:7px;height:7px;border-radius:50%;background:${PALETTE[i]};flex-shrink:0"></div><span style="color:var(--text2);flex:1">${k}</span><span style="font-family:'DM Mono',monospace;color:var(--text3);font-size:9px">${(v/total*100).toFixed(1)}%</span></div>`).join('');
+  const ctx = document.getElementById('ch-pie').getContext('2d');
+  charts['pie'] = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: sorted.map(([k]) => k),
+      datasets: [{data: sorted.map(([,v]) => v), backgroundColor: PALETTE.slice(0, sorted.length), borderColor:'#fff', borderWidth:2}]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:true, cutout:'60%',
+      plugins: {
+        legend: {display:false},
+        datalabels: {display:false},
+        tooltip: {backgroundColor:'#fff', borderColor:'#e8edf5', borderWidth:1, titleColor:'#0f172a', bodyColor:'#475569', padding:8,
+          callbacks: {label: c => ` ${fmtK(c.raw)}원 (${(c.raw/total*100).toFixed(1)}%)`}},
+      }
+    }
+  });
+  document.getElementById('pie-legend').innerHTML = sorted.slice(0, 12).map(([k,v], i) =>
+    `<div style="display:flex;align-items:center;gap:5px;font-size:10px"><div style="width:7px;height:7px;border-radius:50%;background:${PALETTE[i]};flex-shrink:0"></div><span style="color:var(--text2);flex:1">${k}</span><span style="font-family:'DM Mono',monospace;color:var(--text3);font-size:9px">${(v/total*100).toFixed(1)}%</span></div>`
+  ).join('');
 }
 
-function renderCountryPage(){
-  const byC={};
-  FILTERED.forEach(r=>{if(!byC[r.country])byC[r.country]={spend:0,imp:0,click:0,land:0};byC[r.country].spend+=r.spend;byC[r.country].imp+=r.imp;byC[r.country].click+=r.click;byC[r.country].land+=r.land;});
-  const sorted=Object.entries(byC).sort((a,b)=>b[1].spend-a[1].spend);
-  document.getElementById('country-tbl').innerHTML=sorted.map(([k,v],i)=>{
-    const ctr=v.imp>0?v.click/v.imp:0,cpc=v.click>0?v.spend/v.click:0,cpm=v.imp>0?v.spend/v.imp*1000:0;
+/* ════════════════════════════════════════
+   국가별 상세
+════════════════════════════════════════ */
+function renderCountryPage() {
+  const byC = {};
+  FILTERED.forEach(r => {
+    if (!byC[r.country]) byC[r.country] = {spend:0, imp:0, click:0, land:0};
+    byC[r.country].spend += r.spend;
+    byC[r.country].imp   += r.imp;
+    byC[r.country].click += r.click;
+    byC[r.country].land  += r.land;
+  });
+  const sorted = Object.entries(byC).sort((a,b) => b[1].spend - a[1].spend);
+  document.getElementById('country-tbl').innerHTML = sorted.map(([k,v], i) => {
+    const ctr = v.imp   > 0 ? v.click / v.imp         : 0;
+    const cpc = v.click > 0 ? v.spend / v.click        : 0;
+    const cpm = v.imp   > 0 ? v.spend / v.imp * 1000  : 0;
     return `<tr><td><span class="rank">${i+1}</span>${k}</td><td>${fmtK(v.spend)}원</td><td>${fmtK(v.imp)}</td><td>${fmtK(v.click)}</td><td>${pct(ctr)}</td><td>${fmt(cpc,0)}원</td><td>${fmt(cpm,0)}원</td></tr>`;
   }).join('');
   renderCountryChart(countryChartMetric);
@@ -815,214 +944,273 @@ function renderCountryPage(){
   renderCountryTrend();
 }
 
-function switchCTab(el,metric){
-  el.parentElement.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');
-  countryChartMetric=metric;renderCountryChart(metric);
+function switchCTab(el, metric) {
+  el.parentElement.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  countryChartMetric = metric;
+  renderCountryChart(metric);
 }
 
-function renderCountryChart(metric){
-  const byC={};FILTERED.forEach(r=>{if(!byC[r.country])byC[r.country]={spend:0,imp:0,click:0};byC[r.country].spend+=r.spend;byC[r.country].imp+=r.imp;byC[r.country].click+=r.click;});
-  const sorted=Object.entries(byC).sort((a,b)=>b[1].spend-a[1].spend).slice(0,12);
-  const fn=metric==='spend'?v=>v.spend:metric==='cpm'?v=>(v.imp>0?v.spend/v.imp*1000:0):v=>(v.imp>0?v.click/v.imp:0);
+function renderCountryChart(metric) {
+  const byC = {};
+  FILTERED.forEach(r => {
+    if (!byC[r.country]) byC[r.country] = {spend:0, imp:0, click:0};
+    byC[r.country].spend += r.spend;
+    byC[r.country].imp   += r.imp;
+    byC[r.country].click += r.click;
+  });
+  const sorted = Object.entries(byC).sort((a,b) => b[1].spend - a[1].spend).slice(0, 12);
+  const fn = metric === 'spend' ? v => v.spend
+           : metric === 'cpm'   ? v => v.imp   > 0 ? v.spend/v.imp*1000 : 0
+                                : v => v.imp   > 0 ? v.click/v.imp      : 0;
   dc('country');
-  const ctx=document.getElementById('ch-country').getContext('2d');
-  charts['country']=new Chart(ctx,{type:'bar',data:{labels:sorted.map(([k])=>k),datasets:[{data:sorted.map(([,v])=>fn(v)),backgroundColor:PALETTE.slice(0,sorted.length),borderRadius:4,borderSkipped:false}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{display:false},tooltip:{backgroundColor:'#fff',borderColor:'#e8edf5',borderWidth:1,titleColor:'#0f172a',bodyColor:'#475569',padding:8,callbacks:{label:c=>` ${metric==='ctr'?pct(c.raw):fmt(c.raw,0)+(metric==='spend'?'원':'')}`}}},scales:{x:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:10},callback:v=>metric==='ctr'?pct(v):fmtK(v)}},y:{grid:{display:false},ticks:{color:'#0f172a',font:{size:11}}}}}});
+  const ctx = document.getElementById('ch-country').getContext('2d');
+  charts['country'] = new Chart(ctx, {
+    type: 'bar',
+    data: {labels: sorted.map(([k]) => k), datasets: [{data: sorted.map(([,v]) => fn(v)), backgroundColor: PALETTE.slice(0, sorted.length), borderRadius:4, borderSkipped:false}]},
+    options: {
+      indexAxis: 'y', responsive:true, maintainAspectRatio:false,
+      plugins: {
+        legend: {display:false},
+        datalabels: {display:false},
+        tooltip: {backgroundColor:'#fff', borderColor:'#e8edf5', borderWidth:1, titleColor:'#0f172a', bodyColor:'#475569', padding:8,
+          callbacks: {label: c => ` ${metric === 'ctr' ? pct(c.raw) : fmt(c.raw, 0) + (metric === 'spend' ? '원' : '')}`}},
+      },
+      scales: {
+        x: {grid:{color:'#f1f5f9'}, ticks:{color:'#94a3b8', font:{size:10}, callback: v => metric === 'ctr' ? pct(v) : fmtK(v)}},
+        y: {grid:{display:false}, ticks:{color:'#0f172a', font:{size:11}}},
+      }
+    }
+  });
 }
 
-function updateTrendCountrySelects(){
-  const allC=[...new Set(FILTERED.map(r=>r.country))].filter(Boolean).sort();
-  const sel=document.getElementById('trend-country-sel');
-  sel.innerHTML='<option value="">국가 선택</option>';
-  allC.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;sel.appendChild(o);});
+function updateTrendCountrySelects() {
+  const allC = [...new Set(FILTERED.map(r => r.country))].filter(Boolean).sort();
+  const sel  = document.getElementById('trend-country-sel');
+  sel.innerHTML = '<option value="">국가 선택</option>';
+  allC.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; sel.appendChild(o); });
 }
 
-function applyTrendRegion(){
-  const region=document.getElementById('trend-region').value;
-  // 없음 선택 시
-  if(region==='__none__'){
-    selectedTrendCountries=new Set();
-    renderCountryTrend();
-    return;
-  }
-  // 권역 선택 시: 해당 권역 국가 자동 선택 (최대 5개)
-  if(region){
-    const regionCountries=[...new Set(FILTERED.filter(r=>r.region===region).map(r=>r.country))].filter(Boolean).sort();
-    selectedTrendCountries=new Set(regionCountries.slice(0,5));
+function applyTrendRegion() {
+  const region = document.getElementById('trend-region').value;
+  if (region === '__none__') { selectedTrendCountries = new Set(); renderCountryTrend(); return; }
+  if (region) {
+    selectedTrendCountries = new Set([...new Set(FILTERED.filter(r => r.region === region).map(r => r.country))].filter(Boolean).sort().slice(0, 5));
   } else {
-    // 전체 권역: 기존 선택 유지 또는 상위 3개
-    if(selectedTrendCountries.size===0){
-      const allC=[...new Set(FILTERED.map(r=>r.country))].filter(Boolean).sort();
-      selectedTrendCountries=new Set(allC.slice(0,3));
+    if (selectedTrendCountries.size === 0) {
+      selectedTrendCountries = new Set([...new Set(FILTERED.map(r => r.country))].filter(Boolean).sort().slice(0, 3));
     }
   }
-  // 국가 드롭박스 업데이트 (권역 필터링)
-  const filteredC=region
-    ?[...new Set(FILTERED.filter(r=>r.region===region).map(r=>r.country))].filter(Boolean).sort()
-    :[...new Set(FILTERED.map(r=>r.country))].filter(Boolean).sort();
-  const sel=document.getElementById('trend-country-sel');
-  sel.innerHTML='<option value="">국가 선택</option><option value="__none__">— 없음 —</option>';
-  filteredC.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;sel.appendChild(o);});
+  const filteredC = region
+    ? [...new Set(FILTERED.filter(r => r.region === region).map(r => r.country))].filter(Boolean).sort()
+    : [...new Set(FILTERED.map(r => r.country))].filter(Boolean).sort();
+  const sel = document.getElementById('trend-country-sel');
+  sel.innerHTML = '<option value="">국가 선택</option><option value="__none__">— 없음 —</option>';
+  filteredC.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; sel.appendChild(o); });
   renderCountryTrend();
 }
 
-function filterTrendCountries(){
-  applyTrendRegion();
-}
-
-function addTrendCountry(country){
-  if(!country)return;
-  if(country==='__none__'){
-    selectedTrendCountries=new Set();
-    document.getElementById('trend-country-sel').value='';
-    renderCountryTrend();
-    return;
-  }
-  if(selectedTrendCountries.size>=5){alert('최대 5개 국가까지 선택 가능합니다.');document.getElementById('trend-country-sel').value='';return;}
+function addTrendCountry(country) {
+  if (!country) return;
+  if (country === '__none__') { selectedTrendCountries = new Set(); document.getElementById('trend-country-sel').value = ''; renderCountryTrend(); return; }
+  if (selectedTrendCountries.size >= 5) { alert('최대 5개 국가까지 선택 가능합니다.'); document.getElementById('trend-country-sel').value = ''; return; }
   selectedTrendCountries.add(country);
-  document.getElementById('trend-country-sel').value='';
+  document.getElementById('trend-country-sel').value = '';
   renderCountryTrend();
 }
 
-function removeTrendCountry(country){
-  if(selectedTrendCountries.size<=1)return;
+function removeTrendCountry(country) {
+  if (selectedTrendCountries.size <= 1) return;
   selectedTrendCountries.delete(country);
   renderCountryTrend();
 }
 
-function renderCountryTrend(){
-  const metric1=document.getElementById('trend-metric1').value;
-  const metric2=document.getElementById('trend-metric2').value;
-  const countries=[...selectedTrendCountries];
+function renderCountryTrend() {
+  const metric1  = document.getElementById('trend-metric1').value;
+  const metric2  = document.getElementById('trend-metric2').value;
+  const countries = [...selectedTrendCountries];
 
   // 칩 렌더
-  const chipsWrap=document.getElementById('trend-country-chips');
-  chipsWrap.innerHTML=countries.map((c,i)=>`<div style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:#f0f9ff;border:1px solid ${PALETTE[i%PALETTE.length]}44;border-radius:12px;font-size:10px;color:${PALETTE[i%PALETTE.length]};font-weight:600;cursor:pointer" onclick="removeTrendCountry('${c}')"><div style="width:6px;height:6px;border-radius:50%;background:${PALETTE[i%PALETTE.length]}"></div>${c} ✕</div>`).join('');
+  document.getElementById('trend-country-chips').innerHTML = countries.map((c, i) =>
+    `<div style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:#f0f9ff;border:1px solid ${PALETTE[i%PALETTE.length]}44;border-radius:12px;font-size:10px;color:${PALETTE[i%PALETTE.length]};font-weight:600;cursor:pointer" onclick="removeTrendCountry('${c}')"><div style="width:6px;height:6px;border-radius:50%;background:${PALETTE[i%PALETTE.length]}"></div>${c} ✕</div>`
+  ).join('');
 
-  if(!countries.length)return;
-  const allDates=[...new Set(FILTERED.map(r=>r._date))].filter(Boolean).sort();
-  if(!allDates.length){dc('country-trend');return;}
+  if (!countries.length) return;
 
-  const metricFn=(m,rows)=>{const a=agg(rows);return m==='spend'?a.spend:m==='imp'?a.imp:m==='click'?a.click:m==='land'?a.land:m==='ctr'?a.ctr*100:a.cpm;};
-  const metricLabel=(m,v)=>m==='ctr'?v.toFixed(2)+'%':m==='cpm'?fmt(v,0)+'원':fmtK(v);
+  const allDates = [...new Set(FILTERED.map(r => r._date))].filter(Boolean).sort();
+  if (!allDates.length) { dc('country-trend'); return; }
 
-  const datasets=[];
-  countries.forEach((c,i)=>{
-    const color=PALETTE[i%PALETTE.length];
-    datasets.push({label:c,data:allDates.map(d=>{const rows=FILTERED.filter(r=>r.country===c&&r._date===d);return rows.length?metricFn(metric1,rows):null;}),borderColor:color,backgroundColor:color+'22',tension:.3,fill:false,pointRadius:3,pointBackgroundColor:color,spanGaps:true,yAxisID:'y'});
-    if(metric2){
-      datasets.push({label:c+' ('+metric2+')',data:allDates.map(d=>{const rows=FILTERED.filter(r=>r.country===c&&r._date===d);return rows.length?metricFn(metric2,rows):null;}),borderColor:color,backgroundColor:color+'11',tension:.3,fill:false,pointRadius:3,pointBackgroundColor:color,borderDash:[4,4],spanGaps:true,yAxisID:'y2'});
+  const metricFn = (m, rows) => {
+    const a = agg(rows);
+    return m==='spend'?a.spend : m==='imp'?a.imp : m==='click'?a.click : m==='land'?a.land : m==='ctr'?a.ctr*100 : a.cpm;
+  };
+  const metricLabel = (m, v) => m === 'ctr' ? v.toFixed(2) + '%' : m === 'cpm' ? fmt(v,0) + '원' : fmtK(v);
+
+  const datasets = [];
+  countries.forEach((c, i) => {
+    const color = PALETTE[i % PALETTE.length];
+    datasets.push({label:c, data:allDates.map(d => { const rows = FILTERED.filter(r => r.country===c && r._date===d); return rows.length ? metricFn(metric1, rows) : null; }),
+      borderColor:color, backgroundColor:color+'22', tension:.3, fill:false, pointRadius:3, pointBackgroundColor:color, spanGaps:true, yAxisID:'y'});
+    if (metric2) {
+      datasets.push({label:c+' ('+metric2+')', data:allDates.map(d => { const rows = FILTERED.filter(r => r.country===c && r._date===d); return rows.length ? metricFn(metric2, rows) : null; }),
+        borderColor:color, borderDash:[4,4], tension:.3, fill:false, pointRadius:3, pointBackgroundColor:color, spanGaps:true, yAxisID:'y2'});
     }
   });
 
-  // 수치 요약
-  const summaryItems=countries.map((c,i)=>{
-    const rows=FILTERED.filter(r=>r.country===c);
-    const v=metricFn(metric1,rows);
-    return{label:c,val:metricLabel(metric1,v),color:PALETTE[i%PALETTE.length]};
-  });
-  document.getElementById('trend-summary').innerHTML=mkSummary(summaryItems);
+  document.getElementById('trend-summary').innerHTML = mkSummary(countries.map((c, i) => {
+    const v = metricFn(metric1, FILTERED.filter(r => r.country === c));
+    return {label:c, val:metricLabel(metric1, v), color:PALETTE[i%PALETTE.length]};
+  }));
 
   dc('country-trend');
-  const ctx=document.getElementById('ch-country-trend').getContext('2d');
-  const scales={x:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:9},maxTicksLimit:12}},y:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:9},callback:v=>metric1==='ctr'?v.toFixed(1)+'%':fmtK(v)},title:{display:true,text:metric1,color:'#94a3b8',font:{size:9}}}};
-  if(metric2)scales.y2={position:'right',grid:{display:false},ticks:{color:'#cbd5e1',font:{size:9},callback:v=>metric2==='ctr'?v.toFixed(1)+'%':fmtK(v)},title:{display:true,text:metric2,color:'#cbd5e1',font:{size:9}}};
-  charts['country-trend']=new Chart(ctx,{type:'line',data:{labels:allDates,datasets},options:{responsive:true,maintainAspectRatio:true,plugins:{datalabels:{display:false},legend:{display:true,position:'bottom',labels:{color:'#475569',font:{size:10},boxWidth:8,padding:6}},tooltip:{backgroundColor:'#fff',borderColor:'#e8edf5',borderWidth:1,titleColor:'#0f172a',bodyColor:'#475569',padding:8}},scales}});
+  const ctx    = document.getElementById('ch-country-trend').getContext('2d');
+  const scales = {
+    x: {grid:{color:'#f1f5f9'}, ticks:{color:'#94a3b8', font:{size:9}, maxTicksLimit:12}},
+    y: {grid:{color:'#f1f5f9'}, ticks:{color:'#94a3b8', font:{size:9}, callback:v => metric1==='ctr' ? v.toFixed(1)+'%' : fmtK(v)},
+        title:{display:true, text:metric1, color:'#94a3b8', font:{size:9}}},
+  };
+  if (metric2) scales.y2 = {position:'right', grid:{display:false}, ticks:{color:'#cbd5e1', font:{size:9}, callback:v => metric2==='ctr' ? v.toFixed(1)+'%' : fmtK(v)},
+    title:{display:true, text:metric2, color:'#cbd5e1', font:{size:9}}};
+  charts['country-trend'] = new Chart(ctx, {
+    type: 'line', data:{labels:allDates, datasets},
+    options: {
+      responsive:true, maintainAspectRatio:true,
+      plugins: {datalabels:{display:false}, legend:{display:true, position:'bottom', labels:{color:'#475569', font:{size:10}, boxWidth:8, padding:6}},
+        tooltip:{backgroundColor:'#fff', borderColor:'#e8edf5', borderWidth:1, titleColor:'#0f172a', bodyColor:'#475569', padding:8}},
+      scales,
+    }
+  });
 }
 
-function renderCreativePage(){
-  const filterProduct=document.getElementById('filter-product')?document.getElementById('filter-product').value:'';
-  const sort=document.getElementById('creative-sort').value;
-  const moLeft=document.getElementById('creative-month-left')?document.getElementById('creative-month-left').value:'';
-  const moRight=document.getElementById('creative-month-right')?document.getElementById('creative-month-right').value:'';
+/* ════════════════════════════════════════
+   소재별 상세
+════════════════════════════════════════ */
+function initCreativeMonthSelects() {
+  const periods = [...new Set(RAW.map(r => r._period))].filter(Boolean).sort((a,b) =>
+    Object.values(mo_name).indexOf(a) - Object.values(mo_name).indexOf(b)
+  );
+  ['creative-month-left','creative-month-right'].forEach((id, idx) => {
+    const sel = document.getElementById(id); if (!sel) return;
+    sel.innerHTML = `<option value="">전체 (${idx === 0 ? '좌' : '우'})</option>`;
+    periods.forEach(p => { const o = document.createElement('option'); o.value = p; o.textContent = p; sel.appendChild(o); });
+    if (periods.length > 0) sel.value = idx === 0 ? periods[0] : periods[periods.length - 1];
+  });
+}
 
-  // 상품 필터 적용
-  const baseRows=filterProduct==='__none__'?[]:filterProduct?FILTERED.filter(r=>r.product===filterProduct):FILTERED;
+function renderCreativePage() {
+  const filterProduct = document.getElementById('filter-product') ? document.getElementById('filter-product').value : '';
+  const sort          = document.getElementById('creative-sort').value;
+  const moLeft        = document.getElementById('creative-month-left')  ? document.getElementById('creative-month-left').value  : '';
+  const moRight       = document.getElementById('creative-month-right') ? document.getElementById('creative-month-right').value : '';
 
-  function buildCreativeRows(rows){
-    const byCr={};
-    rows.forEach(r=>{const k=r.name+'|'+r.pf;if(!byCr[k])byCr[k]={name:r.name,pf:r.pf,url:r.url,spend:0,imp:0,click:0,land:0};byCr[k].spend+=r.spend;byCr[k].imp+=r.imp;byCr[k].click+=r.click;byCr[k].land+=r.land;});
-    return Object.values(byCr).map(r=>({...r,ctr:r.imp>0?r.click/r.imp:0,cpc:r.click>0?r.spend/r.click:0,cpm:r.imp>0?r.spend/r.imp*1000:0}));
+  const baseRows = filterProduct === '__none__' ? [] : filterProduct ? FILTERED.filter(r => r.product === filterProduct) : FILTERED;
+
+  function buildCreativeRows(rows) {
+    const byCr = {};
+    rows.forEach(r => {
+      const k = r.name + '|' + r.pf;
+      if (!byCr[k]) byCr[k] = {name:r.name, pf:r.pf, url:r.url, spend:0, imp:0, click:0, land:0};
+      byCr[k].spend += r.spend; byCr[k].imp += r.imp; byCr[k].click += r.click; byCr[k].land += r.land;
+    });
+    return Object.values(byCr).map(r => ({...r,
+      ctr: r.imp   > 0 ? r.click / r.imp         : 0,
+      cpc: r.click > 0 ? r.spend / r.click        : 0,
+      cpm: r.imp   > 0 ? r.spend / r.imp * 1000  : 0,
+    }));
   }
 
-  function sortRows(rows){
-    return [...rows].sort((a,b)=>sort==='cpc'?a.cpc-b.cpc:sort==='ctr'?b.ctr-a.ctr:b[sort]-a[sort]);
+  function sortRows(rows) {
+    return [...rows].sort((a,b) => sort === 'cpc' ? a.cpc - b.cpc : sort === 'ctr' ? b.ctr - a.ctr : b[sort] - a[sort]);
   }
 
-  function mkTbody(rows){
-    const maxSpend=Math.max(...rows.map(r=>r.spend),1);
-    return rows.map((r,i)=>{
-      const thumb=r.url?`<img src="${r.url}" class="creative-thumb" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" loading="lazy"><div class="creative-thumb-ph" style="display:none">${r.pf}</div>`:`<div class="creative-thumb-ph">${r.pf}</div>`;
-      const nameEl=r.url?`<a href="${r.url}" target="_blank" rel="noopener" style="color:var(--text);text-decoration:none;border-bottom:1px dashed var(--border)" onmouseover="this.style.color='var(--accent2)'" onmouseout="this.style.color='var(--text)'">${r.name} <span style="font-size:9px;opacity:.4">↗</span></a>`:r.name;
-      return `<tr><td><div class="creative-row-inner">${thumb}<div class="creative-name-cell" title="${r.name}">${nameEl}</div></div></td><td><span class="pf-badge pf-${r.pf.toLowerCase()}">${r.pf}</span></td><td><div class="bar-wrap"><div class="bar-inner" style="width:${r.spend/maxSpend*60}px;background:${r.pf==='IG'?IG_COLOR+'0.6)':TT_COLOR+'0.6)'}"></div><span>${fmtK(r.spend)}원</span></div></td><td>${fmtK(r.imp)}</td><td>${fmtK(r.click)}</td><td>${fmtK(r.land)}</td><td>${pct(r.ctr)}</td><td>${fmt(r.cpc,0)}</td><td>${fmt(r.cpm,0)}</td></tr>`;
+  function mkTbody(rows) {
+    const maxSpend = Math.max(...rows.map(r => r.spend), 1);
+    return rows.map(r => {
+      const thumb  = r.url
+        ? `<img src="${r.url}" class="creative-thumb" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" loading="lazy"><div class="creative-thumb-ph" style="display:none">${r.pf}</div>`
+        : `<div class="creative-thumb-ph">${r.pf}</div>`;
+      const nameEl = r.url
+        ? `<a href="${r.url}" target="_blank" rel="noopener" style="color:var(--text);text-decoration:none;border-bottom:1px dashed var(--border)" onmouseover="this.style.color='var(--accent2)'" onmouseout="this.style.color='var(--text)'">${r.name} <span style="font-size:9px;opacity:.4">↗</span></a>`
+        : r.name;
+      return `<tr>
+        <td><div class="creative-row-inner">${thumb}<div class="creative-name-cell" title="${r.name}">${nameEl}</div></div></td>
+        <td><span class="pf-badge pf-${r.pf.toLowerCase()}">${r.pf}</span></td>
+        <td><div class="bar-wrap"><div class="bar-inner" style="width:${r.spend/maxSpend*60}px;background:${r.pf==='IG'?IG_COLOR+'0.6)':TT_COLOR+'0.6)'}"></div><span>${fmtK(r.spend)}원</span></div></td>
+        <td>${fmtK(r.imp)}</td><td>${fmtK(r.click)}</td><td>${fmtK(r.land)}</td>
+        <td>${pct(r.ctr)}</td><td>${fmt(r.cpc,0)}</td><td>${fmt(r.cpm,0)}</td></tr>`;
     }).join('');
   }
 
-  // 좌측
-  const leftRows=moLeft?baseRows.filter(r=>r._period===moLeft):baseRows;
-  const leftSorted=sortRows(buildCreativeRows(leftRows));
-  document.getElementById('creative-tbl-left').innerHTML=mkTbody(leftSorted);
-  document.getElementById('creative-left-title').textContent='소재 성과'+(moLeft?' — '+moLeft:'  (전체)');
+  const leftRows  = moLeft  ? baseRows.filter(r => r._period === moLeft)  : baseRows;
+  const rightRows = moRight ? baseRows.filter(r => r._period === moRight) : baseRows;
 
-  // 우측
-  const rightRows=moRight?baseRows.filter(r=>r._period===moRight):baseRows;
-  const rightSorted=sortRows(buildCreativeRows(rightRows));
-  document.getElementById('creative-tbl-right').innerHTML=mkTbody(rightSorted);
-  document.getElementById('creative-right-title').textContent='소재 성과'+(moRight?' — '+moRight:'  (전체)');
+  document.getElementById('creative-tbl-left').innerHTML  = mkTbody(sortRows(buildCreativeRows(leftRows)));
+  document.getElementById('creative-left-title').textContent  = '소재 성과' + (moLeft  ? ' — ' + moLeft  : ' (전체)');
+  document.getElementById('creative-tbl-right').innerHTML = mkTbody(sortRows(buildCreativeRows(rightRows)));
+  document.getElementById('creative-right-title').textContent = '소재 성과' + (moRight ? ' — ' + moRight : ' (전체)');
 }
 
-function initCreativeMonthSelects(){
-  const periods=[...new Set(RAW.map(r=>r._period))].filter(Boolean).sort((a,b)=>{
-    return Object.values(mo_name).indexOf(a)-Object.values(mo_name).indexOf(b);
-  });
-  ['creative-month-left','creative-month-right'].forEach((id,idx)=>{
-    const sel=document.getElementById(id);if(!sel)return;
-    sel.innerHTML=`<option value="">전체 (${id.includes('left')?'좌':'우'})</option>`;
-    periods.forEach(p=>{const o=document.createElement('option');o.value=p;o.textContent=p;sel.appendChild(o);});
-    // 좌: 첫번째, 우: 마지막 기간 기본 선택
-    if(periods.length>0) sel.value=idx===0?periods[0]:periods[periods.length-1];
-  });
-}
+/* ════════════════════════════════════════
+   플랫폼 비교
+════════════════════════════════════════ */
+function renderPlatformPage() {
+  const igRows = FILTERED.filter(r => r.pf === 'IG');
+  const ttRows = FILTERED.filter(r => r.pf === 'TT');
+  const ig = agg(igRows), tt = agg(ttRows);
 
-function switchPFTab(el,metric){
-  el.parentElement.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');
-  pfMetricTab=metric;renderPFMetricChart(metric);
-}
+  const mkM = (data, color) => [
+    {l:'지출',  v:fmtK(data.spend)+'원'}, {l:'노출', v:fmtK(data.imp)}, {l:'클릭', v:fmtK(data.click)},
+    {l:'CTR',   v:pct(data.ctr)},          {l:'CPC',  v:fmt(data.cpc,0)+'원'}, {l:'CPM', v:fmt(data.cpm,0)+'원'},
+  ].map(m => `<div class="pf-metric"><div class="pf-metric-label">${m.l}</div><div class="pf-metric-val" style="color:${color}">${m.v}</div></div>`).join('');
 
-function renderPlatformPage(){
-  const igRows=FILTERED.filter(r=>r.pf==='IG'),ttRows=FILTERED.filter(r=>r.pf==='TT');
-  const ig=agg(igRows),tt=agg(ttRows);
-  const mkM=(data,color)=>([
-    {l:'지출',v:fmtK(data.spend)+'원'},{l:'노출',v:fmtK(data.imp)},{l:'클릭',v:fmtK(data.click)},
-    {l:'CTR',v:pct(data.ctr)},{l:'CPC',v:fmt(data.cpc,0)+'원'},{l:'CPM',v:fmt(data.cpm,0)+'원'},
-  ].map(m=>`<div class="pf-metric"><div class="pf-metric-label">${m.l}</div><div class="pf-metric-val" style="color:${color}">${m.v}</div></div>`).join(''));
-  document.getElementById('pf-ig-metrics').innerHTML=mkM(ig,'var(--ig)');
-  document.getElementById('pf-tt-metrics').innerHTML=mkM(tt,'var(--tt)');
+  document.getElementById('pf-ig-metrics').innerHTML = mkM(ig, 'var(--ig)');
+  document.getElementById('pf-tt-metrics').innerHTML = mkM(tt, 'var(--tt)');
 
-  const periods=[...new Set(FILTERED.map(r=>r._period))].filter(Boolean).sort((a,b)=>{
-    return Object.values(mo_name).indexOf(a)-Object.values(mo_name).indexOf(b);
-  });
-  const igSpend=periods.map(p=>igRows.filter(r=>r._period===p).reduce((s,r)=>s+r.spend,0));
-  const ttSpend=periods.map(p=>ttRows.filter(r=>r._period===p).reduce((s,r)=>s+r.spend,0));
+  // 월별 지출 추이 라인차트
+  const periods = [...new Set(FILTERED.map(r => r._period))].filter(Boolean).sort((a,b) =>
+    Object.values(mo_name).indexOf(a) - Object.values(mo_name).indexOf(b)
+  );
+  const igSpend = periods.map(p => igRows.filter(r => r._period === p).reduce((s,r) => s + r.spend, 0));
+  const ttSpend = periods.map(p => ttRows.filter(r => r._period === p).reduce((s,r) => s + r.spend, 0));
 
-  document.getElementById('pf-trend-summary').innerHTML=mkSummary([
-    {label:'Instagram',val:fmtK(ig.spend)+'원',color:IG_COLOR+'0.8)'},
-    {label:'TikTok',val:fmtK(tt.spend)+'원',color:TT_COLOR+'0.8)'},
+  document.getElementById('pf-trend-summary').innerHTML = mkSummary([
+    {label:'Instagram', val:fmtK(ig.spend)+'원', color:IG_COLOR+'0.8)'},
+    {label:'TikTok',    val:fmtK(tt.spend)+'원', color:TT_COLOR+'0.8)'},
   ]);
 
   dc('pf-trend');
-  const ctx1=document.getElementById('ch-pf-trend').getContext('2d');
-  charts['pf-trend']=new Chart(ctx1,{type:'line',data:{labels:periods,datasets:[
-    {label:'Instagram',data:igSpend,borderColor:IG_COLOR+'0.9)',backgroundColor:IG_COLOR+'0.1)',tension:.3,fill:true,pointRadius:4,pointBackgroundColor:IG_COLOR+'0.9)'},
-    {label:'TikTok',data:ttSpend,borderColor:TT_COLOR+'0.9)',backgroundColor:TT_COLOR+'0.1)',tension:.3,fill:true,pointRadius:4,pointBackgroundColor:TT_COLOR+'0.9)'}
-  ]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:true,position:'bottom',labels:{color:'#475569',font:{size:10},boxWidth:8,padding:10}},tooltip:{backgroundColor:'#fff',borderColor:'#e8edf5',borderWidth:1,titleColor:'#0f172a',bodyColor:'#475569',padding:8,callbacks:{label:c=>` ${c.dataset.label}: ${fmtK(c.raw)}원`}}},scales:{x:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:10}}},y:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:10},callback:v=>fmtK(v)}}}}});
+  const ctx1 = document.getElementById('ch-pf-trend').getContext('2d');
+  charts['pf-trend'] = new Chart(ctx1, {
+    type: 'line',
+    data: {labels: periods, datasets: [
+      {label:'Instagram', data:igSpend, borderColor:IG_COLOR+'0.9)', backgroundColor:IG_COLOR+'0.1)', tension:.3, fill:true, pointRadius:4, pointBackgroundColor:IG_COLOR+'0.9)'},
+      {label:'TikTok',    data:ttSpend, borderColor:TT_COLOR+'0.9)', backgroundColor:TT_COLOR+'0.1)', tension:.3, fill:true, pointRadius:4, pointBackgroundColor:TT_COLOR+'0.9)'},
+    ]},
+    options: {
+      responsive:true, maintainAspectRatio:true,
+      plugins: {
+        datalabels: {display:false},
+        legend: {display:true, position:'bottom', labels:{color:'#475569', font:{size:10}, boxWidth:8, padding:10}},
+        tooltip: {backgroundColor:'#fff', borderColor:'#e8edf5', borderWidth:1, titleColor:'#0f172a', bodyColor:'#475569', padding:8,
+          callbacks: {label: c => ` ${c.dataset.label}: ${fmtK(c.raw)}원`}},
+      },
+      scales: {
+        x: {grid:{color:'#f1f5f9'}, ticks:{color:'#94a3b8', font:{size:10}}},
+        y: {grid:{color:'#f1f5f9'}, ticks:{color:'#94a3b8', font:{size:10}, callback:v => fmtK(v)}},
+      }
+    }
+  });
 
   renderPFMetricChart(pfMetricTab);
+  updatePFTrendCountrySelects();
+  renderPFCountryTrend();
 
-  document.getElementById('pf-strengths').innerHTML=`
+  // 강점 분석
+  document.getElementById('pf-strengths').innerHTML = `
     <div style="padding:14px;background:#fef2f5;border:1px solid rgba(225,48,108,.15);border-radius:8px">
       <div style="font-size:11px;font-weight:700;color:var(--ig);margin-bottom:8px">📸 Instagram 강점</div>
       <div style="font-size:11px;color:var(--text2);line-height:1.9">
-        · CTR ${pct(ig.ctr)} ${ig.ctr>tt.ctr?'<span style="color:var(--green)">▲ TT 대비 높음</span>':'<span style="color:var(--red)">▼ TT 대비 낮음</span>'}<br>
+        · CTR ${pct(ig.ctr)} ${ig.ctr > tt.ctr ? '<span style="color:var(--green)">▲ TT 대비 높음</span>' : '<span style="color:var(--red)">▼ TT 대비 낮음</span>'}<br>
         · CPM ${fmt(ig.cpm,0)}원 · CPC ${fmt(ig.cpc,0)}원<br>
         · 랜딩 전환율 ${pct(ig.ltr)}
       </div>
@@ -1030,105 +1218,156 @@ function renderPlatformPage(){
     <div style="padding:14px;background:#f0fdfa;border:1px solid rgba(20,184,166,.15);border-radius:8px">
       <div style="font-size:11px;font-weight:700;color:var(--tt);margin-bottom:8px">🎵 TikTok 강점</div>
       <div style="font-size:11px;color:var(--text2);line-height:1.9">
-        · CTR ${pct(tt.ctr)} ${tt.ctr>ig.ctr?'<span style="color:var(--green)">▲ IG 대비 높음</span>':'<span style="color:var(--red)">▼ IG 대비 낮음</span>'}<br>
+        · CTR ${pct(tt.ctr)} ${tt.ctr > ig.ctr ? '<span style="color:var(--green)">▲ IG 대비 높음</span>' : '<span style="color:var(--red)">▼ IG 대비 낮음</span>'}<br>
         · CPM ${fmt(tt.cpm,0)}원 · CPC ${fmt(tt.cpc,0)}원<br>
         · 랜딩 전환율 ${pct(tt.ltr)}
       </div>
     </div>`;
-
-  updatePFTrendCountrySelects();
-  renderPFCountryTrend();
 }
 
-function renderPFMetricChart(metric){
-  const ig=agg(FILTERED.filter(r=>r.pf==='IG')),tt=agg(FILTERED.filter(r=>r.pf==='TT'));
-  const fn=m=>m==='ctr'?[ig.ctr*100,tt.ctr*100]:m==='cpc'?[ig.cpc,tt.cpc]:[ig.cpm,tt.cpm];
-  const vals=fn(metric);
-  document.getElementById('pf-metric-summary').innerHTML=mkSummary([
-    {label:'Instagram',val:metric==='ctr'?vals[0].toFixed(2)+'%':fmt(vals[0],0)+'원',color:IG_COLOR+'0.8)'},
-    {label:'TikTok',val:metric==='ctr'?vals[1].toFixed(2)+'%':fmt(vals[1],0)+'원',color:TT_COLOR+'0.8)'},
+function switchPFTab(el, metric) {
+  el.parentElement.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  pfMetricTab = metric;
+  renderPFMetricChart(metric);
+}
+
+function renderPFMetricChart(metric) {
+  const ig = agg(FILTERED.filter(r => r.pf === 'IG'));
+  const tt = agg(FILTERED.filter(r => r.pf === 'TT'));
+  const vals = metric === 'ctr' ? [ig.ctr*100, tt.ctr*100]
+             : metric === 'cpc' ? [ig.cpc,      tt.cpc]
+                                : [ig.cpm,      tt.cpm];
+  document.getElementById('pf-metric-summary').innerHTML = mkSummary([
+    {label:'Instagram', val: metric==='ctr' ? vals[0].toFixed(2)+'%' : fmt(vals[0],0)+'원', color:IG_COLOR+'0.8)'},
+    {label:'TikTok',    val: metric==='ctr' ? vals[1].toFixed(2)+'%' : fmt(vals[1],0)+'원', color:TT_COLOR+'0.8)'},
   ]);
   dc('pf-metric');
-  const ctx=document.getElementById('ch-pf-metric').getContext('2d');
-  charts['pf-metric']=new Chart(ctx,{type:'bar',data:{labels:['Instagram','TikTok'],datasets:[{data:vals,backgroundColor:[IG_COLOR+'0.7)',TT_COLOR+'0.7)'],borderRadius:6,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false},tooltip:{backgroundColor:'#fff',borderColor:'#e8edf5',borderWidth:1,titleColor:'#0f172a',bodyColor:'#475569',padding:8,callbacks:{label:c=>metric==='ctr'?` ${c.raw.toFixed(2)}%`:` ${fmt(c.raw,0)}원`}}},scales:{x:{grid:{display:false},ticks:{color:'#0f172a',font:{size:11}}},y:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:10},callback:v=>metric==='ctr'?v.toFixed(1)+'%':fmt(v,0)}}}}});
+  const ctx = document.getElementById('ch-pf-metric').getContext('2d');
+  charts['pf-metric'] = new Chart(ctx, {
+    type: 'bar',
+    data: {labels:['Instagram','TikTok'], datasets:[{data:vals, backgroundColor:[IG_COLOR+'0.7)',TT_COLOR+'0.7)'], borderRadius:6, borderSkipped:false}]},
+    options: {
+      responsive:true, maintainAspectRatio:true,
+      plugins: {
+        legend: {display:false},
+        datalabels: {display:false},
+        tooltip: {backgroundColor:'#fff', borderColor:'#e8edf5', borderWidth:1, titleColor:'#0f172a', bodyColor:'#475569', padding:8,
+          callbacks: {label: c => metric==='ctr' ? ` ${c.raw.toFixed(2)}%` : ` ${fmt(c.raw,0)}원`}},
+      },
+      scales: {
+        x: {grid:{display:false}, ticks:{color:'#0f172a', font:{size:11}}},
+        y: {grid:{color:'#f1f5f9'}, ticks:{color:'#94a3b8', font:{size:10}, callback:v => metric==='ctr' ? v.toFixed(1)+'%' : fmt(v,0)}},
+      }
+    }
+  });
 }
 
-function updatePFTrendCountrySelects(){
-  const allC=[...new Set(FILTERED.map(r=>r.country))].filter(Boolean).sort();
-  const sel=document.getElementById('pf-trend-country');
-  const current=sel.value;
-  sel.innerHTML='<option value="">국가 선택</option>';
-  allC.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;sel.appendChild(o);});
-  if(current)sel.value=current;
+function updatePFTrendCountrySelects() {
+  const allC = [...new Set(FILTERED.map(r => r.country))].filter(Boolean).sort();
+  const sel  = document.getElementById('pf-trend-country');
+  const current = sel.value;
+  sel.innerHTML = '<option value="">국가 선택</option>';
+  allC.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; sel.appendChild(o); });
+  if (current) sel.value = current;
 }
 
-function filterPFTrendCountries(){
-  const region=document.getElementById('pf-trend-region').value;
-  const allC=[...new Set(FILTERED.map(r=>r.country))].filter(Boolean).sort();
-  const filteredC=region?[...new Set(FILTERED.filter(r=>r.region===region).map(r=>r.country))].sort():allC;
-  const sel=document.getElementById('pf-trend-country');
-  const prevVal=sel.value;
-  sel.innerHTML='<option value="">국가 선택</option>';
-  filteredC.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;sel.appendChild(o);});
-  // 이전 선택값 유지 (해당 권역에 있으면)
-  if(prevVal && filteredC.includes(prevVal)) sel.value=prevVal;
+function filterPFTrendCountries() {
+  const region  = document.getElementById('pf-trend-region').value;
+  const allC    = [...new Set(FILTERED.map(r => r.country))].filter(Boolean).sort();
+  const filtered = region ? [...new Set(FILTERED.filter(r => r.region === region).map(r => r.country))].sort() : allC;
+  const sel     = document.getElementById('pf-trend-country');
+  const prevVal = sel.value;
+  sel.innerHTML = '<option value="">국가 선택</option>';
+  filtered.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; sel.appendChild(o); });
+  if (prevVal && filtered.includes(prevVal)) sel.value = prevVal;
   renderPFCountryTrend();
 }
 
-function renderPFCountryTrend(){
-  const metric=document.getElementById('pf-trend-metric').value;
-  const country=document.getElementById('pf-trend-country').value;
-  const region=document.getElementById('pf-trend-region').value;
-  // 국가 미선택 + 권역 선택 → 권역 전체 합산으로 표시
-  if(!country && region){
-    renderPFRegionTrend(metric, region);
-    return;
-  }
-  if(!country){dc('pf-country-trend');document.getElementById('pf-country-summary').innerHTML='';return;}
-  const allDates=[...new Set(FILTERED.map(r=>r._date))].filter(Boolean).sort();
-  const mFn=(rows)=>{const a=agg(rows);return metric==='spend'?a.spend:metric==='imp'?a.imp:metric==='click'?a.click:metric==='ctr'?a.ctr*100:a.cpm;};
-  const mLabel=v=>metric==='ctr'?v.toFixed(2)+'%':fmtK(v);
-  const igData=allDates.map(d=>{const rows=FILTERED.filter(r=>r.country===country&&r.pf==='IG'&&r._date===d);return rows.length?mFn(rows):null;});
-  const ttData=allDates.map(d=>{const rows=FILTERED.filter(r=>r.country===country&&r.pf==='TT'&&r._date===d);return rows.length?mFn(rows):null;});
-  const igTotal=mFn(FILTERED.filter(r=>r.country===country&&r.pf==='IG'));
-  const ttTotal=mFn(FILTERED.filter(r=>r.country===country&&r.pf==='TT'));
-  document.getElementById('pf-country-summary').innerHTML=mkSummary([
-    {label:'Instagram',val:mLabel(igTotal),color:IG_COLOR+'0.8)'},
-    {label:'TikTok',val:mLabel(ttTotal),color:TT_COLOR+'0.8)'},
+function renderPFCountryTrend() {
+  const metric  = document.getElementById('pf-trend-metric').value;
+  const country = document.getElementById('pf-trend-country').value;
+  const region  = document.getElementById('pf-trend-region').value;
+
+  if (!country && region) { renderPFRegionTrend(metric, region); return; }
+  if (!country) { dc('pf-country-trend'); document.getElementById('pf-country-summary').innerHTML = ''; return; }
+
+  const allDates = [...new Set(FILTERED.map(r => r._date))].filter(Boolean).sort();
+  const mFn = rows => { const a = agg(rows); return metric==='spend'?a.spend : metric==='imp'?a.imp : metric==='click'?a.click : metric==='ctr'?a.ctr*100 : a.cpm; };
+  const mLabel = v => metric === 'ctr' ? v.toFixed(2)+'%' : fmtK(v);
+
+  const igData   = allDates.map(d => { const rows = FILTERED.filter(r => r.country===country && r.pf==='IG' && r._date===d); return rows.length ? mFn(rows) : null; });
+  const ttData   = allDates.map(d => { const rows = FILTERED.filter(r => r.country===country && r.pf==='TT' && r._date===d); return rows.length ? mFn(rows) : null; });
+  const igTotal  = mFn(FILTERED.filter(r => r.country===country && r.pf==='IG'));
+  const ttTotal  = mFn(FILTERED.filter(r => r.country===country && r.pf==='TT'));
+
+  document.getElementById('pf-country-summary').innerHTML = mkSummary([
+    {label:'Instagram', val:mLabel(igTotal), color:IG_COLOR+'0.8)'},
+    {label:'TikTok',    val:mLabel(ttTotal), color:TT_COLOR+'0.8)'},
   ]);
+
   dc('pf-country-trend');
-  const ctx=document.getElementById('ch-pf-country-trend').getContext('2d');
-  charts['pf-country-trend']=new Chart(ctx,{type:'line',data:{labels:allDates,datasets:[
-    {label:'Instagram',data:igData,borderColor:IG_COLOR+'0.9)',backgroundColor:IG_COLOR+'0.1)',tension:.3,fill:true,pointRadius:3,pointBackgroundColor:IG_COLOR+'0.9)',spanGaps:true},
-    {label:'TikTok',data:ttData,borderColor:TT_COLOR+'0.9)',backgroundColor:TT_COLOR+'0.1)',tension:.3,fill:true,pointRadius:3,pointBackgroundColor:TT_COLOR+'0.9)',spanGaps:true}
-  ]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:true,position:'bottom',labels:{color:'#475569',font:{size:10},boxWidth:8,padding:10}},tooltip:{backgroundColor:'#fff',borderColor:'#e8edf5',borderWidth:1,titleColor:'#0f172a',bodyColor:'#475569',padding:8}},scales:{x:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:9},maxTicksLimit:12}},y:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:9},callback:v=>metric==='ctr'?v.toFixed(2)+'%':fmtK(v)}}}}});
+  const ctx = document.getElementById('ch-pf-country-trend').getContext('2d');
+  charts['pf-country-trend'] = new Chart(ctx, {
+    type: 'line',
+    data: {labels:allDates, datasets:[
+      {label:'Instagram', data:igData, borderColor:IG_COLOR+'0.9)', backgroundColor:IG_COLOR+'0.1)', tension:.3, fill:true, pointRadius:3, spanGaps:true},
+      {label:'TikTok',    data:ttData, borderColor:TT_COLOR+'0.9)', backgroundColor:TT_COLOR+'0.1)', tension:.3, fill:true, pointRadius:3, spanGaps:true},
+    ]},
+    options: {
+      responsive:true, maintainAspectRatio:true,
+      plugins: {
+        datalabels: {display:false},
+        legend: {display:true, position:'bottom', labels:{color:'#475569', font:{size:10}, boxWidth:8, padding:10}},
+        tooltip: {backgroundColor:'#fff', borderColor:'#e8edf5', borderWidth:1, titleColor:'#0f172a', bodyColor:'#475569', padding:8},
+      },
+      scales: {
+        x: {grid:{color:'#f1f5f9'}, ticks:{color:'#94a3b8', font:{size:9}, maxTicksLimit:12}},
+        y: {grid:{color:'#f1f5f9'}, ticks:{color:'#94a3b8', font:{size:9}, callback:v => metric==='ctr' ? v.toFixed(2)+'%' : fmtK(v)}},
+      }
+    }
+  });
 }
 
+function renderPFRegionTrend(metric, region) {
+  const allDates   = [...new Set(FILTERED.map(r => r._date))].filter(Boolean).sort();
+  const regionRows = FILTERED.filter(r => r.region === region);
+  if (!regionRows.length) { dc('pf-country-trend'); return; }
+  const mFn  = rows => { const a = agg(rows); return metric==='spend'?a.spend : metric==='imp'?a.imp : metric==='click'?a.click : metric==='ctr'?a.ctr*100 : a.cpm; };
+  const mLabel = v => metric === 'ctr' ? v.toFixed(2)+'%' : fmtK(v);
+  const igData  = allDates.map(d => { const rows = regionRows.filter(r => r.pf==='IG' && r._date===d); return rows.length ? mFn(rows) : null; });
+  const ttData  = allDates.map(d => { const rows = regionRows.filter(r => r.pf==='TT' && r._date===d); return rows.length ? mFn(rows) : null; });
 
-// ── 플랫폼 권역별 합산 추이 ──────────────────────────────
-function renderPFRegionTrend(metric, region){
-  const allDates=[...new Set(FILTERED.map(r=>r._date))].filter(Boolean).sort();
-  const regionRows=FILTERED.filter(r=>r.region===region);
-  if(!regionRows.length){dc('pf-country-trend');return;}
-  const mFn=(rows)=>{const a=agg(rows);return metric==='spend'?a.spend:metric==='imp'?a.imp:metric==='click'?a.click:metric==='ctr'?a.ctr*100:a.cpm;};
-  const mLabel=v=>metric==='ctr'?v.toFixed(2)+'%':fmtK(v);
-  const igData=allDates.map(d=>{const rows=regionRows.filter(r=>r.pf==='IG'&&r._date===d);return rows.length?mFn(rows):null;});
-  const ttData=allDates.map(d=>{const rows=regionRows.filter(r=>r.pf==='TT'&&r._date===d);return rows.length?mFn(rows):null;});
-  const igTotal=mFn(regionRows.filter(r=>r.pf==='IG'));
-  const ttTotal=mFn(regionRows.filter(r=>r.pf==='TT'));
-  document.getElementById('pf-country-summary').innerHTML=mkSummary([
-    {label:'Instagram ('+region+')',val:mLabel(igTotal),color:IG_COLOR+'0.8)'},
-    {label:'TikTok ('+region+')',val:mLabel(ttTotal),color:TT_COLOR+'0.8)'},
+  document.getElementById('pf-country-summary').innerHTML = mkSummary([
+    {label:'Instagram ('+region+')', val:mLabel(mFn(regionRows.filter(r => r.pf==='IG'))), color:IG_COLOR+'0.8)'},
+    {label:'TikTok ('+region+')',    val:mLabel(mFn(regionRows.filter(r => r.pf==='TT'))), color:TT_COLOR+'0.8)'},
   ]);
+
   dc('pf-country-trend');
-  const ctx=document.getElementById('ch-pf-country-trend').getContext('2d');
-  charts['pf-country-trend']=new Chart(ctx,{type:'line',data:{labels:allDates,datasets:[
-    {label:'Instagram',data:igData,borderColor:IG_COLOR+'0.9)',backgroundColor:IG_COLOR+'0.1)',tension:.3,fill:true,pointRadius:3,pointBackgroundColor:IG_COLOR+'0.9)',spanGaps:true},
-    {label:'TikTok',data:ttData,borderColor:TT_COLOR+'0.9)',backgroundColor:TT_COLOR+'0.1)',tension:.3,fill:true,pointRadius:3,pointBackgroundColor:TT_COLOR+'0.9)',spanGaps:true}
-  ]},options:{responsive:true,maintainAspectRatio:true,plugins:{datalabels:{display:false},legend:{display:true,position:'bottom',labels:{color:'#475569',font:{size:10},boxWidth:8,padding:10}},tooltip:{backgroundColor:'#fff',borderColor:'#e8edf5',borderWidth:1,titleColor:'#0f172a',bodyColor:'#475569',padding:8}},scales:{x:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:9},maxTicksLimit:12}},y:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:9},callback:v=>metric==='ctr'?v.toFixed(2)+'%':fmtK(v)}}}}});
+  const ctx = document.getElementById('ch-pf-country-trend').getContext('2d');
+  charts['pf-country-trend'] = new Chart(ctx, {
+    type: 'line',
+    data: {labels:allDates, datasets:[
+      {label:'Instagram', data:igData, borderColor:IG_COLOR+'0.9)', backgroundColor:IG_COLOR+'0.1)', tension:.3, fill:true, pointRadius:3, spanGaps:true},
+      {label:'TikTok',    data:ttData, borderColor:TT_COLOR+'0.9)', backgroundColor:TT_COLOR+'0.1)', tension:.3, fill:true, pointRadius:3, spanGaps:true},
+    ]},
+    options: {
+      responsive:true, maintainAspectRatio:true,
+      plugins: {
+        datalabels: {display:false},
+        legend: {display:true, position:'bottom', labels:{color:'#475569', font:{size:10}, boxWidth:8, padding:10}},
+        tooltip: {backgroundColor:'#fff', borderColor:'#e8edf5', borderWidth:1, titleColor:'#0f172a', bodyColor:'#475569', padding:8},
+      },
+      scales: {
+        x: {grid:{color:'#f1f5f9'}, ticks:{color:'#94a3b8', font:{size:9}, maxTicksLimit:12}},
+        y: {grid:{color:'#f1f5f9'}, ticks:{color:'#94a3b8', font:{size:9}, callback:v => metric==='ctr' ? v.toFixed(2)+'%' : fmtK(v)}},
+      }
+    }
+  });
 }
 
-window.onload=()=>{ loadViaJSONP(APPS_URL); };
+/* ── 시작 ── */
+window.onload = () => { loadViaJSONP(APPS_URL); };
 </script>
 </body>
 </html>
