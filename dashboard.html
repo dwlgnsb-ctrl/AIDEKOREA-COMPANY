@@ -683,49 +683,34 @@ function renderSummary(){
   if(!periodEl) return;
   const selPeriod=periodEl.value;
 
-  // 전체 월 목록
-  const allPeriods=[...new Set(RAW.map(r=>r._period))].filter(Boolean).sort((a,b)=>
-    Object.values(mo_name).indexOf(a)-Object.values(mo_name).indexOf(b));
+  // 현월 데이터 결정
+  let curRows, prevRows=[], curLabel, prevLabel;
 
-  // 현월·전월 결정
-  let curPeriod=null, prevPeriod=null;
   if(selPeriod && selPeriod!=='__none__'){
-    curPeriod=selPeriod;
-    const idx=allPeriods.indexOf(selPeriod);
-    prevPeriod=idx>0?allPeriods[idx-1]:null;
-  } else {
-    // 전체 선택 시 FILTERED에서 가장 최근 월
-    const filteredPeriods=[...new Set(FILTERED.map(r=>r._period))].filter(Boolean).sort((a,b)=>
+    // 특정 월 선택
+    curRows=FILTERED.filter(r=>r._period===selPeriod);
+    curLabel=selPeriod;
+    // 전월: RAW에서 선택월 이전 월
+    const allPeriods=[...new Set(RAW.map(r=>r._period))].filter(Boolean).sort((a,b)=>
       Object.values(mo_name).indexOf(a)-Object.values(mo_name).indexOf(b));
-    curPeriod=filteredPeriods[filteredPeriods.length-1]||null;
-    prevPeriod=filteredPeriods.length>1?filteredPeriods[filteredPeriods.length-2]:null;
-    if(!curPeriod){
-      // 월 구분 없이 전체 집계
-      const a=agg(FILTERED);
-      setKPICards(a,null,null,'전체');
-      renderInsights();renderPeriodChart();renderHeatmap();renderNatTop5();renderPieChart();
-      return;
+    const idx=allPeriods.indexOf(selPeriod);
+    if(idx>0){
+      const prev=allPeriods[idx-1];
+      prevLabel=prev;
+      prevRows=RAW.filter(r=>r._period===prev&&activePFs.has(r.pf));
     }
+  } else {
+    // 전체 선택 → FILTERED 전체 집계
+    curRows=FILTERED;
+    curLabel='전체';
   }
 
-  // 현월 데이터
-  const curRows=FILTERED.filter(r=>r._period===curPeriod);
-  // 전월 데이터: RAW에서 같은 필터 조건 적용
-  const regionVal=(document.getElementById('filter-region')||{}).value||'';
-  const countryVal=(document.getElementById('filter-country')||{}).value||'';
-  const prevRows=prevPeriod?RAW.filter(r=>{
-    if(r._period!==prevPeriod) return false;
-    if(!activePFs.has(r.pf)) return false;
-    if(regionVal&&regionVal!=='__none__'&&r.region!==regionVal) return false;
-    if(countryVal&&countryVal!=='__none__'&&r.country!==countryVal) return false;
-    return true;
-  }):[];
-
   const a=agg(curRows);
-  const prev=agg(prevRows);
-  setKPICards(a,prev,prevPeriod,curPeriod);
+  const prev=prevRows.length?agg(prevRows):null;
+  setKPICards(a, prev, prevLabel||null, curLabel);
   renderInsights();renderPeriodChart();renderHeatmap();renderNatTop5();renderPieChart();
 }
+
 
 function setKPICards(a, prev, prevPeriod, curPeriod){
   const dFn=(c,p)=>p&&p!==0?((c-p)/Math.abs(p)*100):null;
