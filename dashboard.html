@@ -183,6 +183,9 @@ tbody td:first-child{text-align:left;font-family:'Pretendard',sans-serif;color:v
 .modal-btns{display:flex;gap:8px;justify-content:flex-end}
 
 canvas{max-height:240px}
+.trend-chart-wrap{position:relative}
+.trend-chart-wrap canvas{max-height:280px}
+.no-data{text-align:center;padding:40px;color:var(--text3);font-size:12px}
 
 /* ── 상단 필터 추가 ── */
 .filter-select{background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:4px 8px;border-radius:6px;font-size:11px;font-family:'Pretendard',sans-serif;outline:none;cursor:pointer;transition:border-color .15s}
@@ -256,16 +259,29 @@ canvas{max-height:240px}
       <span class="date-badge" id="date-range">—</span>
     </div>
     <div class="topbar-right" style="display:flex;flex-wrap:wrap;gap:6px;align-items:center">
+      <!-- 날짜 -->
       <input type="date" id="filter-date-from" class="filter-date" onchange="applyFilters()" title="시작일">
       <span style="font-size:10px;color:var(--text3)">~</span>
       <input type="date" id="filter-date-to" class="filter-date" onchange="applyFilters()" title="종료일">
       <div class="filter-divider"></div>
-      <div id="chips-period" style="display:flex;gap:4px"></div>
-      <div class="filter-divider"></div>
-      <select id="filter-country" class="filter-select" onchange="applyFilters()" style="max-width:100px">
-        <option value="">전체 국가</option>
+      <!-- 기간 드롭박스 (주차별) -->
+      <select id="filter-period" class="filter-select" onchange="applyFilters()" style="max-width:120px">
+        <option value="">전체 기간</option>
+        <option value="__none__">— 없음 —</option>
       </select>
       <div class="filter-divider"></div>
+      <!-- 권역 드롭박스 -->
+      <select id="filter-region" class="filter-select" onchange="applyFilters()" style="max-width:110px">
+        <option value="">전체 권역</option>
+        <option value="__none__">— 없음 —</option>
+      </select>
+      <!-- 국가 드롭박스 -->
+      <select id="filter-country" class="filter-select" onchange="applyFilters()" style="max-width:100px">
+        <option value="">전체 국가</option>
+        <option value="__none__">— 없음 —</option>
+      </select>
+      <div class="filter-divider"></div>
+      <!-- 플랫폼 -->
       <div class="chip ig active" data-pf="IG" onclick="togglePF(this)">IG</div>
       <div class="chip tt active" data-pf="TT" onclick="togglePF(this)">TT</div>
       <div class="filter-divider"></div>
@@ -348,6 +364,7 @@ canvas{max-height:240px}
 
     <!-- ══ 국가별 상세 페이지 ══ -->
     <div class="page" id="page-country">
+      <!-- 국가별 성과 테이블 + 바차트 -->
       <div class="grid2" style="margin-bottom:14px">
         <div class="panel">
           <div class="panel-title">국가별 성과 (지출 순)</div>
@@ -365,28 +382,29 @@ canvas{max-height:240px}
             <div class="tab" onclick="switchTab(this,'country-chart','cpm')">CPM</div>
             <div class="tab" onclick="switchTab(this,'country-chart','ctr')">CTR</div>
           </div>
-          <canvas id="ch-country" style="max-height:280px"></canvas>
+          <canvas id="ch-country" style="max-height:260px"></canvas>
         </div>
       </div>
-      <!-- Drill-down -->
-      <div class="drilldown-panel" id="drilldown">
-        <div class="drilldown-header">
-          <div class="drilldown-title" id="dd-title">국가 상세</div>
-          <div class="drilldown-close" onclick="closeDrilldown()">✕</div>
-        </div>
-        <div class="drilldown-grid">
-          <div>
-            <div class="panel-title" style="margin-bottom:8px">소재 TOP 5</div>
-            <table>
-              <thead><tr><th style="text-align:left">소재</th><th>플랫폼</th><th>지출</th><th>CTR</th></tr></thead>
-              <tbody id="dd-creatives"></tbody>
-            </table>
+      <!-- 국가별 성과 추이 -->
+      <div class="panel">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <div class="panel-title" style="margin-bottom:0">국가별 성과 추이 (일별)</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <span style="font-size:10px;color:var(--text3)">지표</span>
+            <select id="trend-metric" class="filter-select" onchange="renderCountryTrend()">
+              <option value="spend">지출</option>
+              <option value="imp">노출</option>
+              <option value="click">링크 클릭</option>
+              <option value="land">랜딩 조회</option>
+              <option value="ctr">CTR</option>
+              <option value="cpm">CPM</option>
+            </select>
+            <span style="font-size:10px;color:var(--text3)">국가 선택 (최대 5개)</span>
+            <div id="trend-country-chips" style="display:flex;gap:4px;flex-wrap:wrap;max-width:400px"></div>
           </div>
-          <div>
-            <div class="panel-title" style="margin-bottom:8px">성과 추이</div>
-            <canvas id="ch-dd" style="max-height:180px"></canvas>
-          </div>
         </div>
+        <div class="trend-chart-wrap"><canvas id="ch-country-trend"></canvas></div>
+        <div style="font-size:10px;color:var(--text3);margin-top:8px">※ 국가 칩을 클릭해서 선택/해제하세요 (최대 5개)</div>
       </div>
     </div>
 
@@ -394,15 +412,21 @@ canvas{max-height:240px}
     <div class="page" id="page-creative">
       <div class="grid31" style="margin-bottom:14px">
         <div class="panel">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-            <div class="panel-title" style="margin-bottom:0">소재 성과 TOP 20</div>
-            <select id="creative-sort" onchange="renderCreativePage()" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:4px 8px;border-radius:5px;font-size:11px;outline:none;cursor:pointer">
-              <option value="spend">지출 순</option>
-              <option value="imp">노출 순</option>
-              <option value="click">클릭 순</option>
-              <option value="ctr">CTR 순</option>
-              <option value="cpc">CPC 순</option>
-            </select>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:6px">
+            <div class="panel-title" style="margin-bottom:0">소재 성과 전체</div>
+            <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+              <select id="filter-product" class="filter-select" onchange="renderCreativePage()" style="max-width:140px">
+                <option value="">전체 상품</option>
+                <option value="__none__">— 없음 —</option>
+              </select>
+              <select id="creative-sort" class="filter-select" onchange="renderCreativePage()">
+                <option value="spend">지출 순</option>
+                <option value="imp">노출 순</option>
+                <option value="click">클릭 순</option>
+                <option value="ctr">CTR 순</option>
+                <option value="cpc">CPC 순</option>
+              </select>
+            </div>
           </div>
           <div class="tbl-wrap">
             <table>
@@ -455,6 +479,25 @@ canvas{max-height:240px}
         <div class="panel-title">플랫폼별 강점 분석</div>
         <div id="pf-strengths" style="display:grid;grid-template-columns:1fr 1fr;gap:12px"></div>
       </div>
+      <!-- 국가별 추이 (플랫폼별) -->
+      <div class="panel" style="margin-top:14px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <div class="panel-title" style="margin-bottom:0">국가별 성과 추이 (플랫폼 비교)</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <select id="pf-trend-metric" class="filter-select" onchange="renderPFCountryTrend()">
+              <option value="spend">지출</option>
+              <option value="imp">노출</option>
+              <option value="click">링크 클릭</option>
+              <option value="ctr">CTR</option>
+              <option value="cpm">CPM</option>
+            </select>
+            <select id="pf-trend-country" class="filter-select" onchange="renderPFCountryTrend()" style="max-width:110px">
+              <option value="">국가 선택</option>
+            </select>
+          </div>
+        </div>
+        <div class="trend-chart-wrap"><canvas id="ch-pf-country-trend"></canvas></div>
+      </div>
     </div>
 
   </div><!-- /content -->
@@ -470,6 +513,7 @@ let activePeriods = new Set(), activePFs = new Set(['IG','TT']);
 let charts = {};
 let countryChartMetric = 'spend', pfMetricTab = 'ctr';
 let selectedCountry = null;
+let selectedTrendCountries = new Set();
 
 // ── 포맷 ──
 const fmt = (n,d=0) => n==null||isNaN(n)?'—':n.toLocaleString('ko-KR',{minimumFractionDigits:d,maximumFractionDigits:d});
@@ -513,7 +557,9 @@ function normalizeRow(r) {
   o.name=String(o['광고 이름']||'').trim();
   o.country=String(o['국가']||'').trim();
   o.pf=String(o['플랫폼']||'').trim();
+  o.region=String(o['권역']||o['AB열']||'').replace(/\n/g,' ').trim();
   o.url=String(o['소재링크']||o['광고URL']||o['URL']||'').trim();
+  o.product=extractProduct(o.name);
   return o;
 }
 
@@ -586,15 +632,46 @@ function initDashboard(){
     document.getElementById('filter-date-to').value=dates[dates.length-1];
   }
 
-  // 국가 드롭다운 구성
-  const sel=document.getElementById('filter-country');
-  sel.innerHTML='<option value="">전체 국가</option>';
-  const countries=[...new Set(RAW.map(r=>r.country))].filter(Boolean).sort();
-  countries.forEach(c=>{
-    const opt=document.createElement('option');
-    opt.value=c; opt.textContent=c;
-    sel.appendChild(opt);
+  // 기간 드롭박스 (월/주차)
+  const periods=[...new Set(RAW.map(r=>r._period))].filter(Boolean).sort((a,b)=>{
+    const mo=s=>Object.values(mo_name).indexOf(s.split(' ')[0]);
+    const wk=s=>s.includes('1-2')?0:1;
+    return mo(a)!==mo(b)?mo(a)-mo(b):wk(a)-wk(b);
   });
+  const pSel=document.getElementById('filter-period');
+  pSel.innerHTML='<option value="">전체 기간</option><option value="__none__">— 없음 —</option>';
+  periods.forEach(p=>{const o=document.createElement('option');o.value=p;o.textContent=p;pSel.appendChild(o);});
+
+  // 권역 드롭박스
+  const rSel=document.getElementById('filter-region');
+  rSel.innerHTML='<option value="">전체 권역</option><option value="__none__">— 없음 —</option>';
+  const regions=[...new Set(RAW.map(r=>r.region))].filter(Boolean).sort();
+  regions.forEach(r=>{const o=document.createElement('option');o.value=r;o.textContent=r;rSel.appendChild(o);});
+
+  // 국가 드롭박스
+  const cSel=document.getElementById('filter-country');
+  cSel.innerHTML='<option value="">전체 국가</option><option value="__none__">— 없음 —</option>';
+  const countries=[...new Set(RAW.map(r=>r.country))].filter(Boolean).sort();
+  countries.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;cSel.appendChild(o);});
+
+  // 상품명 드롭박스 (소재명 앞부분 추출)
+  const products=[...new Set(RAW.map(r=>extractProduct(r.name)))].filter(Boolean).sort();
+  const prSel=document.getElementById('filter-product');
+  if(prSel){
+    prSel.innerHTML='<option value="">전체 상품</option><option value="__none__">— 없음 —</option>';
+    products.forEach(p=>{const o=document.createElement('option');o.value=p;o.textContent=p;prSel.appendChild(o);});
+  }
+
+  // 플랫폼 비교 국가 드롭박스
+  const pfCSel=document.getElementById('pf-trend-country');
+  if(pfCSel){
+    pfCSel.innerHTML='<option value="">국가 선택</option>';
+    countries.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;pfCSel.appendChild(o);});
+  }
+
+  // 국가 추이 칩 초기화 (상위 3개 자동 선택)
+  selectedTrendCountries=new Set(countries.slice(0,3));
+  renderTrendCountryChips(countries);
 
   applyFilters();
 }
@@ -602,21 +679,29 @@ function initDashboard(){
 function applyFilters(){
   const dateFrom=document.getElementById('filter-date-from').value;
   const dateTo=document.getElementById('filter-date-to').value;
+  const filterPeriod=document.getElementById('filter-period').value;
+  const filterRegion=document.getElementById('filter-region').value;
   const filterCountry=document.getElementById('filter-country').value;
 
   FILTERED=RAW.filter(r=>{
-    if(!activePeriods.has(r._period)) return false;
     if(!activePFs.has(r.pf)) return false;
+    // 기간 필터 (없음 = 데이터 없음)
+    if(filterPeriod==='__none__') return false;
+    if(filterPeriod && r._period!==filterPeriod) return false;
+    // 권역 필터
+    if(filterRegion==='__none__') return false;
+    if(filterRegion && r.region!==filterRegion) return false;
+    // 국가 필터
+    if(filterCountry==='__none__') return false;
     if(filterCountry && r.country!==filterCountry) return false;
+    // 날짜 필터
     if(dateFrom && r._date && r._date < dateFrom) return false;
     if(dateTo && r._date && r._date > dateTo) return false;
     return true;
   });
 
-  // 날짜 범위 표시 업데이트
   const fdates=FILTERED.map(r=>r._date).filter(Boolean).sort();
   if(fdates.length) document.getElementById('date-range').textContent=fdates[0]+' ~ '+fdates[fdates.length-1];
-
   document.getElementById('row-count').textContent=FILTERED.length.toLocaleString()+' / '+RAW.length.toLocaleString()+'행';
   renderAll();
 }
@@ -634,16 +719,15 @@ function togglePF(el){
   applyFilters();
 }
 function resetFilters(){
-  activePeriods=new Set([...new Set(RAW.map(r=>r._period))]);
   activePFs=new Set(['IG','TT']);
-  document.querySelectorAll('.chip').forEach(c=>c.classList.add('active'));
-  // 날짜 초기화
+  document.querySelectorAll('.chip[data-pf]').forEach(c=>c.classList.add('active'));
   const dates=RAW.map(r=>r._date).filter(Boolean).sort();
   if(dates.length){
     document.getElementById('filter-date-from').value=dates[0];
     document.getElementById('filter-date-to').value=dates[dates.length-1];
   }
-  // 국가 초기화
+  document.getElementById('filter-period').value='';
+  document.getElementById('filter-region').value='';
   document.getElementById('filter-country').value='';
   applyFilters();
 }
@@ -850,6 +934,10 @@ function renderCountryPage(){
     </tr>`;
   }).join('');
   renderCountryChart(countryChartMetric);
+  // 추이 칩 업데이트
+  const allCountries=[...new Set(FILTERED.map(r=>r.country))].filter(Boolean).sort();
+  renderTrendCountryChips(allCountries);
+  renderCountryTrend();
 }
 
 function switchTab(el, chartId, metric){
@@ -912,15 +1000,17 @@ function closeDrilldown(){
 // ══════════════════════════════════════════════
 function renderCreativePage(){
   const sort=document.getElementById('creative-sort').value;
+  const filterProduct=document.getElementById('filter-product')?document.getElementById('filter-product').value:'';
+  const srcRows=filterProduct==='__none__'?[]:filterProduct?FILTERED.filter(r=>r.product===filterProduct):FILTERED;
   const byCr={};
-  FILTERED.forEach(r=>{
+  srcRows.forEach(r=>{
     const k=r.name+'|'+r.pf;
     if(!byCr[k])byCr[k]={name:r.name,pf:r.pf,url:r.url,spend:0,imp:0,click:0,land:0};
     byCr[k].spend+=r.spend;byCr[k].imp+=r.imp;byCr[k].click+=r.click;byCr[k].land+=r.land;
   });
   let rows=Object.values(byCr).map(r=>({...r,ctr:r.imp>0?r.click/r.imp:0,cpc:r.click>0?r.spend/r.click:0,cpm:r.imp>0?r.spend/r.imp*1000:0}));
   rows.sort((a,b)=>sort==='cpc'?a.cpc-b.cpc:sort==='ctr'?b.ctr-a.ctr:b[sort]-a[sort]);
-  const top20=rows.slice(0,20);
+  const top20=rows;
   const maxSpend=Math.max(...top20.map(r=>r.spend),1);
   document.getElementById('creative-tbl').innerHTML=top20.map((r,i)=>{
     const thumb=r.url?`<img src="${r.url}" class="creative-thumb" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" loading="lazy"><div class="creative-thumb-placeholder" style="display:none">${r.pf}</div>`:`<div class="creative-thumb-placeholder">${r.pf}</div>`;
@@ -993,6 +1083,7 @@ function renderPlatformPage(){
   ]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:true,position:'bottom',labels:{color:'#8b949e',font:{size:10},boxWidth:8,padding:10}},tooltip:{backgroundColor:'#161b22',borderColor:'#30363d',borderWidth:1,titleColor:'#e6edf3',bodyColor:'#8b949e',padding:8,callbacks:{label:c=>` ${c.dataset.label}: ${fmtK(c.raw)}원`}}},scales:{x:{grid:{color:'#21262d'},ticks:{color:'#6e7681',font:{size:10}}},y:{grid:{color:'#21262d'},ticks:{color:'#6e7681',font:{size:10},callback:v=>fmtK(v)}}}}});
 
   renderPFMetricChart(pfMetricTab);
+  renderPFCountryTrend();
 
   // 강점 분석
   document.getElementById('pf-strengths').innerHTML=`
@@ -1028,6 +1119,117 @@ function renderPFMetricChart(metric){
 // ══════════════════════════════════════════════
 // 시작
 // ══════════════════════════════════════════════
+
+// ── 상품명 추출 (소재명 앞부분) ──────────────────────────
+function extractProduct(name) {
+  if(!name) return '기타';
+  const n=name.trim();
+  // '[' 앞 텍스트 추출
+  const m=n.match(/^([^\[]+)/);
+  if(m){
+    let p=m[1].trim().replace(/[-_]+$/, '').trim();
+    // Copy of / Copy N of 제거
+    p=p.replace(/^Copy\s+(\d+\s+)?of\s+/i,'');
+    if(p) return p;
+  }
+  return n.split(' ')[0]||'기타';
+}
+
+// ── 국가 추이 칩 렌더 ────────────────────────────────────
+function renderTrendCountryChips(countries) {
+  const wrap=document.getElementById('trend-country-chips');
+  if(!wrap) return;
+  wrap.innerHTML=countries.map(c=>{
+    const active=selectedTrendCountries.has(c)?'active':'';
+    return `<div class="chip ${active}" onclick="toggleTrendCountry('${c}',this)" style="font-size:10px;padding:2px 8px">${c}</div>`;
+  }).join('');
+}
+
+function toggleTrendCountry(country, el) {
+  if(selectedTrendCountries.has(country)){
+    if(selectedTrendCountries.size===1) return;
+    selectedTrendCountries.delete(country);
+    el.classList.remove('active');
+  } else {
+    if(selectedTrendCountries.size>=5) return;
+    selectedTrendCountries.add(country);
+    el.classList.add('active');
+  }
+  renderCountryTrend();
+}
+
+// ── 국가별 성과 추이 (국가별 상세) ──────────────────────
+function renderCountryTrend() {
+  const metric=document.getElementById('trend-metric')?document.getElementById('trend-metric').value:'spend';
+  const countries=[...selectedTrendCountries];
+  if(!countries.length) return;
+
+  // 날짜별 집계
+  const allDates=[...new Set(FILTERED.map(r=>r._date))].filter(Boolean).sort();
+  if(!allDates.length){dc('country-trend');return;}
+
+  const metricFn=(rows)=>{
+    const a=agg(rows);
+    return metric==='spend'?a.spend:metric==='imp'?a.imp:metric==='click'?a.click:metric==='land'?a.land:metric==='ctr'?a.ctr*100:a.cpm;
+  };
+  const fmtLabel=metric==='ctr'?v=>v.toFixed(2)+'%':metric==='cpm'?v=>fmt(v,0)+'원':v=>fmtK(v);
+
+  const colors=['#58a6ff','#3fb950','#f0883e','#bc8cff','#f85149'];
+  const datasets=countries.map((c,i)=>({
+    label:c,
+    data:allDates.map(d=>{
+      const rows=FILTERED.filter(r=>r.country===c&&r._date===d);
+      return rows.length?metricFn(rows):null;
+    }),
+    borderColor:colors[i%colors.length],
+    backgroundColor:colors[i%colors.length]+'22',
+    tension:.3,fill:false,pointRadius:3,
+    pointBackgroundColor:colors[i%colors.length],
+    spanGaps:true
+  }));
+
+  dc('country-trend');
+  const ctx=document.getElementById('ch-country-trend').getContext('2d');
+  charts['country-trend']=new Chart(ctx,{type:'line',data:{labels:allDates,datasets},options:{
+    responsive:true,maintainAspectRatio:true,
+    plugins:{legend:{display:true,position:'bottom',labels:{color:'#8b949e',font:{size:10},boxWidth:8,padding:8}},
+      tooltip:{backgroundColor:'#161b22',borderColor:'#30363d',borderWidth:1,titleColor:'#e6edf3',bodyColor:'#8b949e',padding:8,
+        callbacks:{label:c=>`${c.dataset.label}: ${fmtLabel(c.raw)}`}}},
+    scales:{
+      x:{grid:{color:'#21262d'},ticks:{color:'#6e7681',font:{size:9},maxTicksLimit:12}},
+      y:{grid:{color:'#21262d'},ticks:{color:'#6e7681',font:{size:9},callback:v=>metric==='ctr'?v.toFixed(1)+'%':fmtK(v)}}
+    }
+  }});
+}
+
+// ── 플랫폼별 국가 추이 ───────────────────────────────────
+function renderPFCountryTrend() {
+  const metric=document.getElementById('pf-trend-metric')?document.getElementById('pf-trend-metric').value:'spend';
+  const country=document.getElementById('pf-trend-country')?document.getElementById('pf-trend-country').value:'';
+  if(!country){dc('pf-country-trend');return;}
+
+  const allDates=[...new Set(FILTERED.map(r=>r._date))].filter(Boolean).sort();
+  const metricFn=(rows)=>{const a=agg(rows);return metric==='spend'?a.spend:metric==='imp'?a.imp:metric==='click'?a.click:metric==='ctr'?a.ctr*100:a.cpm;};
+
+  const igData=allDates.map(d=>{const rows=FILTERED.filter(r=>r.country===country&&r.pf==='IG'&&r._date===d);return rows.length?metricFn(rows):null;});
+  const ttData=allDates.map(d=>{const rows=FILTERED.filter(r=>r.country===country&&r.pf==='TT'&&r._date===d);return rows.length?metricFn(rows):null;});
+
+  dc('pf-country-trend');
+  const ctx=document.getElementById('ch-pf-country-trend').getContext('2d');
+  charts['pf-country-trend']=new Chart(ctx,{type:'line',data:{labels:allDates,datasets:[
+    {label:'Instagram',data:igData,borderColor:'rgba(225,48,108,.9)',backgroundColor:'rgba(225,48,108,.1)',tension:.3,fill:true,pointRadius:3,pointBackgroundColor:'rgba(225,48,108,.9)',spanGaps:true},
+    {label:'TikTok',data:ttData,borderColor:'rgba(105,201,208,.9)',backgroundColor:'rgba(105,201,208,.1)',tension:.3,fill:true,pointRadius:3,pointBackgroundColor:'rgba(105,201,208,.9)',spanGaps:true}
+  ]},options:{
+    responsive:true,maintainAspectRatio:true,
+    plugins:{legend:{display:true,position:'bottom',labels:{color:'#8b949e',font:{size:10},boxWidth:8,padding:8}},
+      tooltip:{backgroundColor:'#161b22',borderColor:'#30363d',borderWidth:1,titleColor:'#e6edf3',bodyColor:'#8b949e',padding:8}},
+    scales:{
+      x:{grid:{color:'#21262d'},ticks:{color:'#6e7681',font:{size:9},maxTicksLimit:12}},
+      y:{grid:{color:'#21262d'},ticks:{color:'#6e7681',font:{size:9},callback:v=>metric==='ctr'?v.toFixed(2)+'%':fmtK(v)}}
+    }
+  }});
+}
+
 window.onload=()=>{
   loadViaJSONP(APPS_URL);
 };
