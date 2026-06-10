@@ -294,15 +294,15 @@ canvas{max-height:240px}
           <canvas id="ch-period"></canvas>
         </div>
         <div class="panel">
-          <div class="panel-title">국가 × 플랫폼 Heatmap (CTR)</div>
+          <div class="panel-title" id="heatmap-title">국가 × 플랫폼 Heatmap (CTR)</div>
           <div id="heatmap-wrap" style="overflow-x:auto"></div>
         </div>
       </div>
       <div class="grid2">
         <div class="panel">
-          <div class="panel-title">국가 성과 TOP 5</div>
+          <div class="panel-title" id="top5-title">국가 성과 TOP 5</div>
           <table>
-            <thead><tr><th style="text-align:left">국가</th><th>지출</th><th>CTR</th><th>CPC</th><th>전주대비</th></tr></thead>
+            <thead id="top5-thead"><tr><th style="text-align:left">국가</th><th>지출</th><th>CTR</th><th>CPC</th><th>전월대비 지출</th></tr></thead>
             <tbody id="nat-top5"></tbody>
           </table>
         </div>
@@ -893,32 +893,94 @@ function renderPeriodChart() {
 }
 
 function renderHeatmap() {
-  const byCP = {};
-  FILTERED.forEach(r => {
-    const k = r.country + '|' + r.pf;
-    if (!byCP[k]) byCP[k] = {imp:0, click:0};
-    byCP[k].imp   += r.imp;
-    byCP[k].click += r.click;
-  });
+  const selPeriod = (document.getElementById('filter-period') || {}).value || '';
+  const filterRegion  = (document.getElementById('filter-region')  || {}).value || '';
+  const filterCountry = (document.getElementById('filter-country') || {}).value || '';
+
+  const allPeriods = [...new Set(RAW.map(r => r._period))].filter(Boolean).sort((a,b) =>
+    Object.values(mo_name).indexOf(a) - Object.values(mo_name).indexOf(b)
+  );
+  const prevPeriod = selPeriod && selPeriod !== '__none__'
+    ? (allPeriods[allPeriods.indexOf(selPeriod) - 1] || null) : null;
+
+  function getRows(period) {
+    return RAW.filter(r => {
+      if (!activePFs.has(r.pf))                         return false;
+      if (filterRegion  && r.region  !== filterRegion)  return false;
+      if (filterCountry && r.country !== filterCountry) return false;
+      if (period) return r._period === period;
+      return true;
+    });
+  }
+
+  const curRows  = selPeriod && selPeriod !== '__none__' ? getRows(selPeriod) : FILTERED;
+  const prevRows = prevPeriod ? getRows(prevPeriod) : [];
+
+  function buildByCP(rows) {
+    const byCP = {};
+    rows.forEach(r => {
+      const k = r.country + '|' + r.pf;
+      if (!byCP[k]) byCP[k] = {imp:0, click:0};
+      byCP[k].imp   += r.imp;
+      byCP[k].click += r.click;
+    });
+    return byCP;
+  }
+
+  const curByCP  = buildByCP(curRows);
+  const prevByCP = buildByCP(prevRows);
+
   const top10 = Object.entries(
-    FILTERED.reduce((acc,r) => { acc[r.country] = (acc[r.country] || 0) + r.spend; return acc; }, {})
+    curRows.reduce((acc,r) => { acc[r.country] = (acc[r.country] || 0) + r.spend; return acc; }, {})
   ).sort((a,b) => b[1] - a[1]).slice(0, 10).map(([k]) => k);
 
+  // 전체 CTR 범위 계산 (현월 기준)
   const allCtrs = top10.flatMap(c => ['IG','TT'].map(pf => {
-    const d = byCP[c + '|' + pf];
+    const d = curByCP[c + '|' + pf];
     return d && d.imp > 0 ? d.click / d.imp : null;
   })).filter(v => v !== null);
-
   const minC = Math.min(...allCtrs), maxC = Math.max(...allCtrs), range = maxC - minC || 1;
   const hmClass = v => { if (v === null) return 'hm-na'; const t = (v - minC) / range; return t > 0.6 ? 'hm-high' : t > 0.3 ? 'hm-mid' : 'hm-low'; };
 
-  let html = `<table class="heatmap-table"><thead><tr><th>국가</th><th>Instagram</th><th>TikTok</th></tr></thead><tbody>`;
+  const hasPrev = prevRows.length > 0;
+  const titleEl = document.getElementById('heatmap-title');
+  if (titleEl) titleEl.textContent = hasPrev
+    ? `국가 × 플랫폼 Heatmap — ${prevPeriod} vs ${selPeriod} (CTR)`
+    : '국가 × 플랫폼 Heatmap (CTR)';
+
+  // 헤더: 전월 있으면 4컬럼, 없으면 2컬럼
+  let html = `<table class="heatmap-table"><thead><tr><th>국가</th>`;
+  if (hasPrev) {
+    html += `<th>${prevPeriod} IG</th><th>${prevPeriod} TT</th><th>${selPeriod} IG</th><th>${selPeriod} TT</th>`;
+  } else {
+    html += `<th>Instagram</th><th>TikTok</th>`;
+  }
+  html += `</tr></thead><tbody>`;
+
   top10.forEach(c => {
     html += `<tr><td>${c}</td>`;
+    if (hasPrev) {
+      ['IG','TT'].forEach(pf => {
+        const d = prevByCP[c + '|' + pf];
+        const ctr = d && d.imp > 0 ? d.click / d.imp : null;
+        html += `<td><span class="hm-cell hm-na" style="opacity:.7">${ctr !== null ? pct(ctr) : '—'}</span></td>`;
+      });
+    }
     ['IG','TT'].forEach(pf => {
-      const d   = byCP[c + '|' + pf];
+      const d = curByCP[c + '|' + pf];
       const ctr = d && d.imp > 0 ? d.click / d.imp : null;
-      html += `<td><span class="hm-cell ${hmClass(ctr)}">${ctr !== null ? pct(ctr) : '—'}</span></td>`;
+      // 전월 대비 화살표
+      let arrow = '';
+      if (hasPrev) {
+        const dp = prevByCP[c + '|' + pf];
+        const prevCtr = dp && dp.imp > 0 ? dp.click / dp.imp : null;
+        if (ctr !== null && prevCtr !== null) {
+          const diff = ctr - prevCtr;
+          arrow = diff > 0.0001 ? ' <span style="color:#15803d;font-size:9px">▲</span>'
+                : diff < -0.0001 ? ' <span style="color:#b91c1c;font-size:9px">▼</span>' : '';
+        }
+      }
+      html += `<td><span class="hm-cell ${hmClass(ctr)}">${ctr !== null ? pct(ctr) : '—'}${arrow}</span></td>`;
     });
     html += `</tr>`;
   });
@@ -927,18 +989,76 @@ function renderHeatmap() {
 }
 
 function renderNatTop5() {
-  const byC = {};
-  FILTERED.forEach(r => {
-    if (!byC[r.country]) byC[r.country] = {spend:0, imp:0, click:0};
-    byC[r.country].spend += r.spend;
-    byC[r.country].imp   += r.imp;
-    byC[r.country].click += r.click;
-  });
-  const top5 = Object.entries(byC).sort((a,b) => b[1].spend - a[1].spend).slice(0, 5);
+  const selPeriod = (document.getElementById('filter-period') || {}).value || '';
+  const filterRegion  = (document.getElementById('filter-region')  || {}).value || '';
+  const filterCountry = (document.getElementById('filter-country') || {}).value || '';
+
+  const allPeriods = [...new Set(RAW.map(r => r._period))].filter(Boolean).sort((a,b) =>
+    Object.values(mo_name).indexOf(a) - Object.values(mo_name).indexOf(b)
+  );
+  const prevPeriod = selPeriod && selPeriod !== '__none__'
+    ? (allPeriods[allPeriods.indexOf(selPeriod) - 1] || null) : null;
+
+  function getRows(period) {
+    return RAW.filter(r => {
+      if (!activePFs.has(r.pf))                         return false;
+      if (filterRegion  && r.region  !== filterRegion)  return false;
+      if (filterCountry && r.country !== filterCountry) return false;
+      if (period) return r._period === period;
+      return true;
+    });
+  }
+
+  const curRows  = selPeriod && selPeriod !== '__none__' ? getRows(selPeriod) : FILTERED;
+  const prevRows = prevPeriod ? getRows(prevPeriod) : [];
+
+  function sumByCountry(rows) {
+    const byC = {};
+    rows.forEach(r => {
+      if (!byC[r.country]) byC[r.country] = {spend:0, imp:0, click:0};
+      byC[r.country].spend += r.spend;
+      byC[r.country].imp   += r.imp;
+      byC[r.country].click += r.click;
+    });
+    return byC;
+  }
+
+  const curByC  = sumByCountry(curRows);
+  const prevByC = sumByCountry(prevRows);
+  const hasPrev = prevRows.length > 0;
+
+  const titleEl = document.getElementById('top5-title');
+  if (titleEl) titleEl.textContent = hasPrev
+    ? `국가 성과 TOP 5 — ${prevPeriod} vs ${selPeriod}`
+    : '국가 성과 TOP 5';
+
+  const theadEl = document.getElementById('top5-thead');
+  if (theadEl) theadEl.innerHTML = hasPrev
+    ? `<tr><th style="text-align:left">국가</th><th>${prevPeriod} 지출</th><th>${selPeriod} 지출</th><th>증감</th><th>CTR</th><th>CPC</th></tr>`
+    : `<tr><th style="text-align:left">국가</th><th>지출</th><th>CTR</th><th>CPC</th><th>전월대비</th></tr>`;
+
+  const top5 = Object.entries(curByC).sort((a,b) => b[1].spend - a[1].spend).slice(0, 5);
   document.getElementById('nat-top5').innerHTML = top5.map(([k,v], i) => {
     const ctr = v.imp > 0 ? v.click / v.imp : 0;
     const cpc = v.click > 0 ? v.spend / v.click : 0;
-    return `<tr><td><span class="rank">${i+1}</span>${k}</td><td>${fmtK(v.spend)}원</td><td>${pct(ctr)}</td><td>${fmt(cpc,0)}원</td><td><span class="delta neu">—</span></td></tr>`;
+    if (hasPrev) {
+      const pv = prevByC[k] || {spend:0};
+      const diff = v.spend - pv.spend;
+      const diffPct = pv.spend > 0 ? diff / pv.spend * 100 : null;
+      const deltaHtml = diffPct !== null
+        ? `<span class="delta ${diff >= 0 ? 'up' : 'down'}">${diff >= 0 ? '▲' : '▼'}${Math.abs(diffPct).toFixed(1)}%</span>`
+        : `<span class="delta neu">신규</span>`;
+      return `<tr>
+        <td><span class="rank">${i+1}</span>${k}</td>
+        <td style="color:var(--text3)">${pv.spend > 0 ? fmtK(pv.spend)+'원' : '—'}</td>
+        <td>${fmtK(v.spend)}원</td>
+        <td>${deltaHtml}</td>
+        <td>${pct(ctr)}</td>
+        <td>${fmt(cpc,0)}원</td>
+      </tr>`;
+    } else {
+      return `<tr><td><span class="rank">${i+1}</span>${k}</td><td>${fmtK(v.spend)}원</td><td>${pct(ctr)}</td><td>${fmt(cpc,0)}원</td><td><span class="delta neu">—</span></td></tr>`;
+    }
   }).join('');
 }
 
