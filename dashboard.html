@@ -231,9 +231,13 @@ canvas{max-height:240px}
       <span style="font-size:10px;color:var(--text3)">~</span>
       <input type="date" id="filter-date-to" class="filter-date" onchange="applyFilters()">
       <div class="fdiv"></div>
-      <select id="filter-period" class="filter-select" onchange="applyFilters()" style="max-width:100px">
-        <option value="">전체 월</option>
-        <option value="__none__">— 없음 —</option>
+      <span style="font-size:10px;color:var(--text3)">전월</span>
+      <select id="filter-prev-month" class="filter-select" onchange="applyFilters()" style="max-width:90px">
+        <option value="">선택</option>
+      </select>
+      <span style="font-size:10px;color:var(--text3)">→ 현월</span>
+      <select id="filter-cur-month" class="filter-select" onchange="applyFilters()" style="max-width:90px">
+        <option value="">선택</option>
       </select>
       <div class="fdiv"></div>
       <select id="filter-region" class="filter-select" onchange="applyFilters()" style="max-width:110px">
@@ -258,12 +262,12 @@ canvas{max-height:240px}
     <!-- ══ 요약 ══ -->
     <div class="page active" id="page-summary">
       <div class="kpi-row">
-        <div class="kpi-card c1"><div class="kpi-label">💰 총 지출</div><div class="kpi-val" id="k-spend">—</div><div class="kpi-meta"><span class="kpi-sub" id="k-spend-sub"></span><span class="delta" id="k-spend-d"></span></div></div>
-        <div class="kpi-card c2"><div class="kpi-label">👁 노출</div><div class="kpi-val" id="k-imp">—</div><div class="kpi-meta"><span class="kpi-sub" id="k-imp-sub"></span><span class="delta" id="k-imp-d"></span></div></div>
-        <div class="kpi-card c3"><div class="kpi-label">🖱 링크 클릭</div><div class="kpi-val" id="k-click">—</div><div class="kpi-meta"><span class="kpi-sub" id="k-click-sub"></span><span class="delta" id="k-click-d"></span></div></div>
-        <div class="kpi-card c4"><div class="kpi-label">🏠 랜딩 조회</div><div class="kpi-val" id="k-land">—</div><div class="kpi-meta"><span class="kpi-sub" id="k-land-sub"></span><span class="delta" id="k-land-d"></span></div></div>
-        <div class="kpi-card c5"><div class="kpi-label">📡 CPM</div><div class="kpi-val" id="k-cpm">—</div><div class="kpi-meta"><span class="kpi-sub" id="k-cpm-sub">원/1,000노출</span><span class="delta" id="k-cpm-d"></span></div></div>
-        <div class="kpi-card c6"><div class="kpi-label">💡 CPC</div><div class="kpi-val" id="k-cpc">—</div><div class="kpi-meta"><span class="kpi-sub" id="k-cpc-sub">원/클릭</span><span class="delta" id="k-cpc-d"></span></div></div>
+        <div class="kpi-card c1"><div class="kpi-label">💰 총 지출</div><div class="kpi-val" id="k-spend">—</div><div class="kpi-meta"><span class="delta" id="k-spend-d"></span></div><div style="font-size:10px;color:var(--text3);margin-top:3px;font-family:'DM Mono',monospace" id="k-spend-prev"></div></div>
+        <div class="kpi-card c2"><div class="kpi-label">👁 노출</div><div class="kpi-val" id="k-imp">—</div><div class="kpi-meta"><span class="delta" id="k-imp-d"></span></div><div style="font-size:10px;color:var(--text3);margin-top:3px;font-family:'DM Mono',monospace" id="k-imp-prev"></div></div>
+        <div class="kpi-card c3"><div class="kpi-label">🖱 링크 클릭</div><div class="kpi-val" id="k-click">—</div><div class="kpi-meta"><span class="delta" id="k-click-d"></span></div><div style="font-size:10px;color:var(--text3);margin-top:3px;font-family:'DM Mono',monospace" id="k-click-prev"></div></div>
+        <div class="kpi-card c4"><div class="kpi-label">🏠 랜딩 조회</div><div class="kpi-val" id="k-land">—</div><div class="kpi-meta"><span class="delta" id="k-land-d"></span></div><div style="font-size:10px;color:var(--text3);margin-top:3px;font-family:'DM Mono',monospace" id="k-land-prev"></div></div>
+        <div class="kpi-card c5"><div class="kpi-label">📡 CPM</div><div class="kpi-val" id="k-cpm">—</div><div class="kpi-meta"><span class="delta" id="k-cpm-d"></span></div><div style="font-size:10px;color:var(--text3);margin-top:3px;font-family:'DM Mono',monospace" id="k-cpm-prev"></div></div>
+        <div class="kpi-card c6"><div class="kpi-label">💡 CPC</div><div class="kpi-val" id="k-cpc">—</div><div class="kpi-meta"><span class="delta" id="k-cpc-d"></span></div><div style="font-size:10px;color:var(--text3);margin-top:3px;font-family:'DM Mono',monospace" id="k-cpc-prev"></div></div>
       </div>
       <div class="insight-grid" id="insight-cards"></div>
       <div class="grid2">
@@ -573,9 +577,13 @@ function initDashboard(){
   const periods=[...new Set(RAW.map(r=>r._period))].filter(Boolean).sort((a,b)=>{
     return Object.values(mo_name).indexOf(a)-Object.values(mo_name).indexOf(b);
   });
-  const pSel=document.getElementById('filter-period');
-  pSel.innerHTML='<option value="">전체 월</option><option value="__none__">— 없음 —</option>';
-  periods.forEach(p=>{const o=document.createElement('option');o.value=p;o.textContent=p;pSel.appendChild(o);});
+  ['filter-prev-month','filter-cur-month'].forEach((id,idx)=>{
+    const sel=document.getElementById(id);if(!sel)return;
+    sel.innerHTML='<option value="">선택</option>';
+    periods.forEach(p=>{const o=document.createElement('option');o.value=p;o.textContent=p;sel.appendChild(o);});
+    // 기본값: 전월=첫번째, 현월=마지막
+    if(periods.length>0) sel.value=idx===0?periods[0]:periods[periods.length-1];
+  });
 
   const regions=[...new Set(RAW.map(r=>r.region))].filter(Boolean).sort();
   ['filter-region','trend-region','pf-trend-region'].forEach(id=>{
@@ -607,13 +615,13 @@ function initDashboard(){
 function applyFilters(){
   const dateFrom=document.getElementById('filter-date-from').value;
   const dateTo=document.getElementById('filter-date-to').value;
-  const filterPeriod=document.getElementById('filter-period').value;
+  const prevMonth=document.getElementById('filter-prev-month').value;
+  const curMonth=document.getElementById('filter-cur-month').value;
   const filterRegion=document.getElementById('filter-region').value;
   const filterCountry=document.getElementById('filter-country').value;
-  FILTERED=RAW.filter(r=>{
+
+  const baseFilter=r=>{
     if(!activePFs.has(r.pf))return false;
-    if(filterPeriod==='__none__')return false;
-    if(filterPeriod&&r._period!==filterPeriod)return false;
     if(filterRegion==='__none__')return false;
     if(filterRegion&&r.region!==filterRegion)return false;
     if(filterCountry==='__none__')return false;
@@ -621,10 +629,20 @@ function applyFilters(){
     if(dateFrom&&r._date&&r._date<dateFrom)return false;
     if(dateTo&&r._date&&r._date>dateTo)return false;
     return true;
-  });
-  const fdates=FILTERED.map(r=>r._date).filter(Boolean).sort();
+  };
+
+  // 현월 데이터 (메인)
+  FILTERED=RAW.filter(r=>baseFilter(r)&&(!curMonth||r._period===curMonth));
+  // 전월 데이터 (비교용)
+  window.PREV_FILTERED=RAW.filter(r=>baseFilter(r)&&(!prevMonth||r._period===prevMonth));
+
+  const allRows=[...FILTERED,...(window.PREV_FILTERED||[])];
+  const fdates=allRows.map(r=>r._date).filter(Boolean).sort();
   if(fdates.length)document.getElementById('date-range').textContent=fdates[0]+' ~ '+fdates[fdates.length-1];
-  document.getElementById('row-count').textContent=FILTERED.length.toLocaleString()+' / '+RAW.length.toLocaleString()+'행';
+
+  // 월 선택 표시
+  const prevLabel=prevMonth||'전월';const curLabel=curMonth||'현월';
+  document.getElementById('row-count').textContent=`${prevLabel} vs ${curLabel}  |  ${FILTERED.length.toLocaleString()}행`;
   renderAll();
 }
 
@@ -669,28 +687,56 @@ function mkSummary(items){
 }
 
 function renderSummary(){
-  const a=agg(FILTERED);
-  const periods=[...new Set(FILTERED.map(r=>r._period))].sort((x,y)=>{
-    return Object.values(mo_name).indexOf(x)-Object.values(mo_name).indexOf(y);
-  });
-  const prev=agg(FILTERED.filter(r=>r._period===periods[0]));
-  const cur=agg(FILTERED.filter(r=>r._period===periods[periods.length-1]));
-  const dFn=(c,p)=>p?((c-p)/Math.abs(p)*100):null;
+  // filter-period 선택값 기준으로 현월/전월 결정
+  const selPeriod=document.getElementById('filter-period').value;
+  const allPeriods=[...new Set(RAW.map(r=>r._period))].filter(Boolean).sort((a,b)=>
+    Object.values(mo_name).indexOf(a)-Object.values(mo_name).indexOf(b));
 
-  const setK=(vid,sid,did,val,sub,d)=>{
-    const ve=document.getElementById(vid);if(ve)ve.textContent=val;
-    const se=document.getElementById(sid);if(se)se.textContent=sub;
-    if(did){const el=document.getElementById(did);if(el){if(d!==null&&!isNaN(d)){el.textContent=(d>=0?'▲':'▼')+Math.abs(d).toFixed(1)+'%';el.className='delta '+(d>=0?'up':'down');}else el.textContent='';}}
+  let curPeriod, prevPeriod;
+  if(selPeriod && selPeriod!=='__none__'){
+    curPeriod=selPeriod;
+    const idx=allPeriods.indexOf(selPeriod);
+    prevPeriod=idx>0?allPeriods[idx-1]:null;
+  } else {
+    curPeriod=allPeriods[allPeriods.length-1]||'';
+    prevPeriod=allPeriods.length>1?allPeriods[allPeriods.length-2]:null;
+  }
+
+  // 현월: FILTERED 중 현월만, 전월: RAW에서 같은 플랫폼 조건
+  const curRows=FILTERED.filter(r=>r._period===curPeriod);
+  const prevRows=prevPeriod?RAW.filter(r=>r._period===prevPeriod&&activePFs.has(r.pf)&&
+    (!document.getElementById('filter-region').value||r.region===document.getElementById('filter-region').value)&&
+    (!document.getElementById('filter-country').value||r.country===document.getElementById('filter-country').value)):[];
+
+  const a=agg(curRows.length?curRows:FILTERED);
+  const prev=agg(prevRows);
+  const dFn=(c,p)=>p&&p!==0?((c-p)/Math.abs(p)*100):null;
+  const prevLabel=prevPeriod||'전월';
+
+  const setKPI=(valId,deltaId,prevId,curVal,prevVal,fmtFn)=>{
+    const ve=document.getElementById(valId);if(ve)ve.textContent=fmtFn(curVal);
+    const d=dFn(curVal,prevVal);
+    const de=document.getElementById(deltaId);
+    if(de){
+      if(d!==null&&!isNaN(d)&&prevPeriod){
+        de.textContent=(d>=0?'▲':'▼')+Math.abs(d).toFixed(1)+'% vs '+prevLabel;
+        de.className='delta '+(d>=0?'up':'down');
+      } else de.textContent='';
+    }
+    const pe=document.getElementById(prevId);
+    if(pe) pe.textContent=prevPeriod?prevLabel+': '+fmtFn(prevVal):'';
   };
-  setK('k-spend','k-spend-sub','k-spend-d',fmtK(a.spend)+'원',fmt(a.spend)+' KRW',dFn(cur.spend,prev.spend));
-  setK('k-imp','k-imp-sub','k-imp-d',fmtK(a.imp),'도달 '+fmtK(a.reach),dFn(cur.imp,prev.imp));
-  setK('k-click','k-click-sub','k-click-d',fmtK(a.click),'CTR '+pct(a.ctr),dFn(cur.click,prev.click));
-  setK('k-land','k-land-sub','k-land-d',fmtK(a.land),'랜딩율 '+pct(a.ltr),dFn(cur.land,prev.land));
-  setK('k-cpm','k-cpm-sub','k-cpm-d',fmt(a.cpm,0),'',dFn(cur.cpm,prev.cpm));
-  setK('k-cpc','k-cpc-sub','k-cpc-d',fmt(a.cpc,0),'',dFn(cur.cpc,prev.cpc));
+
+  setKPI('k-spend','k-spend-d','k-spend-prev',a.spend,prev.spend,v=>fmtK(v)+'원');
+  setKPI('k-imp','k-imp-d','k-imp-prev',a.imp,prev.imp,v=>fmtK(v));
+  setKPI('k-click','k-click-d','k-click-prev',a.click,prev.click,v=>fmtK(v));
+  setKPI('k-land','k-land-d','k-land-prev',a.land,prev.land,v=>fmtK(v));
+  setKPI('k-cpm','k-cpm-d','k-cpm-prev',a.cpm,prev.cpm,v=>fmt(v,0)+'원');
+  setKPI('k-cpc','k-cpc-d','k-cpc-prev',a.cpc,prev.cpc,v=>fmt(v,0)+'원');
 
   renderInsights();renderPeriodChart();renderHeatmap();renderNatTop5();renderPieChart();
 }
+
 
 function renderInsights(){
   const byC={};
@@ -707,21 +753,32 @@ function renderInsights(){
 }
 
 function renderPeriodChart(){
-  const periods=[...new Set(FILTERED.map(r=>r._period))].filter(Boolean).sort((a,b)=>{
-    return Object.values(mo_name).indexOf(a)-Object.values(mo_name).indexOf(b);
-  });
-  const igD=periods.map(p=>FILTERED.filter(r=>r._period===p&&r.pf==='IG').reduce((s,r)=>s+r.spend,0));
-  const ttD=periods.map(p=>FILTERED.filter(r=>r._period===p&&r.pf==='TT').reduce((s,r)=>s+r.spend,0));
+  const prevMonth=document.getElementById('filter-prev-month').value;
+  const curMonth=document.getElementById('filter-cur-month').value;
+  const prevLabel=prevMonth||'전월';
+  const curLabel=curMonth||'현월';
+  const prevRows=window.PREV_FILTERED||[];
+  const curRows=FILTERED;
+  // 레이블: [전월 IG, 전월 TT, 현월 IG, 현월 TT] → 그룹 비교
+  const labels=[prevLabel+' IG', prevLabel+' TT', curLabel+' IG', curLabel+' TT'];
+  const vals=[
+    prevRows.filter(r=>r.pf==='IG').reduce((s,r)=>s+r.spend,0),
+    prevRows.filter(r=>r.pf==='TT').reduce((s,r)=>s+r.spend,0),
+    curRows.filter(r=>r.pf==='IG').reduce((s,r)=>s+r.spend,0),
+    curRows.filter(r=>r.pf==='TT').reduce((s,r)=>s+r.spend,0),
+  ];
+  const bgColors=[IG_COLOR+'0.4)',TT_COLOR+'0.4)',IG_COLOR+'0.85)',TT_COLOR+'0.85)'];
+  const periods=['dummy'];// 하위호환용
+  const igD=[0];const ttD=[0];// 하위호환용
   dc('period');
   const ctx=document.getElementById('ch-period').getContext('2d');
-  charts['period']=new Chart(ctx,{type:'bar',data:{labels:periods,datasets:[
-    {label:'Instagram',data:igD,backgroundColor:IG_COLOR+'0.7)',borderRadius:5,borderSkipped:false},
-    {label:'TikTok',data:ttD,backgroundColor:TT_COLOR+'0.7)',borderRadius:5,borderSkipped:false}
-  ]},options:{...JSON.parse(JSON.stringify(CHART_BASE)),plugins:{
-    legend:{display:true,position:'bottom',labels:{color:'#475569',font:{size:10},boxWidth:8,padding:10}},
-    tooltip:{...JSON.parse(JSON.stringify(CHART_BASE.plugins.tooltip)),callbacks:{label:c=>` ${c.dataset.label}: ${fmtK(c.raw)}원`}},
-    datalabels:{display:true,anchor:'end',align:'top',formatter:(v)=>v>0?fmtK(v):'',font:{size:9,weight:'600'},color:(ctx)=>ctx.datasetIndex===0?'rgba(225,48,108,0.9)':'rgba(20,184,166,0.9)',padding:{bottom:2}}
-  },scales:{x:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:10}}},y:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:10},callback:v=>fmtK(v)}}}}});
+  charts['period']=new Chart(ctx,{type:'bar',data:{labels,datasets:[
+    {data:vals,backgroundColor:bgColors,borderRadius:5,borderSkipped:false}
+  ]},options:{responsive:true,maintainAspectRatio:true,plugins:{
+    legend:{display:false},
+    datalabels:{display:true,anchor:'end',align:'top',formatter:v=>v>0?fmtK(v):'',font:{size:9,weight:'700'},color:'#475569',padding:{bottom:2}},
+    tooltip:{backgroundColor:'#fff',borderColor:'#e8edf5',borderWidth:1,titleColor:'#0f172a',bodyColor:'#475569',padding:10,callbacks:{label:c=>` ${c.label}: ${fmtK(c.raw)}원`}}
+  },scales:{x:{grid:{display:false},ticks:{color:'#475569',font:{size:10}}},y:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:10},callback:v=>fmtK(v)}}}}});
 }
 
 function renderHeatmap(){
@@ -1026,14 +1083,23 @@ function filterPFTrendCountries(){
   const allC=[...new Set(FILTERED.map(r=>r.country))].filter(Boolean).sort();
   const filteredC=region?[...new Set(FILTERED.filter(r=>r.region===region).map(r=>r.country))].sort():allC;
   const sel=document.getElementById('pf-trend-country');
+  const prevVal=sel.value;
   sel.innerHTML='<option value="">국가 선택</option>';
   filteredC.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;sel.appendChild(o);});
+  // 이전 선택값 유지 (해당 권역에 있으면)
+  if(prevVal && filteredC.includes(prevVal)) sel.value=prevVal;
   renderPFCountryTrend();
 }
 
 function renderPFCountryTrend(){
   const metric=document.getElementById('pf-trend-metric').value;
   const country=document.getElementById('pf-trend-country').value;
+  const region=document.getElementById('pf-trend-region').value;
+  // 국가 미선택 + 권역 선택 → 권역 전체 합산으로 표시
+  if(!country && region){
+    renderPFRegionTrend(metric, region);
+    return;
+  }
   if(!country){dc('pf-country-trend');document.getElementById('pf-country-summary').innerHTML='';return;}
   const allDates=[...new Set(FILTERED.map(r=>r._date))].filter(Boolean).sort();
   const mFn=(rows)=>{const a=agg(rows);return metric==='spend'?a.spend:metric==='imp'?a.imp:metric==='click'?a.click:metric==='ctr'?a.ctr*100:a.cpm;};
@@ -1052,6 +1118,30 @@ function renderPFCountryTrend(){
     {label:'Instagram',data:igData,borderColor:IG_COLOR+'0.9)',backgroundColor:IG_COLOR+'0.1)',tension:.3,fill:true,pointRadius:3,pointBackgroundColor:IG_COLOR+'0.9)',spanGaps:true},
     {label:'TikTok',data:ttData,borderColor:TT_COLOR+'0.9)',backgroundColor:TT_COLOR+'0.1)',tension:.3,fill:true,pointRadius:3,pointBackgroundColor:TT_COLOR+'0.9)',spanGaps:true}
   ]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:true,position:'bottom',labels:{color:'#475569',font:{size:10},boxWidth:8,padding:10}},tooltip:{backgroundColor:'#fff',borderColor:'#e8edf5',borderWidth:1,titleColor:'#0f172a',bodyColor:'#475569',padding:8}},scales:{x:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:9},maxTicksLimit:12}},y:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:9},callback:v=>metric==='ctr'?v.toFixed(2)+'%':fmtK(v)}}}}});
+}
+
+
+// ── 플랫폼 권역별 합산 추이 ──────────────────────────────
+function renderPFRegionTrend(metric, region){
+  const allDates=[...new Set(FILTERED.map(r=>r._date))].filter(Boolean).sort();
+  const regionRows=FILTERED.filter(r=>r.region===region);
+  if(!regionRows.length){dc('pf-country-trend');return;}
+  const mFn=(rows)=>{const a=agg(rows);return metric==='spend'?a.spend:metric==='imp'?a.imp:metric==='click'?a.click:metric==='ctr'?a.ctr*100:a.cpm;};
+  const mLabel=v=>metric==='ctr'?v.toFixed(2)+'%':fmtK(v);
+  const igData=allDates.map(d=>{const rows=regionRows.filter(r=>r.pf==='IG'&&r._date===d);return rows.length?mFn(rows):null;});
+  const ttData=allDates.map(d=>{const rows=regionRows.filter(r=>r.pf==='TT'&&r._date===d);return rows.length?mFn(rows):null;});
+  const igTotal=mFn(regionRows.filter(r=>r.pf==='IG'));
+  const ttTotal=mFn(regionRows.filter(r=>r.pf==='TT'));
+  document.getElementById('pf-country-summary').innerHTML=mkSummary([
+    {label:'Instagram ('+region+')',val:mLabel(igTotal),color:IG_COLOR+'0.8)'},
+    {label:'TikTok ('+region+')',val:mLabel(ttTotal),color:TT_COLOR+'0.8)'},
+  ]);
+  dc('pf-country-trend');
+  const ctx=document.getElementById('ch-pf-country-trend').getContext('2d');
+  charts['pf-country-trend']=new Chart(ctx,{type:'line',data:{labels:allDates,datasets:[
+    {label:'Instagram',data:igData,borderColor:IG_COLOR+'0.9)',backgroundColor:IG_COLOR+'0.1)',tension:.3,fill:true,pointRadius:3,pointBackgroundColor:IG_COLOR+'0.9)',spanGaps:true},
+    {label:'TikTok',data:ttData,borderColor:TT_COLOR+'0.9)',backgroundColor:TT_COLOR+'0.1)',tension:.3,fill:true,pointRadius:3,pointBackgroundColor:TT_COLOR+'0.9)',spanGaps:true}
+  ]},options:{responsive:true,maintainAspectRatio:true,plugins:{datalabels:{display:false},legend:{display:true,position:'bottom',labels:{color:'#475569',font:{size:10},boxWidth:8,padding:10}},tooltip:{backgroundColor:'#fff',borderColor:'#e8edf5',borderWidth:1,titleColor:'#0f172a',bodyColor:'#475569',padding:8}},scales:{x:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:9},maxTicksLimit:12}},y:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:9},callback:v=>metric==='ctr'?v.toFixed(2)+'%':fmtK(v)}}}}});
 }
 
 window.onload=()=>{ loadViaJSONP(APPS_URL); };
