@@ -607,23 +607,6 @@ function loadViaJSONP(baseUrl){
 // 초기화
 // ══════════════════════════════════════════════
 function initDashboard(){
-  const periods=[...new Set(RAW.map(r=>r._period))].filter(Boolean).sort((a,b)=>{
-    const mo=s=>Object.values(mo_name).indexOf(s.split(' ')[0]);
-    const wk=s=>s.includes('1-2')?0:1;
-    return mo(a)!==mo(b)?mo(a)-mo(b):wk(a)-wk(b);
-  });
-  activePeriods=new Set(periods);
-
-  // 기간 칩
-  const wrap=document.getElementById('chips-period');
-  wrap.innerHTML='';
-  periods.forEach(p=>{
-    const el=document.createElement('div');
-    el.className='chip active'; el.textContent=p; el.dataset.period=p;
-    el.onclick=()=>togglePeriod(el);
-    wrap.appendChild(el);
-  });
-
   // 날짜 범위 표시 + 날짜 필터 기본값
   const dates=RAW.map(r=>r._date).filter(Boolean).sort();
   if(dates.length){
@@ -706,12 +689,7 @@ function applyFilters(){
   renderAll();
 }
 
-function togglePeriod(el){
-  const p=el.dataset.period;
-  if(activePeriods.has(p)){if(activePeriods.size===1)return;activePeriods.delete(p);el.classList.remove('active');}
-  else{activePeriods.add(p);el.classList.add('active');}
-  applyFilters();
-}
+
 function togglePF(el){
   const pf=el.dataset.pf;
   if(activePFs.has(pf)){if(activePFs.size===1)return;activePFs.delete(pf);el.classList.remove('active');}
