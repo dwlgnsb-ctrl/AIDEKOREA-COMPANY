@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>AIDKOREA COMPANY — SNS 성과 대시보드</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -338,11 +339,13 @@ canvas{max-height:240px}
               <option value="cpm">CPM</option>
             </select>
             <div class="fdiv"></div>
-            <select id="trend-region" class="filter-select" onchange="filterTrendCountries()" style="max-width:110px">
+            <select id="trend-region" class="filter-select" onchange="applyTrendRegion()" style="max-width:110px">
               <option value="">전체 권역</option>
+              <option value="__none__">— 없음 —</option>
             </select>
             <select id="trend-country-sel" class="filter-select" onchange="addTrendCountry(this.value)" style="max-width:110px">
               <option value="">국가 선택</option>
+              <option value="__none__">— 없음 —</option>
             </select>
           </div>
         </div>
@@ -460,6 +463,7 @@ canvas{max-height:240px}
 </div>
 
 <script>
+Chart.register(ChartDataLabels);
 const APPS_URL='https://script.google.com/macros/s/AKfycbzQn-tRH0Jg6csQOEj3V6s0YL1nh8uNlEYUxixA6J69a_VWJ8LGECyHhYK0CWVM_V8h/exec';
 let RAW=[],FILTERED=[];
 let activePFs=new Set(['IG','TT']);
@@ -710,7 +714,11 @@ function renderPeriodChart(){
   charts['period']=new Chart(ctx,{type:'bar',data:{labels:periods,datasets:[
     {label:'Instagram',data:igD,backgroundColor:IG_COLOR+'0.7)',borderRadius:5,borderSkipped:false},
     {label:'TikTok',data:ttD,backgroundColor:TT_COLOR+'0.7)',borderRadius:5,borderSkipped:false}
-  ]},options:{...JSON.parse(JSON.stringify(CHART_BASE)),plugins:{legend:{display:true,position:'bottom',labels:{color:'#475569',font:{size:10},boxWidth:8,padding:10}},tooltip:{...JSON.parse(JSON.stringify(CHART_BASE.plugins.tooltip)),callbacks:{label:c=>` ${c.dataset.label}: ${fmtK(c.raw)}원`}}},scales:{x:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:10}}},y:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:10},callback:v=>fmtK(v)}}}}});
+  ]},options:{...JSON.parse(JSON.stringify(CHART_BASE)),plugins:{
+    legend:{display:true,position:'bottom',labels:{color:'#475569',font:{size:10},boxWidth:8,padding:10}},
+    tooltip:{...JSON.parse(JSON.stringify(CHART_BASE.plugins.tooltip)),callbacks:{label:c=>` ${c.dataset.label}: ${fmtK(c.raw)}원`}},
+    datalabels:{display:true,anchor:'end',align:'top',formatter:(v)=>v>0?fmtK(v):'',font:{size:9,weight:'600'},color:(ctx)=>ctx.datasetIndex===0?'rgba(225,48,108,0.9)':'rgba(20,184,166,0.9)',padding:{bottom:2}}
+  },scales:{x:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:10}}},y:{grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:10},callback:v=>fmtK(v)}}}}});
 }
 
 function renderHeatmap(){
@@ -784,21 +792,48 @@ function updateTrendCountrySelects(){
   allC.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;sel.appendChild(o);});
 }
 
-function filterTrendCountries(){
+function applyTrendRegion(){
   const region=document.getElementById('trend-region').value;
-  const allC=[...new Set(FILTERED.map(r=>r.country))].filter(Boolean).sort();
-  const filtered=region?FILTERED.filter(r=>r.region===region):FILTERED;
-  const filteredC=[...new Set(filtered.map(r=>r.country))].filter(Boolean).sort();
+  // 없음 선택 시
+  if(region==='__none__'){
+    selectedTrendCountries=new Set();
+    renderCountryTrend();
+    return;
+  }
+  // 권역 선택 시: 해당 권역 국가 자동 선택 (최대 5개)
+  if(region){
+    const regionCountries=[...new Set(FILTERED.filter(r=>r.region===region).map(r=>r.country))].filter(Boolean).sort();
+    selectedTrendCountries=new Set(regionCountries.slice(0,5));
+  } else {
+    // 전체 권역: 기존 선택 유지 또는 상위 3개
+    if(selectedTrendCountries.size===0){
+      const allC=[...new Set(FILTERED.map(r=>r.country))].filter(Boolean).sort();
+      selectedTrendCountries=new Set(allC.slice(0,3));
+    }
+  }
+  // 국가 드롭박스 업데이트 (권역 필터링)
+  const filteredC=region
+    ?[...new Set(FILTERED.filter(r=>r.region===region).map(r=>r.country))].filter(Boolean).sort()
+    :[...new Set(FILTERED.map(r=>r.country))].filter(Boolean).sort();
   const sel=document.getElementById('trend-country-sel');
-  sel.innerHTML='<option value="">국가 선택</option>';
+  sel.innerHTML='<option value="">국가 선택</option><option value="__none__">— 없음 —</option>';
   filteredC.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;sel.appendChild(o);});
-  selectedTrendCountries=new Set([...selectedTrendCountries].filter(c=>filteredC.includes(c)));
   renderCountryTrend();
+}
+
+function filterTrendCountries(){
+  applyTrendRegion();
 }
 
 function addTrendCountry(country){
   if(!country)return;
-  if(selectedTrendCountries.size>=5)return;
+  if(country==='__none__'){
+    selectedTrendCountries=new Set();
+    document.getElementById('trend-country-sel').value='';
+    renderCountryTrend();
+    return;
+  }
+  if(selectedTrendCountries.size>=5){alert('최대 5개 국가까지 선택 가능합니다.');document.getElementById('trend-country-sel').value='';return;}
   selectedTrendCountries.add(country);
   document.getElementById('trend-country-sel').value='';
   renderCountryTrend();
