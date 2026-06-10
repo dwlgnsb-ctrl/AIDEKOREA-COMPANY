@@ -729,18 +729,34 @@ function renderSummary() {
   if (!periodEl) return;
   const selPeriod = periodEl.value;
 
+  // 권역·국가 필터를 전월에도 동일하게 적용
+  const filterRegion  = (document.getElementById('filter-region')  || {}).value || '';
+  const filterCountry = (document.getElementById('filter-country') || {}).value || '';
+
+  function baseFilter(rows) {
+    return rows.filter(r => {
+      if (!activePFs.has(r.pf))                         return false;
+      if (filterRegion  === '__none__')                 return false;
+      if (filterRegion  && r.region  !== filterRegion)  return false;
+      if (filterCountry === '__none__')                 return false;
+      if (filterCountry && r.country !== filterCountry) return false;
+      return true;
+    });
+  }
+
+  const allPeriods = [...new Set(RAW.map(r => r._period))].filter(Boolean).sort((a,b) =>
+    Object.values(mo_name).indexOf(a) - Object.values(mo_name).indexOf(b)
+  );
+
   let curRows, prevRows = [], prevLabel = null;
 
   if (selPeriod && selPeriod !== '__none__') {
-    curRows = FILTERED.filter(r => r._period === selPeriod);
-    const allPeriods = [...new Set(RAW.map(r => r._period))].filter(Boolean).sort((a,b) =>
-      Object.values(mo_name).indexOf(a) - Object.values(mo_name).indexOf(b)
-    );
+    curRows = baseFilter(RAW).filter(r => r._period === selPeriod);
     const idx = allPeriods.indexOf(selPeriod);
     if (idx > 0) {
-      const prev = allPeriods[idx - 1];
-      prevLabel = prev;
-      prevRows  = RAW.filter(r => r._period === prev && activePFs.has(r.pf));
+      const prevPeriod = allPeriods[idx - 1];
+      prevLabel = prevPeriod;
+      prevRows  = baseFilter(RAW).filter(r => r._period === prevPeriod);
     }
   } else {
     curRows = FILTERED;
@@ -757,31 +773,34 @@ function renderSummary() {
 }
 
 function setKPICards(a, prev, prevPeriod) {
-  const dFn = (c, p) => p && p !== 0 ? ((c - p) / Math.abs(p) * 100) : null;
+  const hasPrev = !!(prev && prevPeriod);
+  const dFn = (c, p) => (p && p !== 0) ? ((c - p) / Math.abs(p) * 100) : null;
 
   const setKPI = (valId, deltaId, prevId, curVal, prevVal, fmtFn) => {
     const ve = document.getElementById(valId);
     if (ve) ve.textContent = fmtFn(curVal);
+
     const de = document.getElementById(deltaId);
     if (de) {
-      const d = dFn(curVal, prevVal);
-      if (d !== null && !isNaN(d) && prevPeriod) {
+      const d = hasPrev ? dFn(curVal, prevVal) : null;
+      if (d !== null && !isNaN(d)) {
         de.textContent = (d >= 0 ? '▲' : '▼') + Math.abs(d).toFixed(1) + '% vs ' + prevPeriod;
         de.className = 'delta ' + (d >= 0 ? 'up' : 'down');
       } else {
         de.textContent = ''; de.className = 'delta';
       }
     }
+
     const pe = document.getElementById(prevId);
-    if (pe) pe.textContent = prev && prevPeriod ? prevPeriod + ': ' + fmtFn(prevVal) : '';
+    if (pe) pe.textContent = hasPrev ? prevPeriod + ': ' + fmtFn(prevVal) : '';
   };
 
-  setKPI('k-spend', 'k-spend-d', 'k-spend-prev', a.spend,  prev ? prev.spend  : 0, v => fmtK(v) + '원');
-  setKPI('k-imp',   'k-imp-d',   'k-imp-prev',   a.imp,    prev ? prev.imp    : 0, v => fmtK(v));
-  setKPI('k-click', 'k-click-d', 'k-click-prev', a.click,  prev ? prev.click  : 0, v => fmtK(v));
-  setKPI('k-land',  'k-land-d',  'k-land-prev',  a.land,   prev ? prev.land   : 0, v => fmtK(v));
-  setKPI('k-cpm',   'k-cpm-d',   'k-cpm-prev',   a.cpm,    prev ? prev.cpm    : 0, v => fmt(v, 0) + '원');
-  setKPI('k-cpc',   'k-cpc-d',   'k-cpc-prev',   a.cpc,    prev ? prev.cpc    : 0, v => fmt(v, 0) + '원');
+  setKPI('k-spend', 'k-spend-d', 'k-spend-prev', a.spend, hasPrev ? prev.spend : 0, v => fmtK(v) + '원');
+  setKPI('k-imp',   'k-imp-d',   'k-imp-prev',   a.imp,   hasPrev ? prev.imp   : 0, v => fmtK(v));
+  setKPI('k-click', 'k-click-d', 'k-click-prev', a.click, hasPrev ? prev.click : 0, v => fmtK(v));
+  setKPI('k-land',  'k-land-d',  'k-land-prev',  a.land,  hasPrev ? prev.land  : 0, v => fmtK(v));
+  setKPI('k-cpm',   'k-cpm-d',   'k-cpm-prev',   a.cpm,   hasPrev ? prev.cpm   : 0, v => fmt(v, 0) + '원');
+  setKPI('k-cpc',   'k-cpc-d',   'k-cpc-prev',   a.cpc,   hasPrev ? prev.cpc   : 0, v => fmt(v, 0) + '원');
 }
 
 function renderInsights() {
@@ -808,12 +827,39 @@ function renderInsights() {
 }
 
 function renderPeriodChart() {
-  // 월별 IG/TT 지출 그룹바 차트
-  const periods = [...new Set(FILTERED.map(r => r._period))].filter(Boolean).sort((a,b) =>
+  // 전체 RAW에서 월 목록 추출 (필터와 무관하게 모든 월 표시)
+  const filterRegion  = (document.getElementById('filter-region')  || {}).value || '';
+  const filterCountry = (document.getElementById('filter-country') || {}).value || '';
+  const baseRows = RAW.filter(r => {
+    if (!activePFs.has(r.pf))                         return false;
+    if (filterRegion  === '__none__')                 return false;
+    if (filterRegion  && r.region  !== filterRegion)  return false;
+    if (filterCountry === '__none__')                 return false;
+    if (filterCountry && r.country !== filterCountry) return false;
+    return true;
+  });
+
+  const selPeriod = (document.getElementById('filter-period') || {}).value || '';
+  const allPeriods = [...new Set(RAW.map(r => r._period))].filter(Boolean).sort((a,b) =>
     Object.values(mo_name).indexOf(a) - Object.values(mo_name).indexOf(b)
   );
-  const igData = periods.map(p => FILTERED.filter(r => r._period === p && r.pf === 'IG').reduce((s,r) => s + r.spend, 0));
-  const ttData = periods.map(p => FILTERED.filter(r => r._period === p && r.pf === 'TT').reduce((s,r) => s + r.spend, 0));
+  // 선택한 월이 있으면 전월과 현월만, 없으면 전체
+  let periods;
+  if (selPeriod && selPeriod !== '__none__') {
+    const idx = allPeriods.indexOf(selPeriod);
+    periods = idx > 0 ? [allPeriods[idx-1], selPeriod] : [selPeriod];
+  } else {
+    periods = [...new Set(baseRows.map(r => r._period))].filter(Boolean).sort((a,b) =>
+      Object.values(mo_name).indexOf(a) - Object.values(mo_name).indexOf(b)
+    );
+  }
+
+  const igData = periods.map(p => baseRows.filter(r => r._period === p && r.pf === 'IG').reduce((s,r) => s + r.spend, 0));
+  const ttData = periods.map(p => baseRows.filter(r => r._period === p && r.pf === 'TT').reduce((s,r) => s + r.spend, 0));
+
+  // 선택된 월 강조 색상
+  const igColors = periods.map(p => p === selPeriod ? IG_COLOR+'0.9)' : IG_COLOR+'0.4)');
+  const ttColors = periods.map(p => p === selPeriod ? TT_COLOR+'0.9)' : TT_COLOR+'0.4)');
 
   dc('period');
   const ctx = document.getElementById('ch-period').getContext('2d');
@@ -822,15 +868,19 @@ function renderPeriodChart() {
     data: {
       labels: periods,
       datasets: [
-        {label:'Instagram', data:igData, backgroundColor:IG_COLOR+'0.75)', borderRadius:4, borderSkipped:false},
-        {label:'TikTok',    data:ttData, backgroundColor:TT_COLOR+'0.75)', borderRadius:4, borderSkipped:false},
+        {label:'Instagram', data:igData, backgroundColor: selPeriod ? igColors : IG_COLOR+'0.75)', borderRadius:4, borderSkipped:false},
+        {label:'TikTok',    data:ttData, backgroundColor: selPeriod ? ttColors : TT_COLOR+'0.75)', borderRadius:4, borderSkipped:false},
       ]
     },
     options: {
       responsive: true, maintainAspectRatio: true,
       plugins: {
         legend: {display:true, position:'bottom', labels:{color:'#475569', font:{size:10}, boxWidth:8, padding:10}},
-        datalabels: {display:false},
+        datalabels: {
+          display: true, anchor:'end', align:'top',
+          formatter: v => v > 0 ? fmtK(v) : '',
+          font: {size:9, weight:'700'}, color:'#475569', padding:{bottom:2}
+        },
         tooltip: {backgroundColor:'#fff', borderColor:'#e8edf5', borderWidth:1, titleColor:'#0f172a', bodyColor:'#475569', padding:10,
           callbacks: {label: c => ` ${c.dataset.label}: ${fmtK(c.raw)}원`}},
       },
